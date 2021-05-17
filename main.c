@@ -49,6 +49,7 @@ int     main(int argc, char **argv, char **envp)
     int     count_symb;
     int     cursor_pos;
     int     fd;
+    int     count_line;
     char    c;
     char    *command_line;
 
@@ -60,9 +61,14 @@ int     main(int argc, char **argv, char **envp)
     tcsetattr(0, TCSANOW, &term);
 
     tgetent(0, "xterm-256color");
+
+    count_line = 0;
     fd = open(".minishell_history", O_RDWR | O_CREAT, 0777);
     while ((i = get_next_line(fd, &str)) > 0)
+    {
+        count_line++;
         free(str);
+    }
     str = (char *)malloc(sizeof(*str) * 100);
     while (ft_strcmp(str, "\4"))
     {
@@ -81,9 +87,22 @@ int     main(int argc, char **argv, char **envp)
             // key_up for output previous command 
             if (!ft_strcmp(str, "\e[A"))
             {
+                char *tmp;
+                int k = 0;
+                int tmpfd = open(".minishell_history", O_RDONLY);
+                while (get_next_line(tmpfd, &tmp) > 0 && k < count_line - 1)
+                {
+                    k++;
+                    free(tmp);
+                }
+                count_line--;
                 tputs(restore_cursor, 1, ft_putint);
                 tputs(tgetstr("ce", 0), 1, ft_putint);
-                write (1, "previous command", 16);
+                ft_strcpy(command_line, tmp);
+                cursor_pos = ft_strlen(tmp) + MINISHELL;
+                write (1, tmp, ft_strlen(tmp));
+                free (tmp);
+                close (tmpfd);
             }
             // key_down for output next command
             else if (!ft_strcmp(str, "\e[B"))
@@ -146,7 +165,11 @@ int     main(int argc, char **argv, char **envp)
                 command_line[cursor_pos - MINISHELL] = '\0';
             }
         }
+        count_line++;
         write(fd, command_line, ft_strlen(command_line));
+        //*
+        // PARSER & LOGIC PART
+        //*
         free(command_line);
     }
     write (1, "\n", 1);

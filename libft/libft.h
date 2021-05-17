@@ -36,6 +36,7 @@ int				ft_putstr_fd(char *s, int fd);
 int				ft_putchar_fd(char c, int fd);
 int				ft_atoi(const char *str);
 void			ft_bzero(void *dest, size_t n);
+void			*ft_realloc(void *str, size_t size);
 void			*ft_calloc(size_t count, size_t size);
 void			*ft_memcpy(void *dest, const void *src, size_t n);
 void			*ft_memccpy(void *dest, const void *src, int c, size_t n);

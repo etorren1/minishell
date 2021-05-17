@@ -12,3 +12,4 @@ CMakeLists.txt
 # tmp
 .minishell_history
 a.out
+minishell

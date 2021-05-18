@@ -1,20 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: etorren <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/01 19:16:07 by etorren           #+#    #+#             */
-/*   Updated: 2020/11/14 14:32:03 by etorren          ###   ########.fr       */
+/*   Created: 2021/05/18 01:00:20 by etorren           #+#    #+#             */
+/*   Updated: 2021/05/18 01:07:58 by etorren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_isalnum(int c)
+void	*ft_realloc(void *str, size_t size)
 {
-	if ((c > 47 && c < 58) || (c > 64 && c < 91))
-		return (1);
-	return (0);
+	char	*new;
+
+	new = (char *)malloc(ft_strlen(str) + size);
+	ft_strcpy(new, str);
+	free(str);
+	return (new);
 }

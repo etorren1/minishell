@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: etorren <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/16 19:21:53 by etorren           #+#    #+#             */
-/*   Updated: 2021/05/16 17:00:15 by etorren          ###   ########.fr       */
+/*   Created: 2021/05/16 11:21:53 by etorren           #+#    #+#             */
+/*   Updated: 2021/05/16 19:00:15 by etorren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <fcntl.h>
-#define MINISHELL 15
+#define MINISHELL	15
+#define	BUF_SIZE	12
 
 int	ft_putint(int ch)
 {
@@ -107,19 +108,28 @@ char	*get_history_line(int fd, int pos)
 	return (str);
 }
 
+void	clear_buf(char *buf, int size)
+{
+	int i;
+
+	i = 0;
+	while (i < size)
+		buf[i++] = 0;
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	struct	termios term;
-	char	*str;
+	int		len;
 	int		i;
+	int		fd;
 	int		count_symb;
 	int		cursor_pos;
-	int		fd;
 	int		count_lines;
 	int		current_line;
-	char	c;
 	char	*command_line;
 	char	*last_insert;
+	char	*buf;
 
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ECHO);
@@ -131,27 +141,33 @@ int	main(int argc, char **argv, char **envp)
 	tgetent(0, "xterm-256color");
 
 	fd = open(".minishell_history", O_RDWR | O_CREAT, 0777);
+	len = 1024;
 	count_lines = history_line_count(fd);
-	str = (char *)malloc(sizeof(*str) * 100);
-	while (ft_strcmp(str, "\4"))
+	buf = (char *)malloc(BUF_SIZE);
+	command_line = (char *)malloc(len);
+	while (ft_strcmp(buf, "\4"))
 	{
 		cursor_pos = MINISHELL;
 		count_symb = MINISHELL;
 		last_insert = NULL;
 		write (1, "minishell-0.1$ ", MINISHELL);
 		tputs(save_cursor, 1, ft_putint);
-		command_line = (char *)malloc(sizeof(*str) * 1024);
 		current_line = count_lines;
-		str[0] = 0;
-		command_line[0] = '\0';
-		while (ft_strcmp(str, "\n") && ft_strcmp(str, "\4"))
+		clear_buf(command_line, len);
+		clear_buf(buf, BUF_SIZE);
+		while (ft_strcmp(buf, "\n") && ft_strcmp(buf, "\4"))
 		{
 			if (count_symb < cursor_pos)
 				count_symb = cursor_pos;
-			i = read(0, str, 100);
-			str[i] = 0;
+			if (count_symb > len)
+			{
+				len += len;
+				command_line = ft_realloc(command_line, len);
+			}
+			clear_buf(buf, BUF_SIZE);
+			i = read(0, buf, BUF_SIZE);
 			// key_up for output previous command 
-			if (!ft_strcmp(str, "\e[A"))
+			if (!ft_strcmp(buf, "\e[A"))
 			{
 				char *tmp;
 				int k = 0;
@@ -176,14 +192,12 @@ int	main(int argc, char **argv, char **envp)
 				close(tmpfd);
 			}
 			// key_down for output next command
-			else if (!ft_strcmp(str, "\e[B"))
+			else if (!ft_strcmp(buf, "\e[B"))
 			{
 				char *tmp;
 				int k = 0;
 				int tmpfd;
 
-				//printf("\n last = %s cur_lin = %d, cou_lin = %d \n",
-				// last_insert, current_line, count_lines);
 				if (current_line < count_lines)
 				{
 					current_line++;
@@ -203,7 +217,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 			// key_backspace for delite character
-			else if (!ft_strcmp(str, "\177"))
+			else if (!ft_strcmp(buf, "\177"))
 			{
 				if (cursor_pos > MINISHELL)
 				{
@@ -215,7 +229,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 			// key_left
-			else if (!ft_strcmp(str, "\e[D"))
+			else if (!ft_strcmp(buf, "\e[D"))
 			{
 				if (cursor_pos > MINISHELL)
 				{
@@ -224,7 +238,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 			// key_right
-			else if (!ft_strcmp(str, "\e[C"))
+			else if (!ft_strcmp(buf, "\e[C"))
 			{
 				if (count_symb > cursor_pos)
 				{
@@ -232,27 +246,102 @@ int	main(int argc, char **argv, char **envp)
 					tputs(cursor_right, 1, ft_putint);
 				}
 			}
-			// add newline in command string
-			else if (str[0] == '\n')
+			// ctrl + key_left move directly by word towards
+			else if (!ft_strcmp(buf, "\e[1;5D"))
 			{
-				command_line[count_symb - MINISHELL] = str[0];
+				int		k = 0;
+				int		beg = 0;
+				int		check = 0;;
+				char	ch;
+
+				while (k < cursor_pos - MINISHELL)
+				{
+					ch = command_line[k];
+					if (!ft_isalnum(ch) && !ft_isalpha(ch))
+						check = 1;
+					if ((ft_isalnum(ch) || ft_isalpha(ch)) && check == 1)
+					{
+						check = 0;
+						beg = k;
+					}
+					k++;
+				}
+				tputs(restore_cursor, 1, ft_putint);
+				cursor_pos = MINISHELL;
+				while (cursor_pos < beg + MINISHELL)
+				{
+					tputs(cursor_right, 1, ft_putint);
+					cursor_pos++;
+				}
+			}
+			// ctrl + key_right move directly by word towards
+			else if (!ft_strcmp(buf, "\e[1;5C"))
+			{
+				int		k = cursor_pos;
+				int		end = count_symb;
+				int		check = 0;;
+				char	ch;
+
+				while (k < count_symb)
+				{
+					ch = command_line[k - MINISHELL];
+					if (ft_isalnum(ch) || ft_isalpha(ch))
+						check = 1;
+					if (!ft_isalnum(ch) && !ft_isalpha(ch) && check == 1)
+					{
+						check = 0;
+						end = k;
+						break;
+					}
+					k++;
+				}
+				while (cursor_pos < end)
+				{
+					tputs(cursor_right, 1, ft_putint);
+					cursor_pos++;
+				}
+			}
+			// key_home move cursor in begin command line
+			else if (!ft_strcmp(buf, "\e[H"))
+			{
+				tputs(restore_cursor, 1, ft_putint);
+				cursor_pos = MINISHELL;
+			}
+			// key_end move cursor in end command line
+			else if (!ft_strcmp(buf, "\e[F"))
+			{
+				while (cursor_pos < count_symb)
+				{
+					tputs(cursor_right, 1, ft_putint);
+					cursor_pos++;
+				}
+			}
+			// add newline in command string
+			else if (buf[0] == '\n')
+			{
+				command_line[count_symb - MINISHELL] = buf[0];
 				command_line[1 + count_symb - MINISHELL] = '\0';
-				write (1, str, i);
+				write (1, buf, i);
 			}
 			// command line edit
 			else if (cursor_pos < count_symb)
 			{
-				ft_addchar(&command_line, str[0], cursor_pos);
+				ft_addchar(&command_line, buf[0], cursor_pos);
 				tputs(tgetstr("im", 0), 1, ft_putint);
-				cursor_pos += write (1, str, 1 );
+				cursor_pos += write (1, buf, 1 );
 				count_symb++;
 				tputs(tgetstr("ei", 0), 1, ft_putint);	 
+			}
+			// another keys catch (debug feature)
+			else if (buf[1] != 0)
+			{
+				printf(" \033[31mWarning:\033[0m Non visible symbol\n");
 			}
 			// standart output characters from user
 			else
 			{
-				command_line[cursor_pos - MINISHELL] = str[0];
-				cursor_pos += write (1, str, i);
+				command_line[cursor_pos - MINISHELL] = buf[0];
+				cursor_pos += write (1, buf, i);
 				command_line[cursor_pos - MINISHELL] = '\0';
 			}
 		}
@@ -264,9 +353,9 @@ int	main(int argc, char **argv, char **envp)
 		//*
 		// PARSER & LOGIC PART
 		//*
-		free(command_line);
 	}
 	write (1, "\n", 1);
+	free(command_line);
 	close (fd);
 	return (0);
 }

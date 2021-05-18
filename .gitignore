@@ -12,4 +12,7 @@ CMakeLists.txt
 # tmp
 .minishell_history
 a.out
+tests.c
 minishell
+*.o
+Makefile

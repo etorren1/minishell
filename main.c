@@ -21,6 +21,11 @@
 #define MINISHELL	15
 #define	BUF_SIZE	12
 
+/*
+*	Insert mode have bugs. It print odd symbols
+*	Ctrl + key_left/right have bugs. It print odd symbols
+*/
+
 int	ft_putint(int ch)
 {
 	write (1, &ch, 1);
@@ -323,7 +328,12 @@ int	main(int argc, char **argv, char **envp)
 				command_line[1 + count_symb - MINISHELL] = '\0';
 				write (1, buf, i);
 			}
-			// command line edit
+			// another keys catch (debug feature)
+			else if (buf[1] != 0)
+			{
+				printf(" \033[31mWarning:\033[0m Non visible symbol\n");
+			}
+			// insert mode, command line edit
 			else if (cursor_pos < count_symb)
 			{
 				ft_addchar(&command_line, buf[0], cursor_pos);
@@ -331,11 +341,6 @@ int	main(int argc, char **argv, char **envp)
 				cursor_pos += write (1, buf, 1 );
 				count_symb++;
 				tputs(tgetstr("ei", 0), 1, ft_putint);	 
-			}
-			// another keys catch (debug feature)
-			else if (buf[1] != 0)
-			{
-				printf(" \033[31mWarning:\033[0m Non visible symbol\n");
 			}
 			// standart output characters from user
 			else

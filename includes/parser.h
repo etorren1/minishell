@@ -1,23 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: etorren <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: masharla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/18 01:00:20 by etorren           #+#    #+#             */
-/*   Updated: 2021/05/18 21:54:47 by ruslan           ###   ########.fr       */
+/*   Created: 2021/05/22 16:15:58 by masharla          #+#    #+#             */
+/*   Updated: 2021/05/22 16:16:44 by ruslan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-void	*ft_realloc(void *str, size_t size)
-{
-	char	*new;
-
-	new = (char *)malloc(ft_strlen(str) + size);
-	ft_strcpy(new, str);
-	free(str);
-	return (new);
-}
+char	*join_and_free(char *prefix, char *body, char *postfix);
+char	*backslash(char *str, int *i);
+char	*single_quotes(char *str, int *i);
+char	*double_quotes(char *str, int *i);

@@ -6,24 +6,22 @@
 /*   By: etorren <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 11:21:53 by etorren           #+#    #+#             */
-/*   Updated: 2021/05/16 19:00:15 by etorren          ###   ########.fr       */
+/*   Updated: 2021/05/20 19:28:10 by ruslan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
+#include "includes/minishell.h"
 #include <term.h>
-#include <stdlib.h>
 #include <termios.h>
-#include <fcntl.h>
 #define MINISHELL	15
 #define	BUF_SIZE	12
 
+
+int    simple_parser(char *str, t_builtins *funct);
+void    processor(t_builtins *func);
 /*
-*	Insert mode have bugs. It print odd symbols
-*	Ctrl + key_left/right have bugs. It print odd symbols
+*	Insert mode have bugs on linux core only!. It print odd symbols
+*	Ctrl + key_left/right have bugs on linux core only!. It print odd symbols
 */
 
 int	ft_putint(int ch)
@@ -135,7 +133,9 @@ int	main(int argc, char **argv, char **envp)
 	char	*command_line;
 	char	*last_insert;
 	char	*buf;
+	t_builtins *function;
 
+	function = (t_builtins *)malloc(sizeof(t_builtins));
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ECHO);
 	term.c_lflag &= ~(ICANON);
@@ -156,7 +156,7 @@ int	main(int argc, char **argv, char **envp)
 		count_symb = MINISHELL;
 		last_insert = NULL;
 		write (1, "minishell-0.1$ ", MINISHELL);
-		tputs(save_cursor, 1, ft_putint);
+		tputs(tgetstr("sc", 0), 1, ft_putint);
 		current_line = count_lines;
 		clear_buf(command_line, len);
 		clear_buf(buf, BUF_SIZE);
@@ -171,7 +171,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 			clear_buf(buf, BUF_SIZE);
 			i = read(0, buf, BUF_SIZE);
-			// key_up for output previous command 
+			// key_up for output previous command
 			if (!ft_strcmp(buf, "\e[A"))
 			{
 				char *tmp;
@@ -187,7 +187,7 @@ int	main(int argc, char **argv, char **envp)
 					current_line--;
 				tmpfd = open(".minishell_history", O_RDONLY);
 				tmp = get_history_line(tmpfd, current_line);
-				tputs(restore_cursor, 1, ft_putint);
+				tputs(tgetstr("rc", 0), 1, ft_putint);
 				tputs(tgetstr("ce", 0), 1, ft_putint);
 				ft_strcpy(command_line, tmp);
 				cursor_pos = ft_strlen(command_line) + MINISHELL;
@@ -196,7 +196,7 @@ int	main(int argc, char **argv, char **envp)
 				free (tmp);
 				close(tmpfd);
 			}
-			// key_down for output next command
+				// key_down for output next command
 			else if (!ft_strcmp(buf, "\e[B"))
 			{
 				char *tmp;
@@ -208,7 +208,7 @@ int	main(int argc, char **argv, char **envp)
 					current_line++;
 					tmpfd = open(".minishell_history", O_RDONLY);
 					tmp = get_history_line(tmpfd, current_line);
-					tputs(restore_cursor, 1, ft_putint);
+					tputs(tgetstr("rc", 0), 1, ft_putint);
 					tputs(tgetstr("ce", 0), 1, ft_putint);
 					if (current_line == count_lines)
 						ft_strcpy(command_line, last_insert);
@@ -221,7 +221,7 @@ int	main(int argc, char **argv, char **envp)
 					close(tmpfd);
 				}
 			}
-			// key_backspace for delite character
+				// key_backspace for delite character
 			else if (!ft_strcmp(buf, "\177"))
 			{
 				if (cursor_pos > MINISHELL)
@@ -229,30 +229,30 @@ int	main(int argc, char **argv, char **envp)
 					ft_delchar(&command_line, cursor_pos);
 					cursor_pos--;
 					count_symb--;
-					tputs(cursor_left, 1, ft_putint);
+					tputs(tgetstr("le", 0), 1, ft_putint);
 					tputs(tgetstr("dc", 0), 1, ft_putint);
 				}
 			}
-			// key_left
+				// key_left
 			else if (!ft_strcmp(buf, "\e[D"))
 			{
 				if (cursor_pos > MINISHELL)
 				{
 					cursor_pos--;
-					tputs(cursor_left, 1, ft_putint);
+					tputs(tgetstr("le", 0), 1, ft_putint);
 				}
 			}
-			// key_right
+				// key_right
 			else if (!ft_strcmp(buf, "\e[C"))
 			{
 				if (count_symb > cursor_pos)
 				{
 					cursor_pos++;
-					tputs(cursor_right, 1, ft_putint);
+					tputs(tgetstr("nd", 0), 1, ft_putint);
 				}
 			}
-			// ctrl + key_left move directly by word towards
-			else if (!ft_strcmp(buf, "\e[1;5D"))
+				// ctrl + key_left move directly by word towards // "\e[1;5D" for linux / "\eb" for macos
+			else if (!ft_strcmp(buf, "\eb"))
 			{
 				int		k = 0;
 				int		beg = 0;
@@ -271,16 +271,16 @@ int	main(int argc, char **argv, char **envp)
 					}
 					k++;
 				}
-				tputs(restore_cursor, 1, ft_putint);
+				tputs(tgetstr("rc", 0), 1, ft_putint);
 				cursor_pos = MINISHELL;
-				while (cursor_pos < beg + MINISHELL)
+				if (cursor_pos < beg + MINISHELL)
 				{
-					tputs(cursor_right, 1, ft_putint);
-					cursor_pos++;
+					tputs(tgoto(tgetstr("RI", 0), 0, beg + MINISHELL - cursor_pos), 1, ft_putint);
+					cursor_pos = beg + MINISHELL;
 				}
 			}
-			// ctrl + key_right move directly by word towards
-			else if (!ft_strcmp(buf, "\e[1;5C"))
+				// ctrl + key_right move directly by word towards // "\e[1;5C" for linux / "\ef" for macos
+			else if (!ft_strcmp(buf, "\ef"))
 			{
 				int		k = cursor_pos;
 				int		end = count_symb;
@@ -300,49 +300,53 @@ int	main(int argc, char **argv, char **envp)
 					}
 					k++;
 				}
-				while (cursor_pos < end)
+				if (cursor_pos < end)
 				{
-					tputs(cursor_right, 1, ft_putint);
-					cursor_pos++;
+					tputs(tgoto(tgetstr("RI", 0), 0, end - cursor_pos), 1, ft_putint);
+					cursor_pos = end;
 				}
 			}
-			// key_home move cursor in begin command line
-			else if (!ft_strcmp(buf, "\e[H"))
+				// key_home move cursor in begin command // line "\e[H" for linux or fn + key_left on macos  / "\1" for macos
+			else if (!ft_strcmp(buf, "\1") || !ft_strcmp(buf, "\e[H"))
 			{
-				tputs(restore_cursor, 1, ft_putint);
+				tputs(tgetstr("rc", 0), 1, ft_putint);
 				cursor_pos = MINISHELL;
 			}
-			// key_end move cursor in end command line
-			else if (!ft_strcmp(buf, "\e[F"))
+				// key_end move cursor in end command line // "\e[F" for linux or fn + key_rignt on macos / "\5" for macos
+			else if (!ft_strcmp(buf, "\5") || !ft_strcmp(buf, "\e[F"))
 			{
-				while (cursor_pos < count_symb)
+				if (cursor_pos < count_symb)
 				{
-					tputs(cursor_right, 1, ft_putint);
-					cursor_pos++;
+					tputs(tgoto(tgetstr("RI", 0), 0, count_symb - cursor_pos), 1, ft_putint);
+					cursor_pos = count_symb;
 				}
 			}
-			// add newline in command string
+				// add newline in command string
 			else if (buf[0] == '\n')
 			{
 				command_line[count_symb - MINISHELL] = buf[0];
 				command_line[1 + count_symb - MINISHELL] = '\0';
 				write (1, buf, i);
 			}
-			// another keys catch (debug feature)
-			else if (buf[1] != 0)
+				// another keys catch (debug feature)
+			else if (buf[0] == -47 || buf[0] == -48)
+			{
+				printf(" \033[31mWarning:\033[0m Choose an English keyboard layout\n");
+			}
+			else if (!ft_isalnum(buf[0]) && !ft_isalpha(buf[0]) && buf[1] != 0)
 			{
 				printf(" \033[31mWarning:\033[0m Non visible symbol\n");
 			}
-			// insert mode, command line edit
+				// insert mode, command line edit
 			else if (cursor_pos < count_symb)
 			{
 				ft_addchar(&command_line, buf[0], cursor_pos);
 				tputs(tgetstr("im", 0), 1, ft_putint);
 				cursor_pos += write (1, buf, 1 );
 				count_symb++;
-				tputs(tgetstr("ei", 0), 1, ft_putint);	 
+				tputs(tgetstr("ei", 0), 1, ft_putint);
 			}
-			// standart output characters from user
+				// standart output characters from user
 			else
 			{
 				command_line[cursor_pos - MINISHELL] = buf[0];
@@ -357,6 +361,41 @@ int	main(int argc, char **argv, char **envp)
 		write(fd, command_line, ft_strlen(command_line));
 		//*
 		// PARSER & LOGIC PART
+		//i = 0;
+		///simple_parser(&command_line[i], function);
+		/*int l = 0;
+		printf("\n-------PARSER--------\n");
+		printf("type = %s\nflags = %s\nlen = %d\n", function->type, function->flags, function->len);
+		while (l < function->count_args)
+		{
+			printf("args[%d] = %s\n", l, function->args[l]);
+			l++;
+		}*/
+		//processor(function);
+
+//		i = 0;
+//		int l = 0;
+//		while (simple_parser(&command_line[i], function) > 0)
+//		{
+//			//	simple_parser(&command_line[i], function);
+//			printf("\n-------PARSER--------\n");
+//			printf("type = %s\nflags = %s\nlen = %d\n", function->type, function->flags, function->len);
+//			while (l < function->count_args)
+//			{
+//				printf("args[%d] = %s\n", l, function->args[l]);
+//				l++;
+//			}
+//			i += function->len;
+//		}
+//		printf("\n-------PARSER--------\n");
+//		printf("type = %s\nflags = %s\nlen = %d\n", function->type, function->flags, function->len);
+//		while (l < function->count_args)
+//		{
+//			printf("args[%d] = %s\n", l, function->args[l]);
+//			l++;
+//		}
+//		i += function->len;
+
 		//*
 	}
 	write (1, "\n", 1);

@@ -10,26 +10,26 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS	= main.c #$(wildcard *.c) 
+SRCS	= main.c simple_parser.c processor.c #$(wildcard *.c)
 
 OBJS	= $(SRCS:.c=.o)
 
-HEADER	= -I ./libft
+HEADER	= -I ./includes
 
-FLAGS	= -Wall -Wextra -Werror -g 
+FLAGS	= -g #-Wall -Werror -Wextra
 
 LIB_PATH	= ./libft/libft.a
 
 NAME	= minishell
 
 %.o: %.c
-	@gcc $(HEADER) -c $< -o $(<:.c=.o)
+	@gcc $(FLAGS) $(HEADER) -c $< -o $(<:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 #	@$(MAKE) bonus -C ./libft
-	@gcc $(FLAGS) $(HEADER) $(OBJS) $(LIB_PATH) -ltermcap -o $(NAME)
+	@gcc $(OBJS) $(LIB_PATH) $(HEADER) -ltermcap -o $(NAME)
 	@echo "\033[33mCompiling complete\033[0m"
 
 clean:
@@ -53,4 +53,4 @@ norm:
 	norminette *.h; \
 	cd ../sourse; \
 	echo "\033[46m\033[30mSOURSE\033[0m"; \
-	norminette *.c; 
+	norminette *.c;

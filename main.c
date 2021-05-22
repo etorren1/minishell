@@ -167,8 +167,8 @@ int	main(int argc, char **argv, char **envp)
 				count_symb = cursor_pos;
 			if (count_symb > len)
 			{
-				len += len;
 				command_line = ft_realloc(command_line, len);
+				len += len;
 			}
 			clear_buf(buf, BUF_SIZE);
 			i = read(0, buf, BUF_SIZE);

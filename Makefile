@@ -6,11 +6,11 @@
 #    By: etorren <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/17 19:32:45 by etorren           #+#    #+#              #
-#    Updated: 2021/05/17 19:32:49 by etorren          ###   ########.fr        #
+#    Updated: 2021/05/22 22:44:29 by ruslan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS	= main.c simple_parser.c processor.c #$(wildcard *.c) 
+SRCS	= main.c simple_parser.c processor.c #$(wildcard *.c)
 
 OBJS	= $(SRCS:.c=.o)
 
@@ -53,4 +53,4 @@ norm:
 	norminette *.h; \
 	cd ../sourse; \
 	echo "\033[46m\033[30mSOURSE\033[0m"; \
-	norminette *.c; 
+	norminette *.c;

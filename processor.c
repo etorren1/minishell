@@ -2,16 +2,16 @@
 
 void     ft_echo(t_cmd *cmd)
 {
-    if (ft_strchr(cmd->flags, 'n'))
-        write(1, cmd->args[0], ft_strlen(cmd->args[0]));
-    else
-        printf("%s\n", cmd->args[0]);
+	if (ft_strchr(cmd->flags, 'n'))
+		write(1, cmd->args[0], ft_strlen(cmd->args[0]));
+	else
+		printf("%s\n", cmd->args[0]);
 }
 
 void    ft_pwd(void)
 {
-    int     size;
-    char    *tmp;
+	int     size;
+	char    *tmp;
 
     size = 1024;
     tmp = malloc(size);
@@ -27,25 +27,25 @@ void    ft_pwd(void)
 
 void    ft_exit(void)
 {
-    printf("exit\n");
-    exit(0);
+	printf("exit\n");
+	exit(0);
 }
 
 void    ft_cd(t_cmd *cmd)
 {
-    if (cmd->args[0] == 0)
-        chdir("/Users");
-    else if (chdir(cmd->args[0]) == -1)
-        printf("cd: no such file or directory: %s\n", cmd->args[0]);
+	if (cmd->args[0] == 0)
+		chdir("/Users");
+	else if (chdir(cmd->args[0]) == -1)
+		printf("cd: no such file or directory: %s\n", cmd->args[0]);
 }
 
 void    ft_env(char **envp)
 {
-    int i;
+	int i;
 
-    i = 0;
-    while (envp[i])
-        printf("%s\n", envp[i++]);
+	i = 0;
+	while (envp[i])
+		printf("%s\n", envp[i++]);
 }
 
 int     ft_arrsize(char **str)

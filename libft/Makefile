@@ -45,7 +45,7 @@ all:		${NAME}
 bonus:		${NAME} ${OBGS}
 	@ar rc ${NAME} ${OBGS}
 
-clean:	
+clean:
 	@${RM} ${OBGS}
 
 fclean:		clean

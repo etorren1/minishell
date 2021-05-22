@@ -172,7 +172,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 			clear_buf(buf, BUF_SIZE);
 			i = read(0, buf, BUF_SIZE);
-			// key_up for output previous command 
+			// key_up for output previous command
 			if (!ft_strcmp(buf, "\e[A"))
 			{
 				char *tmp;
@@ -197,7 +197,7 @@ int	main(int argc, char **argv, char **envp)
 				free (tmp);
 				close(tmpfd);
 			}
-			// key_down for output next command
+				// key_down for output next command
 			else if (!ft_strcmp(buf, "\e[B"))
 			{
 				char *tmp;
@@ -222,7 +222,7 @@ int	main(int argc, char **argv, char **envp)
 					close(tmpfd);
 				}
 			}
-			// key_backspace for delite character
+				// key_backspace for delite character
 			else if (!ft_strcmp(buf, "\177"))
 			{
 				if (cursor_pos > PROMPT)
@@ -234,7 +234,7 @@ int	main(int argc, char **argv, char **envp)
 					tputs(tgetstr("dc", 0), 1, ft_putint);
 				}
 			}
-			// key_left
+				// key_left
 			else if (!ft_strcmp(buf, "\e[D"))
 			{
 				if (cursor_pos > PROMPT)
@@ -243,7 +243,7 @@ int	main(int argc, char **argv, char **envp)
 					tputs(tgetstr("le", 0), 1, ft_putint);
 				}
 			}
-			// key_right
+				// key_right
 			else if (!ft_strcmp(buf, "\e[C"))
 			{
 				if (count_symb > cursor_pos)
@@ -252,7 +252,7 @@ int	main(int argc, char **argv, char **envp)
 					tputs(tgetstr("nd", 0), 1, ft_putint);
 				}
 			}
-			// ctrl + key_left move directly by word towards // "\e[1;5D" for linux / "\eb" for macos
+				// ctrl + key_left move directly by word towards // "\e[1;5D" for linux / "\eb" for macos
 			else if (!ft_strcmp(buf, "\eb"))
 			{
 				int		k = 0;
@@ -280,7 +280,7 @@ int	main(int argc, char **argv, char **envp)
 					cursor_pos = beg + PROMPT;
 				}
 			}
-			// ctrl + key_right move directly by word towards // "\e[1;5C" for linux / "\ef" for macos
+				// ctrl + key_right move directly by word towards // "\e[1;5C" for linux / "\ef" for macos
 			else if (!ft_strcmp(buf, "\ef"))
 			{
 				int		k = cursor_pos;
@@ -307,13 +307,13 @@ int	main(int argc, char **argv, char **envp)
 					cursor_pos = end;
 				}
 			}
-			// key_home move cursor in begin command // line "\e[H" for linux or fn + key_left on macos  / "\1" for macos
+				// key_home move cursor in begin command // line "\e[H" for linux or fn + key_left on macos  / "\1" for macos
 			else if (!ft_strcmp(buf, "\1") || !ft_strcmp(buf, "\e[H"))
 			{
 				tputs(tgetstr("rc", 0), 1, ft_putint);
 				cursor_pos = PROMPT;
 			}
-			// key_end move cursor in end command line // "\e[F" for linux or fn + key_rignt on macos / "\5" for macos
+				// key_end move cursor in end command line // "\e[F" for linux or fn + key_rignt on macos / "\5" for macos
 			else if (!ft_strcmp(buf, "\5") || !ft_strcmp(buf, "\e[F"))
 			{
 				if (cursor_pos < count_symb)
@@ -322,23 +322,23 @@ int	main(int argc, char **argv, char **envp)
 					cursor_pos = count_symb;
 				}
 			}
-			// add newline in command string
+				// add newline in command string
 			else if (buf[0] == '\n')
 			{
 				command_line[count_symb - PROMPT] = buf[0];
 				command_line[1 + count_symb - PROMPT] = '\0';
 				write (1, buf, i);
 			}
-			// another keys catch (debug feature)
+				// another keys catch (debug feature)
 			else if (buf[0] == -47 || buf[0] == -48)
 			{
-				printf(" \033[31mWarning:\033[0m Choose an English keyboard layout\n");	
+				printf(" \033[31mWarning:\033[0m Choose an English keyboard layout\n");
 			}
 			else if (!ft_isprint(buf[0]) || buf[1] != 0)
 			{
 				printf(" \033[31mWarning:\033[0m Non visible symbol\n");
 			}
-			// insert mode, command line edit
+				// insert mode, command line edit
 			else if (cursor_pos < count_symb)
 			{
 				ft_addchar(&command_line, buf[0], cursor_pos);
@@ -347,7 +347,7 @@ int	main(int argc, char **argv, char **envp)
 				count_symb++;
 				tputs(tgetstr("ei", 0), 1, ft_putint);
 			}
-			// standart output characters from user
+				// standart output characters from user
 			else
 			{
 				if (buf[0] != '\n')

@@ -76,5 +76,10 @@ void			ft_qsort_d(int *arr, int beg, int end);
 void			ft_qsort_c(char *arr, int beg, int end);
 void			ft_qsort_s(char **arr, int beg, int end);
 void			ft_qsort_f(float *arr, int beg, int end);
+int				ft_arrsize(char **arr);
+void			ft_arrfree(char **arr);
+char			**ft_arrcpy(char **dest, char **arr);
+char			**ft_arrdel_str(char **arr, int pos);
+char			**ft_arradd_str(char **arr, char *str, int pos);
 
 #endif

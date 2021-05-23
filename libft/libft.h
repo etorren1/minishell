@@ -81,5 +81,6 @@ void			ft_arrfree(char **arr);
 char			**ft_arrcpy(char **dest, char **arr);
 char			**ft_arrdel_str(char **arr, int pos);
 char			**ft_arradd_str(char **arr, char *str, int pos);
+int				ft_isspace(int c);
 
 #endif

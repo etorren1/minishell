@@ -42,7 +42,7 @@ char	*ft_strstr(const char *haystack, const char *needle)
 	size_t	i;
 	size_t	size;
 
-	ptr = haystack;
+	ptr = (char *)haystack;
 	if (!needle || needle[0] == '\0')
 		return (ptr);
 	size = ft_strlen(needle);

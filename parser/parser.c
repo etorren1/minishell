@@ -39,9 +39,10 @@ int	main(int argc, char **argv, char **env)
 {
 	t_cmd	cmd;
 	const char *case1 = "co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
-	const char *case2 = "12345\"$USER\"123";
+	const char *case2 = "12345\" я $USER	\"123";
+	const char *case3 = "$USERs";
 
-	printf("%s\n", case1);
+//	printf("%s\n", case1);
 	parser(&case2, env, &cmd);
 
 //	char *long_str = "Foo Bar Baz";

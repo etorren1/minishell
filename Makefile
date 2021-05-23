@@ -10,17 +10,18 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS	= main.c simple_parser.c processor.c #$(wildcard *.c)
+SRCS		= main.c simple_parser.c\
+			$(wildcard ./processor/*.c ./processor/builtin_cmd/*.c)
 
-OBJS	= $(SRCS:.c=.o)
+OBJS		= $(SRCS:.c=.o)
 
-HEADER	= -I ./includes
+HEADER		= -I ./includes
 
-FLAGS	= -g #-Wall -Werror -Wextra
+FLAGS		= -g #-Wall -Werror -Wextra
 
 LIB_PATH	= ./libft/libft.a
 
-NAME	= minishell
+NAME		= minishell
 
 %.o: %.c
 	@gcc $(FLAGS) $(HEADER) -c $< -o $(<:.c=.o)

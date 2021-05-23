@@ -13,6 +13,7 @@ CMakeLists.txt
 .minishell_history
 a.out
 tests.c
+test.c
 minishell
 *.o
 Makefile

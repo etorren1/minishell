@@ -34,7 +34,6 @@ char	**ft_arrdel_str(char **arr, int pos)
 		ft_strcpy(tmp[i], arr[i + 1]);
 		i++;
 	}
-	tmp[i] = malloc(sizeof(NULL));
 	tmp[i] = NULL;
 	ft_arrfree(arr);
 	return (tmp);

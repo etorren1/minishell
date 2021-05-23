@@ -14,12 +14,12 @@
 #include <term.h>
 #include <termios.h>
 #define	BUF_SIZE	12
-#define PROMPT		15
-#define	MINISHELL	"minishell-0.2$ "
+#define PROMPT		26
+#define	MINISHELL	"\033[1;32mminishell-0.3$ \033[0m"
 #define HISTORY		".minishell_history"
 
 int    simple_parser(char *str, t_cmd *cmd);
-void    processor(t_cmd *cmd, char **envp);
+void    processor(t_cmd *cmd, char ***envp);
 /*
 *	Insert mode have bugs on linux core only!. It print odd symbols
 *	Ctrl + key_left/right have bugs on linux core only!. It print odd symbols
@@ -134,6 +134,10 @@ int	main(int argc, char **argv, char **envp)
 	char	*command_line;
 	char	*last_insert;
 	char	*buf;
+	char	**env;
+
+	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
+	ft_arrcpy(env, envp);
 
 	t_cmd *cmd;
 
@@ -141,8 +145,6 @@ int	main(int argc, char **argv, char **envp)
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ECHO);
 	term.c_lflag &= ~(ICANON);
-//	term.c_cc[VMIN] = 1;
-//	term.c_cc[VTIME] = 0;
 	tcsetattr(0, TCSANOW, &term);
 
 	tgetent(0, "xterm-256color");
@@ -373,7 +375,7 @@ int	main(int argc, char **argv, char **envp)
 			printf("args[%d] = %s\n", l, cmd->args[l]);
 			l++;
 		}*/
-		processor(cmd, envp);
+		processor(cmd, &env);
 		/*
 		i = 0;
 		int l = 0;

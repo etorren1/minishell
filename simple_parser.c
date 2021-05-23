@@ -21,6 +21,8 @@ int    simple_parser(char *str, t_cmd *cmd)
     cmd->count_args = 0;
     cmd->len = 0;
     cmd->args[0] = NULL;
+    cmd->args[1] = NULL;
+    cmd->args[2] = NULL;
     while (str[i] == ' ' && !end_command(str[i]))
         i++;
     while (str[i] != ' ' && !end_command(str[i]))

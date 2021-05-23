@@ -6,7 +6,7 @@
 /*   By: etorren <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 17:42:01 by etorren           #+#    #+#             */
-/*   Updated: 2020/11/18 16:30:06 by etorren          ###   ########.fr       */
+/*   Updated: 2021/05/22 22:31:48 by ruslan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,9 @@ int				ft_strcmp(const char *s1, const char *s2);
 char			*ft_strrev(char *str);
 int				ft_samechar(char a, char b);
 char			*ft_itoa_base(int val, int base);
+void			ft_qsort_d(int *arr, int beg, int end);
+void			ft_qsort_c(char *arr, int beg, int end);
+void			ft_qsort_s(char **arr, int beg, int end);
+void			ft_qsort_f(float *arr, int beg, int end);
 
 #endif

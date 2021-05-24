@@ -14,16 +14,18 @@
 
 void	ft_pwd(void)
 {
-	int	 size;
+	int		size;
 	char	*tmp;
 
 	size = 1024;
 	tmp = malloc(size);
+	if (!tmp)
+		return ;
 	getcwd(tmp, size);
 	while (tmp == NULL)
 	{
-		ft_realloc(tmp, size);
 		size += size;
+		ft_realloc(tmp, size);
 		getcwd(tmp, size);
 	}
 	printf("%s\n", tmp);

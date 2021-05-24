@@ -104,8 +104,8 @@ char	*get_history_line(int fd, int pos)
 		str[i++] = ch;
 		if (i > size)
 		{
-			str = ft_realloc(str, size);
 			size += size;
+			str = ft_realloc(str, size);
 		}
 	}
 	str[i] = '\0';
@@ -170,8 +170,8 @@ int	main(int argc, char **argv, char **envp)
 				count_symb = cursor_pos;
 			if (count_symb > len)
 			{
-				command_line = ft_realloc(command_line, len);
 				len += len;
+				command_line = ft_realloc(command_line, len);
 			}
 			clear_buf(buf, BUF_SIZE);
 			i = read(0, buf, BUF_SIZE);
@@ -256,7 +256,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 				// ctrl + key_left move directly by word towards // "\e[1;5D" for linux / "\eb" for macos
-			else if (!ft_strcmp(buf, "\eb"))
+			else if (!ft_strcmp(buf, "\eb") || !ft_strcmp(buf, "\e[1;5D"))
 			{
 				int		k = 0;
 				int		beg = 0;
@@ -266,9 +266,9 @@ int	main(int argc, char **argv, char **envp)
 				while (k < cursor_pos - PROMPT)
 				{
 					ch = command_line[k];
-					if (!ft_isalnum(ch) && !ft_isalpha(ch))
+					if (!ft_isalnum(ch))
 						check = 1;
-					if ((ft_isalnum(ch) || ft_isalpha(ch)) && check == 1)
+					if (ft_isalnum(ch) && check == 1)
 					{
 						check = 0;
 						beg = k;
@@ -284,7 +284,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 			// ctrl + key_right move directly by word towards // "\e[1;5C" for linux / "\ef" for macos
-			else if (!ft_strcmp(buf, "\ef"))
+			else if (!ft_strcmp(buf, "\ef") || !ft_strcmp(buf, "\e[1;5C"))
 			{
 				int		k = cursor_pos;
 				int		end = count_symb;
@@ -294,9 +294,9 @@ int	main(int argc, char **argv, char **envp)
 				while (k < count_symb)
 				{
 					ch = command_line[k - PROMPT];
-					if (ft_isalnum(ch) || ft_isalpha(ch))
+					if (ft_isalnum(ch))
 						check = 1;
-					if (!ft_isalnum(ch) && !ft_isalpha(ch) && check == 1)
+					if (!ft_isalnum(ch) && check == 1)
 					{
 						check = 0;
 						end = k;

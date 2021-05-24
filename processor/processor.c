@@ -25,6 +25,8 @@ void	processor(t_cmd *cmd, char *(**envp))
 		ft_env(*envp);
 	else if (!ft_strcmp(cmd->type, "export"))
 		ft_export(cmd, envp);
+	else if (!ft_strcmp(cmd->type, "unset"))
+		ft_unset(cmd, envp);
 	else if (!ft_strcmp(cmd->type, "exit"))
 		ft_exit();
 	else

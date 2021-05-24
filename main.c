@@ -266,9 +266,9 @@ int	main(int argc, char **argv, char **envp)
 				while (k < cursor_pos - PROMPT)
 				{
 					ch = command_line[k];
-					if (!ft_isalnum(ch) && !ft_isalpha(ch))
+					if (!ft_isalnum(ch))
 						check = 1;
-					if ((ft_isalnum(ch) || ft_isalpha(ch)) && check == 1)
+					if (ft_isalnum(ch) && check == 1)
 					{
 						check = 0;
 						beg = k;
@@ -294,9 +294,9 @@ int	main(int argc, char **argv, char **envp)
 				while (k < count_symb)
 				{
 					ch = command_line[k - PROMPT];
-					if (ft_isalnum(ch) || ft_isalpha(ch))
+					if (ft_isalnum(ch))
 						check = 1;
-					if (!ft_isalnum(ch) && !ft_isalpha(ch) && check == 1)
+					if (!ft_isalnum(ch) && check == 1)
 					{
 						check = 0;
 						end = k;

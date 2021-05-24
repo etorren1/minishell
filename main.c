@@ -256,7 +256,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 				// ctrl + key_left move directly by word towards // "\e[1;5D" for linux / "\eb" for macos
-			else if (!ft_strcmp(buf, "\eb"))
+			else if (!ft_strcmp(buf, "\eb") || !ft_strcmp(buf, "\e[1;5D"))
 			{
 				int		k = 0;
 				int		beg = 0;
@@ -284,7 +284,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 			// ctrl + key_right move directly by word towards // "\e[1;5C" for linux / "\ef" for macos
-			else if (!ft_strcmp(buf, "\ef"))
+			else if (!ft_strcmp(buf, "\ef") || !ft_strcmp(buf, "\e[1;5C"))
 			{
 				int		k = cursor_pos;
 				int		end = count_symb;

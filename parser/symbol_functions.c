@@ -33,11 +33,10 @@ char	*dollar(char *str, int *i, char **env)
 	char	*body;
 	char	*postfix;
 
-	start = *i;
+	start = (*i)++;
 //	if (!ft_isalpha(str[*i + 1]) && str[*i] != '_')
-	while (str[++(*i)])
-		if (!ft_isalnum(str[*i]) && str[*i] != '_')
-			break ;
+	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+		(*i)++;
 	if (*i == start + 1)
 		return (str);
 	prefix = ft_strjoin(ft_substr(str, start + 1, *i - start - 1), "=");
@@ -45,11 +44,16 @@ char	*dollar(char *str, int *i, char **env)
 	while (env[++e])
 		if (ft_strstr_mod(env[e], prefix) == 0)
 			break ;
-	body = ft_substr(env[e], ft_strlen(prefix),
-			ft_strlen(env[e]) - ft_strlen(prefix));
+	if (env[e])
+		body = ft_substr(env[e], ft_strlen(prefix),
+				ft_strlen(env[e]) - ft_strlen(prefix));
+	else
+		body = ft_strdup("");
+	e = ft_strlen(body) - ft_strlen(prefix) + 1;
 	free(prefix);
 	prefix = ft_substr(str, 0, start);
-	postfix = ft_strdup(&str[*i + 1]);
+	postfix = ft_strdup(&str[*i]);
+	*i += e;
 	free(str);
 	return (join_and_free(prefix, body, postfix));
 }

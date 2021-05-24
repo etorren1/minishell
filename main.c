@@ -18,13 +18,6 @@
 #define	MINISHELL	"\033[1;32mminishell-0.3$ \033[0m"
 #define HISTORY		".minishell_history"
 
-int    simple_parser(char *str, t_cmd *cmd);
-void    processor(t_cmd *cmd, char ***envp);
-/*
-*	Insert mode have bugs on linux core only!. It print odd symbols
-*	Ctrl + key_left/right have bugs on linux core only!. It print odd symbols
-*/
-
 int	ft_putint(int ch)
 {
 	write (1, &ch, 1);
@@ -137,7 +130,7 @@ int	main(int argc, char **argv, char **envp)
 	char	**env;
 	char	*history;
 
-	history = ft_strjoin(get_absolute_path_process(envp), HISTORY);
+	history = ft_strjoin(get_absolute_path_process(argv[0]), HISTORY);
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
 
@@ -378,6 +371,18 @@ int	main(int argc, char **argv, char **envp)
 			l++;
 		}*/
 		processor(cmd, &env);
+		/*int p = 0;
+		printf("\e[31m-----ENV-----\n");
+		while (env[p])
+			printf("%s\n", env[p++]);
+		printf("\e[0m\n");
+		p = 0;
+		envp = env;
+		printf("\e[33m-----ENVP-----\n");
+		while (envp[p])
+			printf("%s\n", envp[p++]);
+		printf("\e[0m\n");
+		printf("%s\n", getenv("HOME"));*/
 		/*
 		i = 0;
 		int l = 0;
@@ -404,7 +409,9 @@ int	main(int argc, char **argv, char **envp)
 		//*
 	}
 	write (1, "\n", 1);
+	free(history);
 	free(command_line);
+	ft_arrfree(env);
 	close (fd);
 	return (0);
 }

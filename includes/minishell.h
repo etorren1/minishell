@@ -19,6 +19,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <errno.h>
 
 typedef struct  s_cmd {
 	char        *type;
@@ -28,7 +29,10 @@ typedef struct  s_cmd {
 	int			len;
 }               t_cmd;
 
+int    simple_parser(char *str, t_cmd *cmd);
+
+void			processor(t_cmd *cmd, char *(**envp));
 int				find_environment(char *env, char **envp);
-char			*get_absolute_path_process(char **envp);
+char			*get_absolute_path_process(char *proc);
 
 #endif

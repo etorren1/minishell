@@ -12,10 +12,19 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_cd(t_cmd *cmd)
+void	get_home_dir(char **envp)
+{
+	int		ret;
+
+	ret = find_environment("HOME", envp);
+	if (ret > 0)
+		chdir(&envp[ret][5]);
+}
+
+void	ft_cd(t_cmd *cmd, char **envp)
 {
 	if (cmd->args[0] == 0)
-		chdir("/Users");
+		get_home_dir(envp);
 	else if (chdir(cmd->args[0]) == -1)
 		printf("cd: no such file or directory: %s\n", cmd->args[0]);
 }

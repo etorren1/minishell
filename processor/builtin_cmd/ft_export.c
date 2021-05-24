@@ -65,6 +65,7 @@ static void	add_envvar(t_cmd *cmd, char *(**envp))
 
 void	ft_export(t_cmd *cmd, char *(**envp))
 {
+
 	if (!cmd->args[0])
 		output_envvar(*envp);
 	else

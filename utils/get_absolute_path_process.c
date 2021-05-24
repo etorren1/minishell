@@ -1,16 +1,16 @@
 #include "../includes/minishell.h"
 
-char	*get_absolute_path_process(char **envp)
+char	*get_absolute_path_process(char *proc)
 {
 	char	*str;
-	int		ret;
+	int		size;
 	int		i;
 
-	ret = find_environment("PWD", envp);
-	str = ft_substr(envp[ret], 4, ft_strlen(envp[ret]) - 4);
+	size = 1024;
+	while (!(str = getcwd(str, size))) // maybe use ERRNO ???
+		size += size;
 	str = ft_strjoin(str, "/");
-	ret = find_environment("_", envp);
-	str = ft_strjoin(str, &envp[ret][2]);
+	str = ft_strjoin(str, proc);
 	i = ft_strlen(str);
 	while (str[i] != '/')
 		str[i--] = 0;

@@ -22,11 +22,12 @@ void	ft_pwd(void)
 	if (!tmp)
 		return ;
 	getcwd(tmp, size);
-	while (tmp == NULL)
+	while (tmp == NULL) // maybe use ERRNO???
 	{
 		size += size;
 		ft_realloc(tmp, size);
 		getcwd(tmp, size);
 	}
 	printf("%s\n", tmp);
+	free(tmp);
 }

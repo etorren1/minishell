@@ -24,5 +24,6 @@ void	*ft_realloc(void *src, size_t size)
 	else
 		ft_strcpy(new, src);
 	free(src);
-	return (new);
+	src = new;
+	return (src);
 }

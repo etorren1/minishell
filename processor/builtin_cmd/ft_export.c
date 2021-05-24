@@ -29,34 +29,44 @@ static int	find_environment(char *env, char **envp)
 	return (-1);
 }
 
-void	ft_export(t_cmd *cmd, char *(**envp))
+static void	output_envvar(char **envp)
 {
 	char	**tmp;
-	int	 size;
+	int	 	size;
+
+	size = ft_arrsize(envp);
+	tmp = (char **)malloc(sizeof(envp) * (size + 1));
+	ft_arrcpy(tmp, envp);
+	ft_qsort_s(tmp, 0, ft_arrsize(tmp) - 1);
+	size = 0;
+	while (tmp[size])
+		printf("%s\n", tmp[size++]);
+}
+
+static void	add_envvar(t_cmd *cmd, char *(**envp))
+{
 	int		i;
 	int		res;
 
 	i = 0;
-	if (!cmd->args[0])
+	while (cmd->args[i])
 	{
-		size = ft_arrsize(*envp);
-		tmp = (char **)malloc(sizeof(*envp) * (size + 1));
-		ft_arrcpy(tmp, *envp);
-		ft_qsort_s(tmp, 0, ft_arrsize(tmp) - 1);
-		size = 0;
-		while (tmp[size])
-			printf("%s\n", tmp[size++]);
-	}
-	else
-	{
-		while (cmd->args[i])
+		res = find_environment(cmd->args[i], *envp);
+		if (res >= 0)
 		{
-			res = find_environment(cmd->args[i], *envp);
-			if (res >= 0)
-				ft_strcpy((*envp)[res], cmd->args[i]); // ft_strcpy is a bad
-			else if (res == -1)
-				*envp = ft_arradd_str(*envp, cmd->args[i], ft_arrsize(*envp) - 1);
-			i++;
+			(*envp)[res] = ft_realloc((*envp)[res], ft_strlen(cmd->args[i]));
+			ft_strcpy((*envp)[res], cmd->args[i]);
 		}
+		else if (res == -1)
+			*envp = ft_arradd_str(*envp, cmd->args[i], ft_arrsize(*envp) - 1);
+		i++;
 	}
+}
+
+void	ft_export(t_cmd *cmd, char *(**envp))
+{
+	if (!cmd->args[0])
+		output_envvar(*envp);
+	else
+		add_envvar(cmd, envp);
 }

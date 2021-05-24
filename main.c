@@ -104,8 +104,8 @@ char	*get_history_line(int fd, int pos)
 		str[i++] = ch;
 		if (i > size)
 		{
-			str = ft_realloc(str, size);
 			size += size;
+			str = ft_realloc(str, size);
 		}
 	}
 	str[i] = '\0';
@@ -170,8 +170,8 @@ int	main(int argc, char **argv, char **envp)
 				count_symb = cursor_pos;
 			if (count_symb > len)
 			{
-				command_line = ft_realloc(command_line, len);
 				len += len;
+				command_line = ft_realloc(command_line, len);
 			}
 			clear_buf(buf, BUF_SIZE);
 			i = read(0, buf, BUF_SIZE);

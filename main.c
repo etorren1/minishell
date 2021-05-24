@@ -135,7 +135,9 @@ int	main(int argc, char **argv, char **envp)
 	char	*last_insert;
 	char	*buf;
 	char	**env;
+	char	*history;
 
+	history = ft_strjoin(get_absolute_path_process(envp), HISTORY);
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
 
@@ -149,7 +151,7 @@ int	main(int argc, char **argv, char **envp)
 
 	tgetent(0, "xterm-256color");
 
-	fd = open(HISTORY, O_RDWR | O_CREAT, 0777);
+	fd = open(history, O_RDWR | O_CREAT, 0777);
 	len = 1024;
 	count_lines = history_line_count(fd);
 	buf = (char *)malloc(BUF_SIZE);
@@ -189,7 +191,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 				if (current_line > 0)
 					current_line--;
-				tmpfd = open(HISTORY, O_RDONLY);
+				tmpfd = open(history, O_RDONLY);
 				tmp = get_history_line(tmpfd, current_line);
 				tputs(tgetstr("rc", 0), 1, ft_putint);
 				tputs(tgetstr("ce", 0), 1, ft_putint);
@@ -210,7 +212,7 @@ int	main(int argc, char **argv, char **envp)
 				if (current_line < count_lines)
 				{
 					current_line++;
-					tmpfd = open(HISTORY, O_RDONLY);
+					tmpfd = open(history, O_RDONLY);
 					tmp = get_history_line(tmpfd, current_line);
 					tputs(tgetstr("rc", 0), 1, ft_putint);
 					tputs(tgetstr("ce", 0), 1, ft_putint);

@@ -28,6 +28,7 @@ typedef struct  s_cmd {
 	int			len;
 }               t_cmd;
 
-int	find_environment(char *env, char **envp);
+int				find_environment(char *env, char **envp);
+char			*get_absolute_path_process(char **envp);
 
 #endif

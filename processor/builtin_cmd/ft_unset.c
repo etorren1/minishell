@@ -37,9 +37,8 @@ void	ft_unset(t_cmd *cmd, char *(**envp))
     while (cmd->args[i])
     {
         res = find_environment(cmd->args[i], *envp);
-        printf("res = %d\n", res);
         if (res >= 0)
-            *envp = ft_arrdel_str(*envp, res + 1);
+            *envp = ft_arrdel_str(*envp, res);
         i++;
     }
 }

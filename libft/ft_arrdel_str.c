@@ -23,7 +23,7 @@ char	**ft_arrdel_str(char **arr, int pos)
 	if (pos > size || pos < 0)
 		return (NULL);
 	tmp = (char **)malloc(sizeof(char **) * (size));
-	while (++i < pos - 1)
+	while (++i < pos)
 	{
 		tmp[i] = malloc(ft_strlen(arr[i]) + 1);
 		ft_strcpy(tmp[i], arr[i]);

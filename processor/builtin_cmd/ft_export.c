@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-static int	find_environment(char *env, char **envp)
+static int	find_environment_mod(char *env, char **envp)
 {
 	char	*str;
 	int		i;
@@ -51,7 +51,7 @@ static void	add_envvar(t_cmd *cmd, char *(**envp))
 	i = 0;
 	while (cmd->args[i])
 	{
-		res = find_environment(cmd->args[i], *envp);
+		res = find_environment_mod(cmd->args[i], *envp);
 		if (res >= 0)
 		{
 			(*envp)[res] = ft_realloc((*envp)[res], ft_strlen(cmd->args[i]));

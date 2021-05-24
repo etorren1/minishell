@@ -28,4 +28,6 @@ typedef struct  s_cmd {
 	int			len;
 }               t_cmd;
 
+int	find_environment(char *env, char **envp);
+
 #endif

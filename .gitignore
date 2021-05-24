@@ -16,6 +16,5 @@ tests.c
 test.c
 minishell
 *.o
-Makefile
 *.gch
 /libft/libft.a

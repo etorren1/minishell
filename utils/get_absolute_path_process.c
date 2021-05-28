@@ -7,10 +7,15 @@ char	*get_absolute_path_process(char *proc)
 	int		i;
 
 	size = 1024;
-	while (!(str = getcwd(str, size))) // maybe use ERRNO ???
-		size += size;
-	str = ft_strjoin(str, "/");
-	str = ft_strjoin(str, proc);
+	if (!ft_strncmp(proc, "/Users", 6))
+		str = ft_strdup(proc);
+	else
+	{
+		while (!(str = getcwd(str, size))) // maybe use ERRNO ???
+			size += size;
+		str = ft_strjoin(str, "/");
+		str = ft_strjoin(str, proc);
+	}
 	i = ft_strlen(str);
 	while (str[i] != '/')
 		str[i--] = 0;

@@ -29,11 +29,16 @@ void	processor(t_cmd *cmd, char *(**envp))
 		ft_unset(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "exit"))
 		ft_exit();
-	else
+	/*int i = 0;
+	while (cmd->args[i]) {
+		printf("debug3>>i=%d %s\n", i, cmd->args[i]);
+		i++;
+	}*/
+	/*else
 	{
 		pid_t pid = fork();
 		char *str;
-		str = ft_strdup("/usr/bin/");
+		str = ft_strdup("/bin/");
 		str = ft_strjoin(str, cmd->args[0]);
 		if (cmd->flags)
 			cmd->args = ft_arradd_str(cmd->args, cmd->flags, 1);
@@ -46,5 +51,5 @@ void	processor(t_cmd *cmd, char *(**envp))
 			printf("Error\n");
 		else
 			wait(NULL);
-	}
+	}*/
 }

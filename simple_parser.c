@@ -15,13 +15,12 @@ int    simple_parser(char *str, t_cmd *cmd)
     i = 0;
     j = 0;
     cmd->flags = NULL;
-    cmd->args = malloc(4);
-    cmd->count_args = 0;
+    cmd->args = malloc(3);
+    cmd->count_args = 1;
     cmd->len = 0;
     cmd->args[0] = malloc(1024);
     cmd->args[1] = NULL;
     cmd->args[2] = NULL;
-    cmd->args[3] = NULL;
     while (str[i] == ' ' && !end_command(str[i]))
         i++;
     while (str[i] != ' ' && !end_command(str[i]))

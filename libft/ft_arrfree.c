@@ -15,11 +15,9 @@
 void	ft_arrfree(char **arr)
 {
 	int	i;
-	int	size;
 
 	i = 0;
-	size = ft_arrsize(arr);
-	while (i < size)
+	while (arr[i])
 		free(arr[i++]);
 	free(arr);
 }

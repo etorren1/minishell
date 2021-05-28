@@ -41,6 +41,7 @@ static void	output_envvar(char **envp)
 	size = 0;
 	while (tmp[size])
 		printf("%s\n", tmp[size++]);
+	ft_arrfree(tmp);
 }
 
 static void	add_envvar(t_cmd *cmd, char *(**envp))
@@ -51,10 +52,11 @@ static void	add_envvar(t_cmd *cmd, char *(**envp))
 	i = 1;
 	while (cmd->args[i])
 	{
+		printf("debug>>i=%d %s\n", i, cmd->args[i]);
 		res = find_environment_mod(cmd->args[i], *envp);
 		if (res >= 0)
 		{
-			(*envp)[res] = ft_realloc((*envp)[res], ft_strlen(cmd->args[i]));
+			ft_realloc((*envp)[res], ft_strlen(cmd->args[i]) + 1);
 			ft_strcpy((*envp)[res], cmd->args[i]);
 		}
 		else if (res == -1)
@@ -70,4 +72,9 @@ void	ft_export(t_cmd *cmd, char *(**envp))
 		output_envvar(*envp);
 	else
 		add_envvar(cmd, envp);
+	/*int i = 0;
+	while (cmd->args[i]) {
+		printf("debug2>>i=%d %s\n", i, cmd->args[i]);
+		i++;
+	}*/
 }

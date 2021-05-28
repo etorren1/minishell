@@ -15,7 +15,7 @@
 void	 ft_echo(t_cmd *cmd)
 {
 	if (ft_strchr(cmd->flags, 'n'))
-		write(1, cmd->args[0], ft_strlen(cmd->args[0]));
+		write(1, cmd->args[1], ft_strlen(cmd->args[1]));
 	else
-		printf("%s\n", cmd->args[0]);
+		printf("%s\n", cmd->args[1]);
 }

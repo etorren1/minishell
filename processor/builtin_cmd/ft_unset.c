@@ -17,7 +17,7 @@ void	ft_unset(t_cmd *cmd, char *(**envp))
     int     res;
     int     i;
 
-    i = 0;
+    i = 1;
     while (cmd->args[i])
     {
         res = find_environment(cmd->args[i], *envp);

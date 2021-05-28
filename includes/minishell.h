@@ -22,7 +22,6 @@
 # include <errno.h>
 
 typedef struct  s_cmd {
-	char        *type;
 	char        *flags;
 	char        **args;
 	int         count_args;

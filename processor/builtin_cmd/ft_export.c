@@ -48,7 +48,7 @@ static void	add_envvar(t_cmd *cmd, char *(**envp))
 	int		i;
 	int		res;
 
-	i = 0;
+	i = 1;
 	while (cmd->args[i])
 	{
 		res = find_environment_mod(cmd->args[i], *envp);
@@ -66,7 +66,7 @@ static void	add_envvar(t_cmd *cmd, char *(**envp))
 void	ft_export(t_cmd *cmd, char *(**envp))
 {
 
-	if (!cmd->args[0])
+	if (!cmd->args[1])
 		output_envvar(*envp);
 	else
 		add_envvar(cmd, envp);

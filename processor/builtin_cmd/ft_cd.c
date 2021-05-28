@@ -23,8 +23,8 @@ void	get_home_dir(char **envp)
 
 void	ft_cd(t_cmd *cmd, char **envp)
 {
-	if (cmd->args[0] == 0)
+	if (cmd->args[1] == 0)
 		get_home_dir(envp);
-	else if (chdir(cmd->args[0]) == -1)
-		printf("cd: no such file or directory: %s\n", cmd->args[0]);
+	else if (chdir(cmd->args[1]) == -1)
+		printf("cd: no such file or directory: %s\n", cmd->args[1]);
 }

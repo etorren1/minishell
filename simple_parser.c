@@ -14,38 +14,37 @@ int    simple_parser(char *str, t_cmd *cmd)
 
     i = 0;
     j = 0;
-    cmd->type = malloc(1024);
-    cmd->flags = malloc(1024);
-    cmd->flags[0] = '\0';
+    cmd->flags = NULL;
     cmd->args = malloc(4);
     cmd->count_args = 0;
     cmd->len = 0;
-    cmd->args[0] = NULL;
+    cmd->args[0] = malloc(1024);
     cmd->args[1] = NULL;
     cmd->args[2] = NULL;
+    cmd->args[3] = NULL;
     while (str[i] == ' ' && !end_command(str[i]))
         i++;
     while (str[i] != ' ' && !end_command(str[i]))
-        cmd->type[j++] = str[i++];
+        cmd->args[0][j++] = str[i++];
+    cmd->args[0][j] = '\0';
     j = 0;
-    cmd->type[i] = '\0';
     while (str[i] == ' ' && !end_command(str[i]))
         i++;
     if (str[i] == '-')
     {
-        i++;
+        cmd->flags = malloc(1024);
         while (str[i] != ' ' && !end_command(str[i]))
             cmd->flags[j++] = str[i++];
         cmd->flags[j] = '\0';
     }
     while (str[i] == ' ' && !end_command(str[i]))
         i++;
-    int k = 0;
+    int k = 1;
     while (!end_command(str[i]))
     {
         j = 0;
         cmd->args[k] = malloc(1024);
-        if (!ft_strcmp(cmd->type, "echo"))
+        if (!ft_strcmp(cmd->args[0], "echo"))
             while (!end_command(str[i]))
                 cmd->args[k][j++] = str[i++];
         else
@@ -58,5 +57,6 @@ int    simple_parser(char *str, t_cmd *cmd)
     i++;
     if (str[i])
         return(1);
+    i = 0;
     return (0);
 }

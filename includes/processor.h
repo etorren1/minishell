@@ -14,6 +14,8 @@
 # define PROCESSOR_H
 
 # include "minishell.h"
+# include <sys/types.h>
+# include <sys/wait.h>
 
 void	ft_echo(t_cmd *cmd);
 void	ft_pwd(void);

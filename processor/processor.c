@@ -15,21 +15,36 @@
 
 void	processor(t_cmd *cmd, char *(**envp))
 {
-	if (!ft_strcmp(cmd->type, "echo"))
+	if (!ft_strcmp(cmd->args[0], "echo"))
 		ft_echo(cmd);
-	else if (!ft_strcmp(cmd->type, "pwd"))
+	else if (!ft_strcmp(cmd->args[0], "pwd"))
 		ft_pwd();
-	else if (!ft_strcmp(cmd->type, "cd"))
+	else if (!ft_strcmp(cmd->args[0], "cd"))
 		ft_cd(cmd, *envp);
-	else if (!ft_strcmp(cmd->type, "env"))
+	else if (!ft_strcmp(cmd->args[0], "env"))
 		ft_env(*envp);
-	else if (!ft_strcmp(cmd->type, "export"))
+	else if (!ft_strcmp(cmd->args[0], "export"))
 		ft_export(cmd, envp);
-	else if (!ft_strcmp(cmd->type, "unset"))
+	else if (!ft_strcmp(cmd->args[0], "unset"))
 		ft_unset(cmd, envp);
-	else if (!ft_strcmp(cmd->type, "exit"))
+	else if (!ft_strcmp(cmd->args[0], "exit"))
 		ft_exit();
 	else
-		if (execve("/usr/bin/cat", cmd->args, *envp) == -1)
-			printf("minishell: %s: command not found\n\e[31merrno:\e[0m %s\n\e[31merr_id:\e[0m %d\n", cmd->type, strerror(errno), errno);
+	{
+		pid_t pid = fork();
+		char *str;
+		str = ft_strdup("/usr/bin/");
+		str = ft_strjoin(str, cmd->args[0]);
+		if (cmd->flags)
+			cmd->args = ft_arradd_str(cmd->args, cmd->flags, 1);
+		if (pid == 0)
+		{
+			if (execve(str, cmd->args, *envp) == -1)
+				printf("minishell: %s: command not found\n\e[31merrno:\e[0m %s\n\e[31merr_id:\e[0m %d\n", cmd->args[0], strerror(errno), errno);
+		}
+		else if (pid == -1)
+			printf("Error\n");
+		else
+			wait(NULL);
+	}
 }

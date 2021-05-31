@@ -49,6 +49,7 @@ int    simple_parser(char *str, t_cmd *cmd)
         else
             while (str[i] != ' ' && !end_command(str[i]))
                 cmd->args[k][j++] = str[i++];
+        cmd->args[k][j] = '\0';
         k++;
         cmd->count_args++;
     }

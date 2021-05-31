@@ -129,7 +129,9 @@ int	main(int argc, char **argv, char **envp)
 	char	*buf;
 	char	**env;
 	char	*history;
+	char *ptr;
 
+	ptr = NULL;
 	history = ft_strjoin(get_absolute_path_process(argv[0]), HISTORY);
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
@@ -355,9 +357,17 @@ int	main(int argc, char **argv, char **envp)
 		}
 		if (last_insert)
 			free(last_insert);
-		count_lines++;
-		current_line = count_lines;
-		write(fd, command_line, ft_strlen(command_line));
+		int k = 1;
+		if (ptr)
+			k = ft_strcmp(ptr, command_line);
+		if (k != 0) {
+			count_lines++;
+			current_line = count_lines;
+			write(fd, command_line, ft_strlen(command_line));
+		}
+		if (ptr)
+			free(ptr);
+		ptr = ft_strdup(command_line);
 		//*
 		// PARSER & LOGIC PART
 		i = 0;

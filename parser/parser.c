@@ -43,7 +43,7 @@ void	retrieve_flags(t_cmd *cmd)
 {
 	char	*flags;
 
-	if (!cmd->args[0] || cmd->args[0][0] == '-')
+	if (!cmd->args[0] || cmd->args[0][0] == '-' || !cmd->args[1])
 		return ;
 	flags = ft_strdup("");
 	while (cmd->args[1][0] == '-')
@@ -111,6 +111,9 @@ int	parser(const char **command_line, char **env, t_cmd *cmd)
 	int	i;
 	char *line;
 
+	i = preparser(*command_line);
+	if (i <= 0)
+		return (i);
 	i = -1;
 	cmd->len = find_end(*command_line);
 	line = ft_substr(*command_line, 0, cmd->len);
@@ -143,15 +146,14 @@ int	main(int argc, char **argv, char **env)
 	t_cmd	*cmd = malloc(sizeof(t_cmd));
 	cmd->args = malloc(sizeof (char *));
 	*cmd->args = NULL;
-	const char *case0 = "";
+	const char *case0 = "  			1";
 	const char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
-	const char *case2 = "echo 12345\" я $USER	\"123 \";\" ls ;";
+	const char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
 	const char *case3 = "echo $USER";
-	const char *case4 = "./minishell -pwd -asd asldk asdlk acsdpo";
+	const char *case4 = "ls -l -a arg1 arg2 ' ' \" ' \" arg3";
 
 	printf("%d\n", parser(&case0, env, cmd));
-	printf("%s %s %s %s\n", cmd->args[0], cmd->args[1], cmd->args[2],
-		cmd->args[3]);
+//	printf("%s %s %s %s\n", cmd->args[0], cmd->args[1], cmd->args[2],cmd->args[3]);
 	if (cmd->flags)
 		printf("%s\n", cmd->flags);
 }

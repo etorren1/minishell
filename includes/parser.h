@@ -19,3 +19,4 @@ char	*double_quotes(char *str, char** env, int *i);
 char	*ft_strstr(const char *haystack, const char *needle);
 int		ft_strstr_mod(const char *haystack, const char *needle);
 char	*dollar(char *str, int *i, char **env);
+int		preparser(const char *command_line);

@@ -34,7 +34,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 		printf("debug3>>i=%d %s\n", i, cmd->args[i]);
 		i++;
 	}*/
-	/*else
+	else
 	{
 		pid_t pid = fork();
 		char *str;
@@ -51,5 +51,5 @@ void	processor(t_cmd *cmd, char *(**envp))
 			printf("Error\n");
 		else
 			wait(NULL);
-	}*/
+	}
 }

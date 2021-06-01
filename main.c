@@ -15,7 +15,7 @@
 #include <termios.h>
 #define	BUF_SIZE	12
 #define PROMPT		26
-#define	MINISHELL	"\033[1;32mminishell-0.3$ \033[0m"
+#define	MINISHELL	"\033[1;32mminishell-0.4$ \033[0m"
 #define HISTORY		".minishell_history"
 
 int	ft_putint(int ch)
@@ -368,10 +368,11 @@ int	main(int argc, char **argv, char **envp)
 		if (ptr)
 			free(ptr);
 		ptr = ft_strdup(command_line);
+		command_line[count_symb - PROMPT] = 0;
 		//*
 		// PARSER & LOGIC PART
-		i = 0;
-		simple_parser(&command_line[i], cmd);
+		//i = 0;
+		//simple_parser(&command_line[i], cmd);
 		/*int l = 0;
 		printf("\n-------PARSER--------\n");
 		printf("type = %s\nflags = %s\nlen = %d\n", cmd->type, cmd->flags, cmd->len);
@@ -380,7 +381,15 @@ int	main(int argc, char **argv, char **envp)
 			printf("args[%d] = %s\n", l, cmd->args[l]);
 			l++;
 		}*/
-		processor(cmd, &env);
+		cmd->args = malloc(sizeof (char *));
+		*cmd->args = NULL;
+		cmd->flags = NULL;
+		int i = 0;
+		while (command_line[i]) {
+			parser(&command_line[i], env, cmd);
+			processor(cmd, &env);
+			i += cmd->len + 1;
+		}
 		/*int p = 0;
 		printf("\e[31m-----ENV-----\n");
 		while (env[p])

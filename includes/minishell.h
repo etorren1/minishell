@@ -28,9 +28,9 @@ typedef struct  s_cmd {
 	int			len;
 }               t_cmd;
 
-int	parser(const char **command_line, char **env, t_cmd *cmd);
 int    simple_parser(char *str, t_cmd *cmd);
 
+int				parser(char *command_line, char **env, t_cmd *cmd);
 void			processor(t_cmd *cmd, char *(**envp));
 int				find_environment(char *env, char **envp);
 char			*get_absolute_path_process(char *proc);

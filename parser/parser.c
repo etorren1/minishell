@@ -45,13 +45,13 @@ void	retrieve_flags(t_cmd *cmd)
 
 	if (!cmd->args[0] || cmd->args[0][0] == '-' || !cmd->args[1])
 		return ;
-	flags = ft_strdup("");
-	while (cmd->args[1][0] == '-')
+	flags = ft_strdup("-");
+	while (cmd->args[1] && cmd->args[1][0] == '-')
 	{
 		flags = ft_strjoin(flags, &cmd->args[1][1]);
 		cmd->args = ft_arrdel_str(cmd->args, 1);
 	}
-	if (ft_strlen(flags) == 0)
+	if (ft_strlen(flags) == 1)
 	{
 		free(flags);
 		flags = NULL;
@@ -106,17 +106,17 @@ int	find_end(const char *line)
 	return (i);
 }
 
-int	parser(const char **command_line, char **env, t_cmd *cmd)
+int	parser(char *command_line, char **env, t_cmd *cmd)
 {
 	int	i;
 	char *line;
 
-	i = preparser(*command_line);
+	i = preparser(command_line);
 	if (i <= 0)
 		return (i);
 	i = -1;
-	cmd->len = find_end(*command_line);
-	line = ft_substr(*command_line, 0, cmd->len);
+	cmd->len = find_end(command_line);
+	line = ft_substr(command_line, 0, cmd->len);
 	while (line[++i])
 		if (!ft_isspace(line[i]))
 		{
@@ -140,7 +140,7 @@ int	parser(const char **command_line, char **env, t_cmd *cmd)
 	free(line);
 	return (1);
 }
-
+/*
 int	main(int argc, char **argv, char **env)
 {
 	t_cmd	*cmd = malloc(sizeof(t_cmd));
@@ -157,3 +157,4 @@ int	main(int argc, char **argv, char **env)
 	if (cmd->flags)
 		printf("%s\n", cmd->flags);
 }
+*/

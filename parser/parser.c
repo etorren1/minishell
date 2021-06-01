@@ -12,42 +12,146 @@
 
 #include "../includes/parser.h"
 
+//int check_command(char *command, char *str) {
+//	int len;
+//
+//	len = ft_strlen(command);
+//	return ft_strstr_mod(str, command) == 0 && (ft_isspace(str[len])
+//			|| str[len] == '\0');
+//}
+//
+//int	find_command(char *str)
+//{
+//	int	i;
+//
+//	i = 0;
+//
+//	while (ft_isspace(str[i]))
+//		i++;
+//	if (check_command("echo", &str[i])
+//		|| check_command("cd", &str[i])
+//		|| check_command("pwd", &str[i])
+//		|| check_command("export", &str[i])
+//		|| check_command("unset", &str[i])
+//		|| check_command("env", &str[i])
+//		|| check_command("exit", &str[i]))
+//		return (i);
+//	return (-1);
+//}
+
+void	retrieve_flags(t_cmd *cmd)
+{
+	char	*flags;
+
+	if (!cmd->args[0] || cmd->args[0][0] == '-')
+		return ;
+	flags = ft_strdup("");
+	while (cmd->args[1][0] == '-')
+	{
+		flags = ft_strjoin(flags, &cmd->args[1][1]);
+		cmd->args = ft_arrdel_str(cmd->args, 1);
+	}
+	if (ft_strlen(flags) == 0)
+	{
+		free(flags);
+		flags = NULL;
+	}
+	cmd->flags = flags;
+}
+
+void	retrieve_args(const char *str, t_cmd *cmd)
+{
+	int	start;
+	int	end;
+	int	arg;
+
+	arg = 0;
+	start = 0;
+	while (str[start])
+	{
+		if (!ft_isspace(str[start])) {
+			end = start;
+			while (str[end] && !ft_isspace(str[end]))
+				end++;
+			cmd->args = ft_arradd_str_mod(cmd->args, ft_substr(str, start,
+					end - start), arg++);
+			start = end - 1;
+		}
+		start++;
+	}
+	cmd->args[arg] = NULL;
+}
+
+int	find_end(const char *line)
+{
+	int	i;
+
+	i = -1;
+	while (line[++i]){
+		if (line[i] == '\'')
+		{
+			i++;
+			while (line[i] != '\'')
+				i++;
+		}
+		else if (line[i] == '"')
+		{
+			i++;
+			while (line[i] != '"')
+				i++;
+		}
+		else if(line[i] == ';' || line[i] == '|')
+			break ;
+	}
+	return (i);
+}
+
 int	parser(const char **command_line, char **env, t_cmd *cmd)
 {
 	int	i;
 	char *line;
 
 	i = -1;
-	line = ft_strdup(*command_line);
+	cmd->len = find_end(*command_line);
+	line = ft_substr(*command_line, 0, cmd->len);
 	while (line[++i])
-	{
-		cmd->len++;
-		if (line[i] == '\'')
-			line = single_quotes(line, &i);
-		else if (line[i] == '"')
-			line = double_quotes(line, env, &i);
-		else if (line[i] == '\\')
-			line = backslash(line, &i);
-		else if (line[i] == '$')
-			line = dollar(line, &i, env);
-	}
-	printf("%s\n", line);
-	return (0);
+		if (!ft_isspace(line[i]))
+		{
+			if (line[i] == '\'')
+				line = single_quotes(line, &i);
+			else if (line[i] == '"')
+				line = double_quotes(line, env, &i);
+			else if (line[i] == '\\')
+				line = backslash(line, &i);
+			else if (line[i] == '$')
+				line = dollar(line, &i, env);
+			else if (line[i] == '|')
+				;
+			else if (line[i] == '>')
+				;
+			else if (line[i] == '<')
+				;
+		}
+	retrieve_args(line, cmd);
+	retrieve_flags(cmd);
+	free(line);
+	return (1);
 }
 
 int	main(int argc, char **argv, char **env)
 {
-	t_cmd	cmd;
-	const char *case1 = "co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
-	const char *case2 = "12345\" я $USER	\"123";
-	const char *case3 = "$USERs";
+	t_cmd	*cmd = malloc(sizeof(t_cmd));
+	cmd->args = malloc(sizeof (char *));
+	*cmd->args = NULL;
+	const char *case0 = "";
+	const char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
+	const char *case2 = "echo 12345\" я $USER	\"123 \";\" ls ;";
+	const char *case3 = "echo $USER";
+	const char *case4 = "./minishell -pwd -asd asldk asdlk acsdpo";
 
-//	printf("%s\n", case1);
-	parser(&case2, env, &cmd);
-
-//	char *long_str = "Foo Bar Baz";
-//	char *short_str = "Bar";
-//	printf("%s\n", strstr(long_str, short_str));
-//	printf("%s\n", ft_strstr(long_str, short_str));
-//	printf("%d\n", ft_strstr_mod(long_str, short_str));
+	printf("%d\n", parser(&case0, env, cmd));
+	printf("%s %s %s %s\n", cmd->args[0], cmd->args[1], cmd->args[2],
+		cmd->args[3]);
+	if (cmd->flags)
+		printf("%s\n", cmd->flags);
 }

@@ -12,7 +12,7 @@
 
 SRCS		= main.c simple_parser.c\
 			$(wildcard ./processor/*.c ./processor/builtin_cmd/*.c\
-			./utils/*.c)
+			./utils/*.c ./parser/*.c)
 
 OBJS		= $(SRCS:.c=.o)
 

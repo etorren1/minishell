@@ -51,16 +51,23 @@ void	ft_delchar(char **str, int i)
 	free(tail);
 }
 
-int	history_line_count(int fd)
+int	read_history(int fd, t_node **node)
 {
 	int		i;
 	int		rd;
-	char	ch;
+	char	*line;
 
 	i = 0;
-	while ((rd = read(fd, &ch, 1)) > 0)
-		if (ch == '\n')
-			i++;
+	while ((rd = get_next_line(fd, &line)) > 0)
+	{
+		ft_nodeadd_back(node, ft_nodenew(line));
+		i++;
+	}
+	if (*node)
+		*node = ft_nodelast(*node);
+	else
+		*node = ft_nodenew("\n");
+	i++;
 	if (rd == -1)
 		return (-1);
 	return (i);
@@ -117,13 +124,12 @@ void	clear_buf(char *buf, int size)
 int	main(int argc, char **argv, char **envp)
 {
 	struct	termios term;
+	t_node	*histnode;
 	int		len;
 	int		i;
 	int		fd;
 	int		count_symb;
 	int		cursor_pos;
-	int		count_lines;
-	int		current_line;
 	char	*command_line;
 	char	*last_insert;
 	char	*buf;
@@ -132,6 +138,7 @@ int	main(int argc, char **argv, char **envp)
 	char *ptr;
 
 	ptr = NULL;
+	histnode = NULL;
 	history = ft_strjoin(get_absolute_path_process(argv[0]), HISTORY);
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
@@ -148,7 +155,7 @@ int	main(int argc, char **argv, char **envp)
 
 	fd = open(history, O_RDWR | O_CREAT, 0777);
 	len = 1024;
-	count_lines = history_line_count(fd);
+	read_history(fd, &histnode);
 	buf = (char *)malloc(BUF_SIZE);
 	command_line = (char *)malloc(len);
 	while (ft_strcmp(buf, "\4"))
@@ -158,7 +165,6 @@ int	main(int argc, char **argv, char **envp)
 		last_insert = NULL;
 		write (1, MINISHELL, PROMPT);
 		tputs(tgetstr("sc", 0), 1, ft_putint);
-		current_line = count_lines;
 		clear_buf(command_line, len);
 		clear_buf(buf, BUF_SIZE);
 		while (ft_strcmp(buf, "\n") && ft_strcmp(buf, "\4"))
@@ -175,51 +181,35 @@ int	main(int argc, char **argv, char **envp)
 			// key_up for output previous command
 			if (!ft_strcmp(buf, "\e[A"))
 			{
-				char *tmp;
-				int k = 0;
-				int tmpfd;
-
-				if (current_line == count_lines)
+				if (!histnode->next)
 				{
 					last_insert = malloc(ft_strlen(command_line));
 					ft_strcpy(last_insert, command_line);
 				}
-				if (current_line > 0)
-					current_line--;
-				tmpfd = open(history, O_RDONLY);
-				tmp = get_history_line(tmpfd, current_line);
 				tputs(tgetstr("rc", 0), 1, ft_putint);
 				tputs(tgetstr("ce", 0), 1, ft_putint);
-				ft_strcpy(command_line, tmp);
+				ft_strcpy(command_line, histnode->content);
+				if (histnode->prev)
+					histnode = histnode->prev;
 				cursor_pos = ft_strlen(command_line) + PROMPT;
 				count_symb = ft_strlen(command_line) + PROMPT;
 				write (1, command_line, ft_strlen(command_line));
-				free (tmp);
-				close(tmpfd);
 			}
 				// key_down for output next command
 			else if (!ft_strcmp(buf, "\e[B"))
 			{
-				char *tmp;
-				int k = 0;
-				int tmpfd;
-
-				if (current_line < count_lines)
+				if (histnode->next)
 				{
-					current_line++;
-					tmpfd = open(history, O_RDONLY);
-					tmp = get_history_line(tmpfd, current_line);
+					histnode = histnode->next;
 					tputs(tgetstr("rc", 0), 1, ft_putint);
 					tputs(tgetstr("ce", 0), 1, ft_putint);
-					if (current_line == count_lines)
+					if (!histnode->next)
 						ft_strcpy(command_line, last_insert);
 					else
-						ft_strcpy(command_line, tmp);
+						ft_strcpy(command_line, histnode->content);
 					cursor_pos = ft_strlen(command_line) + PROMPT;
 					count_symb = ft_strlen(command_line) + PROMPT;
 					write (1, command_line, ft_strlen(command_line));
-					free (tmp);
-					close(tmpfd);
 				}
 			}
 				// key_backspace for delite character
@@ -357,30 +347,15 @@ int	main(int argc, char **argv, char **envp)
 		}
 		if (last_insert)
 			free(last_insert);
-		int k = 1;
-		if (ptr)
-			k = ft_strcmp(ptr, command_line);
-		if (k != 0) {
-			count_lines++;
-			current_line = count_lines;
-			write(fd, command_line, ft_strlen(command_line));
-		}
-		if (ptr)
-			free(ptr);
-		ptr = ft_strdup(command_line);
+		histnode = ft_nodelast(histnode);
 		command_line[count_symb - PROMPT] = 0;
-		//*
-		// PARSER & LOGIC PART
-		//i = 0;
-		//simple_parser(&command_line[i], cmd);
-		/*int l = 0;
-		printf("\n-------PARSER--------\n");
-		printf("type = %s\nflags = %s\nlen = %d\n", cmd->type, cmd->flags, cmd->len);
-		while (l < cmd->count_args)
+		if (ft_strcmp(histnode->content, command_line))
 		{
-			printf("args[%d] = %s\n", l, cmd->args[l]);
-			l++;
-		}*/
+			ft_nodeadd_back(&histnode, ft_nodenew(ft_strdup(command_line)));
+			histnode = histnode->next;
+			write(fd, command_line, ft_strlen(command_line));
+			write(fd, "\n", 1);
+		}
 		cmd->args = malloc(sizeof (char *));
 		*cmd->args = NULL;
 		cmd->flags = NULL;
@@ -390,42 +365,6 @@ int	main(int argc, char **argv, char **envp)
 			processor(cmd, &env);
 			i += cmd->len + 1;
 		}
-		/*int p = 0;
-		printf("\e[31m-----ENV-----\n");
-		while (env[p])
-			printf("%s\n", env[p++]);
-		printf("\e[0m\n");
-		p = 0;
-		envp = env;
-		printf("\e[33m-----ENVP-----\n");
-		while (envp[p])
-			printf("%s\n", envp[p++]);
-		printf("\e[0m\n");
-		printf("%s\n", getenv("HOME"));*/
-		/*
-		i = 0;
-		int l = 0;
-		while (simple_parser(&command_line[i], cmd) > 0)
-		{
-		//	simple_parser(&command_line[i], cmd);
-			printf("\n-------PARSER--------\n");
-			printf("type = %s\nflags = %s\nlen = %d\n", cmd->type, cmd->flags, cmd->len);
-			while (l < cmd->count_args)
-			{
-				printf("args[%d] = %s\n", l, cmd->args[l]);
-				l++;
-			}
-			i += cmd->len;
-		}
-		printf("\n-------PARSER--------\n");
-		printf("type = %s\nflags = %s\nlen = %d\n", cmd->type, cmd->flags, cmd->len);
-		while (l < cmd->count_args)
-		{
-			printf("args[%d] = %s\n", l, cmd->args[l]);
-			l++;
-		}
-		i += cmd->len;*/
-		//*
 	}
 	write (1, "\n", 1);
 	free(history);

@@ -20,6 +20,25 @@ typedef struct s_list
 	void			*content;
 	struct s_list	*next;
 }				t_list;
+
+typedef struct s_node
+{
+	void			*content;
+	struct s_node	*next;
+	struct s_node	*prev;
+}				t_node;
+
+int				ft_nodesize(t_node *node);
+void			ft_nodeiter(t_node *node, void (*f)(void *));
+void			ft_nodeadd_front(t_node **node, t_node *new);
+void			ft_nodeadd_back(t_node **node, t_node *new);
+void			ft_nodedelone(t_node *node, void (*del)(void *));
+void			ft_nodeclear(t_node **node, void (*del)(void *));
+t_node			*ft_nodemap(t_node *node, void *(*f)(void *),
+					 void (*del)(void *));
+t_node			*ft_nodenew(void *content);
+t_node			*ft_nodelast(t_node *node);
+t_node			*ft_nodefirst(t_node *node);
 int				ft_lstsize(t_list *lst);
 void			ft_lstiter(t_list *lst, void (*f)(void *));
 void			ft_lstadd_front(t_list **lst, t_list *new);

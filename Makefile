@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS		= main.c simple_parser.c\
+SRCS		= main.c\
 			$(wildcard ./processor/*.c ./processor/builtin_cmd/*.c\
 			./utils/*.c ./parser/*.c)
 

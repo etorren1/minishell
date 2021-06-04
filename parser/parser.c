@@ -140,21 +140,24 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	free(line);
 	return (1);
 }
+
 /*
 int	main(int argc, char **argv, char **env)
 {
 	t_cmd	*cmd = malloc(sizeof(t_cmd));
 	cmd->args = malloc(sizeof (char *));
 	*cmd->args = NULL;
-	const char *case0 = "  			1";
-	const char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
-	const char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
-	const char *case3 = "echo $USER";
-	const char *case4 = "ls -l -a arg1 arg2 ' ' \" ' \" arg3";
+	char *case0 = "  			1";
+	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
+	char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
+	char *case3 = "echo $USER";
+	char *case4 = "ls -l -a arg1 arg2 ' ' \" ' \" arg3";
+	char *case5 = "echo ASD";
 
-	printf("%d\n", parser(&case0, env, cmd));
-//	printf("%s %s %s %s\n", cmd->args[0], cmd->args[1], cmd->args[2],cmd->args[3]);
+	printf("%d\n", parser(case5, env, cmd));
+	printf("%s %s %s %s\n", cmd->args[0], cmd->args[1], cmd->args[2],cmd->args[3]);
 	if (cmd->flags)
 		printf("%s\n", cmd->flags);
 }
 */
+

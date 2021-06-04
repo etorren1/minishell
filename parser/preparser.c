@@ -48,7 +48,7 @@ int	is_empty(const char *str)
 	while (str[++i])
 		if (!ft_isspace(str[i]))
 			break ;
-	if (i == 0 || i == ft_strlen(str))
+	if (i == ft_strlen(str))
 		return (1);
 	return (0);
 }

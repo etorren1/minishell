@@ -63,53 +63,17 @@ int	read_history(int fd, t_node **node)
 		ft_nodeadd_back(node, ft_nodenew(line));
 		i++;
 	}
+	rd = get_next_line(fd, &line);
+	ft_nodeadd_back(node, ft_nodenew(line));
 	if (*node)
 		*node = ft_nodelast(*node);
 	else
 		*node = ft_nodenew("\n");
 	i++;
+	close(fd);
 	if (rd == -1)
 		return (-1);
 	return (i);
-}
-
-static void	get_line_pos(int fd, int pos)
-{
-	int		rd;
-	char	ch;
-	int		i;
-
-	i = 0;
-	while (i < pos)
-	{
-		read(fd, &ch, 1);
-		if (ch == '\n')
-			i++;
-	}
-}
-
-char	*get_history_line(int fd, int pos)
-{
-	char	ch;
-	size_t	i;
-	size_t	size;
-	char	*str;
-
-	get_line_pos(fd, pos);
-	i = 0;
-	size = 1024;
-	str = (char *)malloc(size);
-	while (read(fd, &ch, 1) > 0 && ch != '\n')
-	{
-		str[i++] = ch;
-		if (i > size)
-		{
-			size += size;
-			str = ft_realloc(str, size);
-		}
-	}
-	str[i] = '\0';
-	return (str);
 }
 
 void	clear_buf(char *buf, int size)
@@ -153,10 +117,11 @@ int	main(int argc, char **argv, char **envp)
 
 	tgetent(0, "xterm-256color");
 
-	fd = open(history, O_RDWR | O_CREAT, 0777);
-	len = 1024;
+	fd = open(history, O_RDONLY | O_CREAT, 0777);
+	len = 512;
 	read_history(fd, &histnode);
 	buf = (char *)malloc(BUF_SIZE);
+	clear_buf(buf, BUF_SIZE);
 	command_line = (char *)malloc(len);
 	while (ft_strcmp(buf, "\4"))
 	{
@@ -181,26 +146,37 @@ int	main(int argc, char **argv, char **envp)
 			// key_up for output previous command
 			if (!ft_strcmp(buf, "\e[A"))
 			{
-				if (!histnode->next)
-				{
-					last_insert = malloc(ft_strlen(command_line));
-					ft_strcpy(last_insert, command_line);
-				}
-				tputs(tgetstr("rc", 0), 1, ft_putint);
-				tputs(tgetstr("ce", 0), 1, ft_putint);
-				ft_strcpy(command_line, histnode->content);
 				if (histnode->prev)
+				{
+					if (!histnode->next)
+					{
+						last_insert = malloc(ft_strlen(command_line));
+						ft_strcpy(last_insert, command_line);
+					}
+					else
+					{
+						free(histnode->content);
+						histnode->content = ft_strdup(command_line);
+					}
 					histnode = histnode->prev;
-				cursor_pos = ft_strlen(command_line) + PROMPT;
-				count_symb = ft_strlen(command_line) + PROMPT;
-				write (1, command_line, ft_strlen(command_line));
+					clear_buf(command_line, len);
+					tputs(tgetstr("rc", 0), 1, ft_putint);
+					tputs(tgetstr("ce", 0), 1, ft_putint);
+					ft_strcpy(command_line, histnode->content);
+					cursor_pos = ft_strlen(command_line) + PROMPT;
+					count_symb = ft_strlen(command_line) + PROMPT;
+					write (1, command_line, ft_strlen(command_line));
+				}
 			}
 				// key_down for output next command
 			else if (!ft_strcmp(buf, "\e[B"))
 			{
 				if (histnode->next)
 				{
+					free(histnode->content);
+					histnode->content = ft_strdup(command_line);
 					histnode = histnode->next;
+					clear_buf(command_line, len);
 					tputs(tgetstr("rc", 0), 1, ft_putint);
 					tputs(tgetstr("ce", 0), 1, ft_putint);
 					if (!histnode->next)
@@ -324,7 +300,7 @@ int	main(int argc, char **argv, char **envp)
 			{
 				printf(" \033[31mWarning:\033[0m Choose an English keyboard layout\n");
 			}
-			else if (!ft_isprint(buf[0]) || buf[1] != 0)
+			else if ((!ft_isprint(buf[0]) || buf[1] != 0) && buf[0] != '\4')
 			{
 				printf(" \033[31mWarning:\033[0m Non visible symbol\n");
 			}
@@ -345,31 +321,50 @@ int	main(int argc, char **argv, char **envp)
 				cursor_pos += write (1, buf, i);
 			}
 		}
-		if (last_insert)
-			free(last_insert);
-		histnode = ft_nodelast(histnode);
-		command_line[count_symb - PROMPT] = 0;
-		if (ft_strcmp(histnode->content, command_line))
+		if (ft_strcmp(buf, "\4"))
 		{
-			ft_nodeadd_back(&histnode, ft_nodenew(ft_strdup(command_line)));
-			histnode = histnode->next;
-			write(fd, command_line, ft_strlen(command_line));
-			write(fd, "\n", 1);
-		}
-		cmd->args = malloc(sizeof (char *));
-		*cmd->args = NULL;
-		cmd->flags = NULL;
-		int i = 0;
-		while (command_line[i]) {
-			parser(&command_line[i], env, cmd);
-			processor(cmd, &env);
-			i += cmd->len + 1;
+			if (last_insert)
+				free(last_insert);
+			histnode = ft_nodelast(histnode);
+			command_line[count_symb - PROMPT] = 0;
+			if (ft_strcmp(histnode->content, command_line))
+			{
+				free(histnode->content);
+				histnode->content = ft_strdup(command_line);
+				ft_nodeadd_back(&histnode, ft_nodenew(ft_strdup("\n")));
+				write(fd, command_line, ft_strlen(command_line));
+				write(fd, "\n", 1);
+				histnode = histnode->next;
+			}
+			cmd->args = malloc(sizeof (char *));
+			*cmd->args = NULL;
+			cmd->flags = NULL;
+			int i = 0;
+			while (command_line[i]) {
+				parser(&command_line[i], env, cmd);
+				processor(cmd, &env);
+				i += cmd->len + 1;
+			}
 		}
 	}
-	write (1, "\n", 1);
+	fd = open(history, O_WRONLY | O_TRUNC, 0777);
+	histnode = ft_nodefirst(histnode);
+	while (histnode->next)
+	{
+		write(fd, histnode->content, ft_strlen(histnode->content));
+		write(fd, "\n", 1);
+		histnode = histnode->next;
+	}
+	write (1, "exit\n", 5);
 	free(history);
 	free(command_line);
 	ft_arrfree(env);
 	close (fd);
+
+	term.c_lflag |= (ECHO);
+	term.c_lflag |= (ICANON);
+	tcsetattr(0, TCSANOW, &term);
+
+	tgetent(0, "xterm-256color");
 	return (0);
 }

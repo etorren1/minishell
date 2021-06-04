@@ -20,7 +20,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
 		ft_pwd();
 	else if (!ft_strcmp(cmd->args[0], "cd"))
-		ft_cd(cmd, *envp);
+		ft_cd(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "env"))
 		ft_env(*envp);
 	else if (!ft_strcmp(cmd->args[0], "export"))

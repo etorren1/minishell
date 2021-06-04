@@ -17,16 +17,15 @@ void	ft_pwd(void)
 	int		size;
 	char	*tmp;
 
-	size = 1024;
-	tmp = malloc(size);
-	if (!tmp)
-		return ;
-	getcwd(tmp, size);
-	while (tmp == NULL) // maybe use ERRNO???
+	size = 5;
+	tmp = NULL;
+	tmp = getcwd(tmp, size);
+	while (errno == 34)
 	{
 		size += size;
-		ft_realloc(tmp, size);
-		getcwd(tmp, size);
+		errno = 0;
+		free(tmp);
+		tmp = getcwd(tmp, size);
 	}
 	printf("%s\n", tmp);
 	free(tmp);

@@ -14,19 +14,9 @@
 
 void	ft_pwd(void)
 {
-	int		size;
-	char	*tmp;
+	char	*pwd;
 
-	size = 5;
-	tmp = NULL;
-	tmp = getcwd(tmp, size);
-	while (errno == 34)
-	{
-		size += size;
-		errno = 0;
-		free(tmp);
-		tmp = getcwd(tmp, size);
-	}
-	printf("%s\n", tmp);
-	free(tmp);
+	pwd = get_pwd();
+	printf("%s\n", pwd);
+	free(pwd);
 }

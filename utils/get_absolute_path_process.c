@@ -1,20 +1,18 @@
 #include "../includes/minishell.h"
 
-char	*get_absolute_path_process(char *proc)
+char	*get_absolute_path_process(char *name)
 {
 	char	*str;
-	int		size;
 	int		i;
 
-	size = 1024;
-	if (!ft_strncmp(proc, "/Users", 6))
-		str = ft_strdup(proc);
+	str = NULL;
+	if (!ft_strncmp(name, "/Users", 6))
+		str = ft_strdup(name);
 	else
 	{
-		while (!(str = getcwd(str, size))) // maybe use ERRNO ???
-			size += size;
+		str = get_pwd();
 		str = ft_strjoin(str, "/");
-		str = ft_strjoin(str, proc);
+		str = ft_strjoin(str, name);
 	}
 	i = ft_strlen(str);
 	while (str[i] != '/')

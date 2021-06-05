@@ -20,26 +20,6 @@ static void	get_home_dir(char **envp)
 	if (ret > 0)
 		chdir(&envp[ret][5]);
 }
-static char	*get_pwd(char *env)
-{
-	int 	size;
-	char	*pwd;
-	char	*tmp;
-
-	size = 128;
-	tmp = NULL;
-	tmp = getcwd(tmp, size);
-	while (errno == 34)
-	{
-		size += size;
-		errno = 0;
-		free(tmp);
-		tmp = getcwd(tmp, size);
-	}
-	pwd = ft_strjoin(ft_strdup(env), tmp);
-	free(tmp);
-	return (pwd);
-}
 
 static void	change_envp(char ***envp, char *old, char *new)
 {
@@ -59,12 +39,22 @@ static void	change_envp(char ***envp, char *old, char *new)
 	ft_strcpy((*envp)[ret], new);
 }
 
+static char *make_pwdenv(char *var, char *val)
+{
+	char	*env;
+
+	env = ft_strjoin(ft_strdup(var), "=");
+	env = ft_strjoin(env, val);
+	free(val);
+	return(env);
+}
+
 static void	new_pwd(t_cmd *cmd, char ***envp)
 {
 	char	*oldpwd;
 	char	*newpwd;
 
-	oldpwd = get_pwd("OLDPWD=");
+	oldpwd = make_pwdenv("OLDPWD", get_pwd());
 	if (chdir(cmd->args[1]) == -1)
 	{
 		free(oldpwd);
@@ -72,7 +62,7 @@ static void	new_pwd(t_cmd *cmd, char ***envp)
 	}
 	else if (find_environment("PWD", *envp) > -1)
 	{
-		newpwd = get_pwd("PWD=");
+		newpwd = make_pwdenv("PWD", get_pwd());
 		change_envp(envp, oldpwd, newpwd);
 	}
 }

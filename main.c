@@ -70,7 +70,6 @@ int	read_history(int fd, t_node **node)
 	else
 		*node = ft_nodenew("\n");
 	i++;
-	close(fd);
 	if (rd == -1)
 		return (-1);
 	return (i);
@@ -88,6 +87,7 @@ void	clear_buf(char *buf, int size)
 int	main(int argc, char **argv, char **envp)
 {
 	struct	termios term;
+	struct	termios saveterm;
 	t_node	*histnode;
 	int		len;
 	int		i;
@@ -110,14 +110,14 @@ int	main(int argc, char **argv, char **envp)
 	t_cmd *cmd;
 
 	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	tcgetattr(0, &saveterm);
 	tcgetattr(0, &term);
-	term.c_lflag &= ~(ECHO);
-	term.c_lflag &= ~(ICANON);
+	term.c_lflag &= ~(ICANON|ECHO);
 	tcsetattr(0, TCSANOW, &term);
 
 	tgetent(0, "xterm-256color");
 
-	fd = open(history, O_RDONLY | O_CREAT, 0777);
+	fd = open(history, O_RDWR | O_CREAT, 0777);
 	len = 512;
 	read_history(fd, &histnode);
 	buf = (char *)malloc(BUF_SIZE);
@@ -316,8 +316,7 @@ int	main(int argc, char **argv, char **envp)
 				// standart output characters from user
 			else
 			{
-				if (buf[0] != '\n')
-					command_line[cursor_pos - PROMPT] = buf[0];
+				command_line[cursor_pos - PROMPT] = buf[0];
 				cursor_pos += write (1, buf, i);
 			}
 		}
@@ -347,6 +346,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 		}
 	}
+	close(fd);
 	fd = open(history, O_WRONLY | O_TRUNC, 0777);
 	histnode = ft_nodefirst(histnode);
 	while (histnode->next)
@@ -361,10 +361,6 @@ int	main(int argc, char **argv, char **envp)
 	ft_arrfree(env);
 	close (fd);
 
-	term.c_lflag |= (ECHO);
-	term.c_lflag |= (ICANON);
-	tcsetattr(0, TCSANOW, &term);
-
-	tgetent(0, "xterm-256color");
+	tcsetattr(0, TCSANOW, &saveterm);
 	return (0);
 }

@@ -14,10 +14,28 @@
 
 void	 ft_echo(t_cmd *cmd)
 {
+	int	i;
+	int	size;
+
+	i = 1;
+	size = ft_arrsize(cmd->args);
 	if (cmd->flags && ft_strchr(cmd->flags, 'n'))
-		write(1, cmd->args[1], ft_strlen(cmd->args[1]));
+		while (i < size)
+		{
+			write(1, cmd->args[i++], ft_strlen(cmd->args[1]));
+			if (i != size)
+				write(1, " ", 1);
+		}
 	else if (!cmd->args[1])
 		write(1, "\n", 1);
 	else
-		printf("%s\n", cmd->args[1]);
+	{
+		while (i < size)
+		{
+			write(1, cmd->args[i++], ft_strlen(cmd->args[1]));
+			if (i != size)
+				write(1, " ", 1);
+		}
+		write(1, "\n", 1);
+	}
 }

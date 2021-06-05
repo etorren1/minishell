@@ -290,11 +290,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 				// add newline in command string
 			else if (buf[0] == '\n')
-			{
-				command_line[count_symb - PROMPT] = buf[0];
-				command_line[1 + count_symb - PROMPT] = '\0';
 				write (1, buf, i);
-			}
 				// another keys catch (debug feature)
 			else if (buf[0] == -47 || buf[0] == -48)
 			{
@@ -325,9 +321,11 @@ int	main(int argc, char **argv, char **envp)
 			if (last_insert)
 				free(last_insert);
 			histnode = ft_nodelast(histnode);
+			histnode = histnode->prev;
 			command_line[count_symb - PROMPT] = 0;
 			if (ft_strcmp(histnode->content, command_line))
 			{
+				histnode = histnode->next;
 				free(histnode->content);
 				histnode->content = ft_strdup(command_line);
 				ft_nodeadd_back(&histnode, ft_nodenew(ft_strdup("\n")));
@@ -335,6 +333,8 @@ int	main(int argc, char **argv, char **envp)
 				write(fd, "\n", 1);
 				histnode = histnode->next;
 			}
+			else
+				histnode = histnode->next;
 			cmd->args = malloc(sizeof (char *));
 			*cmd->args = NULL;
 			cmd->flags = NULL;

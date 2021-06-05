@@ -79,8 +79,8 @@ void	processor(t_cmd *cmd, char *(**envp))
 			if (!temp[j])
 			{
 				//kill(pid, SIGTERM);
-				//exit(-1); ??????
-				printf("minishell: %s: command not found\n\e[31merrno:\e[0m %s\n\e[31merr_id:\e[0m %d\nNow your minishell can't exit (Use Ctrl+C)\n", cmd->args[0], strerror(errno), errno);
+				printf("minishell: %s: command not found\n\e[31merrno:\e[0m %s\n\e[31merr_id:\e[0m %d\n", cmd->args[0], strerror(errno), errno);
+				exit(-1);
 			}
 		}
 		else if (pid == -1)

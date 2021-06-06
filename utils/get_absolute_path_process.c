@@ -11,6 +11,7 @@ char	*get_absolute_path_process(char *proc)
 		str = ft_strdup(proc);
 	else
 	{
+		str = NULL;
 		while (!(str = getcwd(str, size))) // maybe use ERRNO ???
 			size += size;
 		str = ft_strjoin(str, "/");

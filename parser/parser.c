@@ -141,7 +141,6 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	return (1);
 }
 
-/*
 int	main(int argc, char **argv, char **env)
 {
 	t_cmd	*cmd = malloc(sizeof(t_cmd));
@@ -152,12 +151,15 @@ int	main(int argc, char **argv, char **env)
 	char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
 	char *case3 = "echo $USER";
 	char *case4 = "ls -l -a arg1 arg2 ' ' \" ' \" arg3";
-	char *case5 = "echo ASD";
+	char *case5 = "echo \"$USER\"";
+	char *case6 = "echo -n $USER $USER";
 
-	printf("%d\n", parser(case5, env, cmd));
-	printf("%s %s %s %s\n", cmd->args[0], cmd->args[1], cmd->args[2],cmd->args[3]);
+	printf("%d\n", parser(case6, env, cmd));
+
+	int i = -1;
+	while (cmd->args[++i])
+		printf("arg[%d] = %s\n", i , cmd->args[i]);
 	if (cmd->flags)
-		printf("%s\n", cmd->flags);
+		printf("flags = %s\n", cmd->flags);
 }
-*/
 

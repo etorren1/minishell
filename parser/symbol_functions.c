@@ -6,7 +6,7 @@
 /*   By: masharla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/22 16:19:07 by masharla          #+#    #+#             */
-/*   Updated: 2021/05/22 22:11:50 by ruslan           ###   ########.fr       */
+/*   Updated: 2021/06/05 22:21:32 by masharla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*dollar(char *str, int *i, char **env)
 				ft_strlen(env[e]) - ft_strlen(prefix));
 	else
 		body = ft_strdup("");
-	e = ft_strlen(body) - ft_strlen(prefix) + 1;
+	e = ft_strlen(body) - ft_strlen(prefix);
 	free(prefix);
 	prefix = ft_substr(str, 0, start);
 	postfix = ft_strdup(&str[*i]);
@@ -88,7 +88,7 @@ char	*double_quotes(char *str, char **env, int *i)
 	while (str[++(*i)])
 	{
 		if (str[*i] == '\\' && (str[*i + 1] == '\\' || str[*i + 1] == '$'
-				|| str[*i + 1] == '"') || str[*i + 1] == '\\')
+				|| str[*i + 1] == '"'))
 			str = backslash(str, i);
 		if (str[*i] == '$')
 			str = dollar(str, i, env);

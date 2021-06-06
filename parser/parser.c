@@ -141,7 +141,7 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	return (1);
 }
 
-int	main(int argc, char **argv, char **env)
+/*int	main(int argc, char **argv, char **env)
 {
 	t_cmd	*cmd = malloc(sizeof(t_cmd));
 	cmd->args = malloc(sizeof (char *));
@@ -161,5 +161,5 @@ int	main(int argc, char **argv, char **env)
 		printf("arg[%d] = %s\n", i , cmd->args[i]);
 	if (cmd->flags)
 		printf("flags = %s\n", cmd->flags);
-}
+}*/
 

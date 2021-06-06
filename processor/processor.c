@@ -20,7 +20,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
 		ft_pwd();
 	else if (!ft_strcmp(cmd->args[0], "cd"))
-		ft_cd(cmd, *envp);
+		ft_cd(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "env"))
 		ft_env(*envp);
 	else if (!ft_strcmp(cmd->args[0], "export"))
@@ -77,10 +77,14 @@ void	processor(t_cmd *cmd, char *(**envp))
 			while (execve(temp[j], cmd->args, *envp) == -1 && temp[j])
 				j++;
 			if (!temp[j])
+			{
+				//kill(pid, SIGTERM);
 				printf("minishell: %s: command not found\n\e[31merrno:\e[0m %s\n\e[31merr_id:\e[0m %d\n", cmd->args[0], strerror(errno), errno);
+				exit(-1);
+			}
 		}
 		else if (pid == -1)
-			printf("Error\n");
+			printf("PID Error!!!!!!!!!!!!!!!\n");
 		else
 			wait(NULL);
 	}

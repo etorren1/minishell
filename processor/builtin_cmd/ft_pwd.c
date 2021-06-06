@@ -14,20 +14,9 @@
 
 void	ft_pwd(void)
 {
-	int		size;
-	char	*tmp;
+	char	*pwd;
 
-	size = 1024;
-	tmp = malloc(size);
-	if (!tmp)
-		return ;
-	getcwd(tmp, size);
-	while (tmp == NULL) // maybe use ERRNO???
-	{
-		size += size;
-		ft_realloc(tmp, size);
-		getcwd(tmp, size);
-	}
-	printf("%s\n", tmp);
-	free(tmp);
+	pwd = get_pwd();
+	printf("%s\n", pwd);
+	free(pwd);
 }

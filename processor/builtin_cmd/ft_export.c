@@ -40,7 +40,7 @@ static void	output_envvar(char **envp)
 	ft_qsort_s(tmp, 0, ft_arrsize(tmp) - 1);
 	size = 0;
 	while (tmp[size])
-		printf("%s\n", tmp[size++]);
+		ft_putendl_fd(tmp[size++], 1);
 	ft_arrfree(tmp);
 }
 

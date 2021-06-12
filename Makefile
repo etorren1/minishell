@@ -53,6 +53,15 @@ norm:
 	cd ../includes; \
 	echo "\033[46m\033[30mHEADERS\033[0m"; \
 	norminette *.h; \
-	cd ../sourse; \
-	echo "\033[46m\033[30mSOURSE\033[0m"; \
-	norminette *.c;
+	cd ../processor; \
+	echo "\033[46m\033[30mPROCESSOR\033[0m"; \
+	norminette *.c; \
+	cd ../parser; \
+	echo "\033[46m\033[30mPARSER\033[0m"; \
+	norminette *.c; \
+	cd ../utils; \
+	echo "\033[46m\033[30mUTILS\033[0m"; \
+	norminette *.c; \
+	cd ..; \
+	echo "\033[46m\033[30mMAIN\033[0m"; \
+	norminette main.c

@@ -19,7 +19,7 @@
 
 void	ft_echo(t_cmd *cmd);
 void	ft_pwd(void);
-void	ft_exit(void);
+void	ft_exit(t_cmd *cmd);
 void	ft_cd(t_cmd *cmd,char ***envp);
 void	ft_env(char **envp);
 void	ft_unset(t_cmd *cmd, char *(**envp));

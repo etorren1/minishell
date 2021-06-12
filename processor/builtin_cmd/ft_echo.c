@@ -22,7 +22,7 @@ void	 ft_echo(t_cmd *cmd)
 	if (cmd->flags && ft_strchr(cmd->flags, 'n'))
 		while (i < size)
 		{
-			write(1, cmd->args[i++], ft_strlen(cmd->args[1]));
+			ft_putstr_fd(cmd->args[i++], 1);
 			if (i != size)
 				write(1, " ", 1);
 		}
@@ -32,7 +32,7 @@ void	 ft_echo(t_cmd *cmd)
 	{
 		while (i < size)
 		{
-			write(1, cmd->args[i++], ft_strlen(cmd->args[1]));
+			ft_putstr_fd(cmd->args[i++], 1);
 			if (i != size)
 				write(1, " ", 1);
 		}

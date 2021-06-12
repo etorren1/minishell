@@ -28,7 +28,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 	else if (!ft_strcmp(cmd->args[0], "unset"))
 		ft_unset(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "exit"))
-		ft_exit();
+		ft_exit(cmd);
 	else
 	{
 		pid_t pid = fork();
@@ -78,7 +78,6 @@ void	processor(t_cmd *cmd, char *(**envp))
 				j++;
 			if (!temp[j])
 			{
-				//kill(pid, SIGTERM);
 				printf("minishell: %s: command not found\n\e[31merrno:\e[0m %s\n\e[31merr_id:\e[0m %d\n", cmd->args[0], strerror(errno), errno);
 				exit(-1);
 			}

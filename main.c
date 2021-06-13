@@ -108,10 +108,13 @@ char **get_dir_content(char *str)
 	int i = 0;
     while ( (entry = readdir(dir)) != NULL)
 	{
-		names = ft_arradd_str(names, entry->d_name, i);
-		if (entry->d_type == 4)
-			names[i] = ft_strjoin(names[i], "/");
-		i++;
+		if (entry->d_name[0] != '.')
+		{
+			names = ft_arradd_str(names, entry->d_name, i);
+			if (entry->d_type == 4)
+				names[i] = ft_strjoin(names[i], "/");
+			i++;
+		}
     };
     closedir(dir);
 	return (names);
@@ -161,14 +164,14 @@ int	main(int argc, char **argv, char **envp)
 		tcsetattr(0, TCSANOW, &term);
 		cursor_pos = PROMPT;
 		count_symb = PROMPT;
-		last_insert = NULL;	write (1, MINISHELL, PROMPT);
+		last_insert = NULL;	
+		write (1, MINISHELL, PROMPT);
 		tputs(tgetstr("sc", 0), 1, ft_putint);
 		clear_buf(command_line, len);
 		clear_buf(buf, BUF_SIZE);
-
-		while (ft_strcmp(buf, "\n") && (ft_strcmp(buf, "\4") || command_line[0] != 0))
+		while (ft_strcmp(buf, "\n")
+			 && (ft_strcmp(buf, "\4") || command_line[0] != 0))
 		{
-			//printf(">> %c %d\n", command_line[0], command_line[0]);
 			if (count_symb < cursor_pos)
 				count_symb = cursor_pos;
 			while (count_symb > len)
@@ -241,33 +244,20 @@ int	main(int argc, char **argv, char **envp)
 				char *tmp;
 				int size;
 
-				printf(">>cl-%s\n", command_line);
-				//printf(" before>> cs=%d cp=%d\n", count_symb, cursor_pos);
 				size = cursor_pos - PROMPT - 1;
 				while (command_line[size] && command_line[size] != ' ')
 					size--;
 				char	*ptr;
-
-				/*int k = size;
-				while (k < cursor_pos - 1)
-					ft_putchar_fd(command_line[k++], 1);
-				printf("\n\e[31m>>TAB\e[0m\n");*/
-				printf("len = %d\n", cursor_pos - size - PROMPT - 1);
 				ptr = ft_substr(command_line, size + 1, cursor_pos - PROMPT - size - 1);
-				//printf("\n\e[31m>>TAB\e[0m\n");
 				tmp = get_absolute_path_process(ptr);
-				printf("ptr>>%s\ntmp>>%s\n", ptr, tmp);
 				name = get_dir_content(tmp);
 				int m = -1;
-				/*while (name[++m])
-				{
-					ft_putstr_fd(name[m], 1);
-					write(1, "\n", 1);
-				}*/
+
 				free(ptr);
 				free(tmp);
 
 				int i = 0;
+				tputs(tgetstr("vi", 0), 1, ft_putint);
 				if (command_line[cursor_pos - PROMPT - 1] != ' ' && command_line[cursor_pos - PROMPT - 1] != '/'
 					 && command_line[0])
 				{
@@ -278,7 +268,6 @@ int	main(int argc, char **argv, char **envp)
 						size--;
 					int wordlen;
 					wordlen = cursor_pos - size - PROMPT - 1;
-					//printf(" len = %d\n", len);
 					char	*ptr;
 					ptr = ft_substr(command_line, size + 1, wordlen);
 					int i = -1;
@@ -286,35 +275,40 @@ int	main(int argc, char **argv, char **envp)
 					{
 						if (!ft_strncmp(ptr, name[i], wordlen) && ptr[0])
 						{
-							tputs(tgoto(tgetstr("LE", 0), 0, wordlen), 1, ft_putint);
-							tputs(tgetstr("ce", 0), 1, ft_putint);
+							int h = 0;
+							while (h < wordlen)
+							{
+								tputs(tgetstr("le", 0), 1, ft_putint);
+								tputs(tgetstr("dc", 0), 1, ft_putint);
+								h++;
+							}
+							tputs(tgetstr("im", 0), 1, ft_putint);
 							ft_putstr_fd(name[i], 1);
-							//command_line
+							tputs(tgetstr("ei", 0), 1, ft_putint);
 							char *tail;
 
-							tail = ft_substr(command_line, cursor_pos, count_symb - cursor_pos);
+							tail = ft_substr(command_line, cursor_pos - PROMPT, count_symb - cursor_pos - PROMPT);
 							int z = 0;
 							while (ft_strlen(command_line) + ft_strlen(name[i]) > len)
 							{
 								len += len;
 								command_line = ft_realloc(command_line, len);
 							}
-							while (name[z])
+							while (name[i][z])
 							{
-								command_line[size + 1 + z] = name[i][z]; //????
+								command_line[size + 1 + z] = name[i][z];
 								z++;
 							}
-							ft_strcpy(&command_line[size + z], tail);
+							ft_strcpy(&command_line[size + z + 1], tail);
 							free(tail);
-							//
 							cursor_pos += - wordlen + ft_strlen(name[i]);
 							count_symb += - wordlen + ft_strlen(name[i]);
-							//printf(" after>> cs=%d cp=%d\n", count_symb, cursor_pos);
-							printf("  new cl>>%s\n", command_line);
+							buf[0] = 0;
 							break ;
 						}
 					}
 					free(ptr);
+					ft_arrfree(name);
 				}
 				else
 				{
@@ -323,13 +317,28 @@ int	main(int argc, char **argv, char **envp)
 					{
 						ft_putstr_fd(name[i++], 1);
 						if (name[i])
-							write(1, "  ", 2);
+						{
+							int sp = 25;
+
+							sp -= ft_strlen(name[i - 1]);
+							if (i % 4 == 0)
+								tputs(tgetstr("do", 0), 1, ft_putint);
+							else
+							{
+								if (sp < 2)
+									write(1, " ", 1);
+								else
+									while (sp--)
+										write(1, " ", 1);
+							}
+						}
 					}
-					tputs(tgetstr("rc", 0), 1, ft_putint);
-					tputs(tgetstr("up", 0), 1, ft_putint);
-					if (cursor_pos != PROMPT)
-					tputs(tgoto(tgetstr("RI", 0), 0, cursor_pos - PROMPT), 1, ft_putint);
+					tputs(tgetstr("do", 0), 1, ft_putint);
+					write (1, MINISHELL, PROMPT);
+					tputs(tgetstr("sc", 0), 1, ft_putint);
+					ft_putstr_fd(command_line, 1);
 				}
+				tputs(tgetstr("ve", 0), 1, ft_putint);
 			}
 				// key_backspace for delite character
 			else if (!ft_strcmp(buf, "\177"))

@@ -34,5 +34,7 @@ void			processor(t_cmd *cmd, char *(**envp));
 int				find_environment(char *env, char **envp);
 char			*get_absolute_path_process(char *proc);
 char			*get_pwd(void);
+void			up_shlvl(char ***envp);
+char 			**get_dir_content(char *str);
 
 #endif

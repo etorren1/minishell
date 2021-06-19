@@ -13,6 +13,7 @@
 #include "./includes/minishell.h"
 #include <term.h>
 #include <termios.h>
+#include <dirent.h>
 #define	BUF_SIZE	12
 #define PROMPT		26
 #define	MINISHELL	"\033[1;32mminishell-0.4$ \033[0m"
@@ -38,12 +39,19 @@ void	ft_addchar(char **str, char ch, int i)
 	free(tail);
 }
 
-void	ft_delchar(char **str, int i)
+void	ft_delchar(char **str, int i, int size)
 {
 	char	*tail;
 	int	 j;
 
 	j = 0;
+	if (i == PROMPT + 1)
+	{
+		(*str)[0] = 0;
+		return ;
+	}
+	else if (i == size)
+		(*str)[i - PROMPT - 1] = 0;
 	tail = malloc(ft_strlen(&(*str)[i - PROMPT]) + 1);
 	ft_strcpy(tail, &(*str)[(i--) - PROMPT]);
 	while (tail[j])
@@ -84,6 +92,34 @@ void	clear_buf(char *buf, int size)
 		buf[i++] = 0;
 }
 
+char **get_dir_content(char *str)
+{
+    DIR				*dir;
+    struct dirent	*entry;
+	char			**names;
+
+	names = malloc(sizeof(char *));
+	names[0] = NULL;
+    dir = opendir(str);
+    if (!dir) {
+        perror("diropen");
+        exit(1);
+    };
+	int i = 0;
+    while ( (entry = readdir(dir)) != NULL)
+	{
+		if (entry->d_name[0] != '.')
+		{
+			names = ft_arradd_str(names, entry->d_name, i);
+			if (entry->d_type == 4)
+				names[i] = ft_strjoin(names[i], "/");
+			i++;
+		}
+    };
+    closedir(dir);
+	return (names);
+};
+
 int	main(int argc, char **argv, char **envp)
 {
 	struct	termios term;
@@ -99,44 +135,46 @@ int	main(int argc, char **argv, char **envp)
 	char	*buf;
 	char	**env;
 	char	*history;
-	char *ptr;
+	char	*ptr;
 
 	ptr = NULL;
 	histnode = NULL;
 	history = ft_strjoin(get_absolute_path_process(argv[0]), HISTORY);
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
-
+	up_shlvl(&env);
 	t_cmd *cmd;
+
+	tgetent(0, "xterm-256color");
 
 	cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	tcgetattr(0, &saveterm);
 	tcgetattr(0, &term);
-	term.c_lflag &= ~(ICANON|ECHO);
-	tcsetattr(0, TCSANOW, &term);
-
-	tgetent(0, "xterm-256color");
 
 	fd = open(history, O_RDWR | O_CREAT, 0777);
 	len = 512;
+	//len = 3;
 	read_history(fd, &histnode);
 	buf = (char *)malloc(BUF_SIZE);
 	clear_buf(buf, BUF_SIZE);
 	command_line = (char *)malloc(len);
-	while (ft_strcmp(buf, "\4"))
+	while (ft_strcmp(buf, "\4") || command_line[0] != 0)
 	{
+		term.c_lflag &= ~(ICANON|ECHO);
+		tcsetattr(0, TCSANOW, &term);
 		cursor_pos = PROMPT;
 		count_symb = PROMPT;
-		last_insert = NULL;
+		last_insert = NULL;	
 		write (1, MINISHELL, PROMPT);
 		tputs(tgetstr("sc", 0), 1, ft_putint);
 		clear_buf(command_line, len);
 		clear_buf(buf, BUF_SIZE);
-		while (ft_strcmp(buf, "\n") && ft_strcmp(buf, "\4"))
+		while (ft_strcmp(buf, "\n")
+			 && (ft_strcmp(buf, "\4") || command_line[0] != 0))
 		{
 			if (count_symb < cursor_pos)
 				count_symb = cursor_pos;
-			if (count_symb > len)
+			while (count_symb > len)
 			{
 				len += len;
 				command_line = ft_realloc(command_line, len);
@@ -162,6 +200,11 @@ int	main(int argc, char **argv, char **envp)
 					clear_buf(command_line, len);
 					tputs(tgetstr("rc", 0), 1, ft_putint);
 					tputs(tgetstr("ce", 0), 1, ft_putint);
+					while (ft_strlen(histnode->content) > len)
+					{
+						len += len;
+						command_line = ft_realloc(command_line, len);
+					}
 					ft_strcpy(command_line, histnode->content);
 					cursor_pos = ft_strlen(command_line) + PROMPT;
 					count_symb = ft_strlen(command_line) + PROMPT;
@@ -179,6 +222,11 @@ int	main(int argc, char **argv, char **envp)
 					clear_buf(command_line, len);
 					tputs(tgetstr("rc", 0), 1, ft_putint);
 					tputs(tgetstr("ce", 0), 1, ft_putint);
+					while (ft_strlen(histnode->content) > len || ft_strlen(last_insert) > len)
+					{
+						len += len;
+						command_line = ft_realloc(command_line, len);
+					}
 					if (!histnode->next)
 						ft_strcpy(command_line, last_insert);
 					else
@@ -188,12 +236,116 @@ int	main(int argc, char **argv, char **envp)
 					write (1, command_line, ft_strlen(command_line));
 				}
 			}
+				// key_tab for autocomplete
+			else if (!ft_strcmp(buf, "\t"))
+			{
+				char	**name;
+
+				char *tmp;
+				int size;
+
+				size = cursor_pos - PROMPT - 1;
+				while (command_line[size] && command_line[size] != ' ')
+					size--;
+				char	*ptr;
+				ptr = ft_substr(command_line, size + 1, cursor_pos - PROMPT - size - 1);
+				tmp = get_absolute_path_process(ptr);
+				name = get_dir_content(tmp);
+				int m = -1;
+
+				free(ptr);
+				free(tmp);
+
+				int i = 0;
+				tputs(tgetstr("vi", 0), 1, ft_putint);
+				if (command_line[cursor_pos - PROMPT - 1] != ' ' && command_line[cursor_pos - PROMPT - 1] != '/'
+					 && command_line[0])
+				{
+					int size;
+
+					size = cursor_pos - PROMPT - 1;
+					while (command_line[size] && command_line[size] != ' ' && command_line[size] != '/')
+						size--;
+					int wordlen;
+					wordlen = cursor_pos - size - PROMPT - 1;
+					char	*ptr;
+					ptr = ft_substr(command_line, size + 1, wordlen);
+					int i = -1;
+					while (name[++i])
+					{
+						if (!ft_strncmp(ptr, name[i], wordlen) && ptr[0])
+						{
+							int h = 0;
+							while (h < wordlen)
+							{
+								tputs(tgetstr("le", 0), 1, ft_putint);
+								tputs(tgetstr("dc", 0), 1, ft_putint);
+								h++;
+							}
+							tputs(tgetstr("im", 0), 1, ft_putint);
+							ft_putstr_fd(name[i], 1);
+							tputs(tgetstr("ei", 0), 1, ft_putint);
+							char *tail;
+
+							tail = ft_substr(command_line, cursor_pos - PROMPT, count_symb - cursor_pos - PROMPT);
+							int z = 0;
+							while (ft_strlen(command_line) + ft_strlen(name[i]) > len)
+							{
+								len += len;
+								command_line = ft_realloc(command_line, len);
+							}
+							while (name[i][z])
+							{
+								command_line[size + 1 + z] = name[i][z];
+								z++;
+							}
+							ft_strcpy(&command_line[size + z + 1], tail);
+							free(tail);
+							cursor_pos += - wordlen + ft_strlen(name[i]);
+							count_symb += - wordlen + ft_strlen(name[i]);
+							buf[0] = 0;
+							break ;
+						}
+					}
+					free(ptr);
+					ft_arrfree(name);
+				}
+				else
+				{
+					tputs(tgetstr("do", 0), 1, ft_putint);
+					while (name[i])
+					{
+						ft_putstr_fd(name[i++], 1);
+						if (name[i])
+						{
+							int sp = 25;
+
+							sp -= ft_strlen(name[i - 1]);
+							if (i % 4 == 0)
+								tputs(tgetstr("do", 0), 1, ft_putint);
+							else
+							{
+								if (sp < 2)
+									write(1, " ", 1);
+								else
+									while (sp--)
+										write(1, " ", 1);
+							}
+						}
+					}
+					tputs(tgetstr("do", 0), 1, ft_putint);
+					write (1, MINISHELL, PROMPT);
+					tputs(tgetstr("sc", 0), 1, ft_putint);
+					ft_putstr_fd(command_line, 1);
+				}
+				tputs(tgetstr("ve", 0), 1, ft_putint);
+			}
 				// key_backspace for delite character
 			else if (!ft_strcmp(buf, "\177"))
 			{
 				if (cursor_pos > PROMPT)
 				{
-					ft_delchar(&command_line, cursor_pos);
+					ft_delchar(&command_line, cursor_pos, count_symb);
 					cursor_pos--;
 					count_symb--;
 					tputs(tgetstr("le", 0), 1, ft_putint);
@@ -298,7 +450,8 @@ int	main(int argc, char **argv, char **envp)
 			}
 			else if ((!ft_isprint(buf[0]) || buf[1] != 0) && buf[0] != '\4')
 			{
-				printf(" \033[31mWarning:\033[0m Non visible symbol\n");
+				clear_buf(buf, BUF_SIZE);
+				//printf(" \033[31mWarning:\033[0m Non visible symbol\n");
 			}
 				// insert mode, command line edit
 			else if (cursor_pos < count_symb)
@@ -312,10 +465,15 @@ int	main(int argc, char **argv, char **envp)
 				// standart output characters from user
 			else
 			{
-				command_line[cursor_pos - PROMPT] = buf[0];
-				cursor_pos += write (1, buf, i);
+				if (buf[0] != '\4')
+				{
+					command_line[cursor_pos - PROMPT] = buf[0];
+					cursor_pos += write (1, buf, i);
+					//printf(" |cp = %d >!>%s\n", cursor_pos, command_line);
+				}
 			}
 		}
+		tcsetattr(0, TCSANOW, &saveterm);
 		if (ft_strcmp(buf, "\4"))
 		{
 			if (last_insert)
@@ -360,7 +518,5 @@ int	main(int argc, char **argv, char **envp)
 	free(command_line);
 	ft_arrfree(env);
 	close (fd);
-
-	tcsetattr(0, TCSANOW, &saveterm);
 	return (0);
 }

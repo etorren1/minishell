@@ -10,19 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <term.h>
-#include <termios.h>
 #include "../../includes/minishell.h"
 
-void	ft_exit(void)
+void	ft_exit(t_cmd *cmd)
 {
-	struct	termios term;
+	/*struct	termios term;
 	tcgetattr(0, &term);
 	term.c_lflag |= (ECHO);
 	term.c_lflag |= (ICANON);
-	tcsetattr(0, TCSANOW, &term);
+	tcsetattr(0, TCSANOW, &term);*/
 
-	tgetent(0, "xterm-256color");
 	printf("exit(doesn't work)\n");
 	exit(0);
 }

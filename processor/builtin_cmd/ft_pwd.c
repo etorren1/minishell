@@ -17,6 +17,6 @@ void	ft_pwd(void)
 	char	*pwd;
 
 	pwd = get_pwd();
-	printf("%s\n", pwd);
+	ft_putendl_fd(pwd, 1);
 	free(pwd);
 }

@@ -18,5 +18,5 @@ void	ft_env(char **envp)
 
 	i = 0;
 	while (envp[i])
-		printf("%s\n", envp[i++]);
+		ft_putendl_fd(envp[i++], 1);
 }

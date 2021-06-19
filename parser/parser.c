@@ -12,33 +12,6 @@
 
 #include "../includes/parser.h"
 
-//int check_command(char *command, char *str) {
-//	int len;
-//
-//	len = ft_strlen(command);
-//	return ft_strstr_mod(str, command) == 0 && (ft_isspace(str[len])
-//			|| str[len] == '\0');
-//}
-//
-//int	find_command(char *str)
-//{
-//	int	i;
-//
-//	i = 0;
-//
-//	while (ft_isspace(str[i]))
-//		i++;
-//	if (check_command("echo", &str[i])
-//		|| check_command("cd", &str[i])
-//		|| check_command("pwd", &str[i])
-//		|| check_command("export", &str[i])
-//		|| check_command("unset", &str[i])
-//		|| check_command("env", &str[i])
-//		|| check_command("exit", &str[i]))
-//		return (i);
-//	return (-1);
-//}
-
 void	retrieve_flags(t_cmd *cmd)
 {
 	char	*flags;
@@ -131,6 +104,10 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 			else if (line[i] == '|')
 				;
 			else if (line[i] == '>')
+				line = redirect(line, &i);
+			else if (line[i] == '>' && line[i + 2] == '>')
+				return (-3);
+			else if (line[i] == '>' && line[i + 1] == '>')
 				;
 			else if (line[i] == '<')
 				;
@@ -153,8 +130,12 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	char *case4 = "ls -l -a arg1 arg2 ' ' \" ' \" arg3";
 	char *case5 = "echo \"$USER\"";
 	char *case6 = "echo -n $USER $USER";
+	char *case7 = "echo test > 1";
+	char *case8 = "echo test >&1";
+	char *case9 = "echo test 2>&2";
+	char *case10 = "echo test 3>&2asd";
 
-	printf("%d\n", parser(case6, env, cmd));
+	printf("%d\n", parser(case10, env, cmd));
 
 	int i = -1;
 	while (cmd->args[++i])

@@ -24,7 +24,8 @@
 typedef struct  s_cmd {
 	char        *flags;
 	char        **args;
-	int         count_args;
+	int			fd_from;
+	int 		fd_to;
 	int			len;
 }               t_cmd;
 

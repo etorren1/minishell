@@ -79,6 +79,12 @@ int	find_end(const char *line)
 	return (i);
 }
 
+int	non_valid_redirect(char *line)
+{
+	return (*line == '>' && *(line + 1) && *(line + 1) == '>' && *(line + 2)
+		&& (*(line + 2) == '>' || *(line + 2) == '<' || *(line + 2) == '|'));
+}
+
 int	parser(char *command_line, char **env, t_cmd *cmd)
 {
 	int	i;
@@ -101,16 +107,21 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 				line = backslash(line, &i);
 			else if (line[i] == '$')
 				line = dollar(line, &i, env);
-			else if (line[i] == '|')
+		}
+	i = -1;
+	while (line[++i])
+		if (!ft_isspace(line[i]))
+		{
+			if (line[i] == '|')
 				;
-			else if (line[i] == '>')
-				line = redirect(line, &i);
-			else if (line[i] == '>' && line[i + 2] == '>')
+			else if (non_valid_redirect(line))
 				return (-3);
-			else if (line[i] == '>' && line[i + 1] == '>')
-				;
+			else if (line[i] == '>')
+				line = redirect_output(line, &i, cmd);
 			else if (line[i] == '<')
-				;
+				line = redirect_input(line, &i, cmd);
+			if (!line)
+				return (-1);
 		}
 	retrieve_args(line, cmd);
 	retrieve_flags(cmd);
@@ -122,6 +133,8 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 {
 	t_cmd	*cmd = malloc(sizeof(t_cmd));
 	cmd->args = malloc(sizeof (char *));
+	cmd->fd_from = 0;
+	cmd->fd_to = 0;
 	*cmd->args = NULL;
 	char *case0 = "  			1";
 	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
@@ -132,15 +145,25 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	char *case6 = "echo -n $USER $USER";
 	char *case7 = "echo test > 1";
 	char *case8 = "echo test >&1";
-	char *case9 = "echo test 2>&2";
-	char *case10 = "echo test 3>&2asd";
+	char *case9 = "cat 1 < 2 >&1";
+	char *case10 = "echo test > 1 > 2 > 3";
+	char *case11 = "cat > 2\\>2";
+	char *case12 = "cat > $USER";
+	char *case13 = "echo > $USER";
+	char *case14 = "cat < 1 < 2";
 
-	printf("%d\n", parser(case10, env, cmd));
+
+	printf("%d\n", parser(case14, env, cmd));
 
 	int i = -1;
 	while (cmd->args[++i])
 		printf("arg[%d] = %s\n", i , cmd->args[i]);
 	if (cmd->flags)
 		printf("flags = %s\n", cmd->flags);
+	printf("fd_from = %d\n", cmd->fd_from);
+	printf("fd_to = %d\n", cmd->fd_to);
 }*/
+
+// Если cat и !arg[1] то печатаем из fd_from. Если cat и arg[1] то печатаем с
+// arg[1]
 

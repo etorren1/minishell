@@ -36,6 +36,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 			cmd->args = ft_arradd_str(cmd->args, cmd->flags, 1);
 		if (pid == 0)
 		{
+			dup2(cmd->fd_to, 1);
 			char **temp;
 
 			temp = malloc(sizeof(temp) * 2);

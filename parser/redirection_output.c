@@ -72,6 +72,8 @@ static	void define_output_fd(char *line, t_cmd *cmd, int *j, int from)
 	is_valid_ampersand = 0;
 	mode = count_symbols(&line[*j], '>');
 	*j += mode;
+	if (cmd->fd_to > 2)
+		close(cmd->fd_to);
 	if (line[*j] == '&')
 		if (is_next_word_number(&line[++(*j)]))
 		{

@@ -497,8 +497,15 @@ int	main(int argc, char **argv, char **envp)
 			*cmd->args = NULL;
 			cmd->flags = NULL;
 			int i = 0;
+//			while (command_line[i]) {
+//				parser(&command_line[i], env, cmd);
+//				processor(cmd, &env);
+//				i += cmd->len + 1;
+//				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);
+//			}
 			while (command_line[i]) {
 				parser(&command_line[i], env, cmd);
+				if (command_line[i + cmd->len] == '|')
 				processor(cmd, &env);
 				i += cmd->len + 1;
 				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);

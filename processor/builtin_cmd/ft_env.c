@@ -12,11 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_env(char **envp)
+void	ft_env(int fd, char **envp)
 {
 	int i;
 
 	i = 0;
 	while (envp[i])
-		ft_putendl_fd(envp[i++], 1);
+		ft_putendl_fd(envp[i++], fd);
 }

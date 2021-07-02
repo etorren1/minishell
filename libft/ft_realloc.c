@@ -17,6 +17,7 @@ char	*ft_realloc(char *src, size_t size)
 	char	*new;
 	
 	new = (char *)malloc(size);
+	ft_bzero(new, size);
 	if (!new)
 		return (0);
 	if (size < ft_strlen(src))

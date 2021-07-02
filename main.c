@@ -115,7 +115,7 @@ char **get_dir_content(char *str)
 				names[i] = ft_strjoin(names[i], "/");
 			i++;
 		}
-    };
+    }
     closedir(dir);
 	return (names);
 };
@@ -152,8 +152,8 @@ int	main(int argc, char **argv, char **envp)
 	tcgetattr(0, &term);
 
 	fd = open(history, O_RDWR | O_CREAT, 0777);
-	len = 512;
-	//len = 3;
+	//len = 512;
+	len = 28;
 	read_history(fd, &histnode);
 	buf = (char *)malloc(BUF_SIZE);
 	clear_buf(buf, BUF_SIZE);
@@ -174,14 +174,14 @@ int	main(int argc, char **argv, char **envp)
 		{
 			if (count_symb < cursor_pos)
 				count_symb = cursor_pos;
-			while (count_symb > len)
+			if (count_symb >= len + PROMPT)
 			{
 				len += len;
 				command_line = ft_realloc(command_line, len);
 			}
 			clear_buf(buf, BUF_SIZE);
 			i = read(0, buf, BUF_SIZE);
-			// key_up for output previous command
+				// key_up for output previous command
 			if (!ft_strcmp(buf, "\e[A"))
 			{
 				if (histnode->prev)
@@ -501,6 +501,7 @@ int	main(int argc, char **argv, char **envp)
 				parser(&command_line[i], env, cmd);
 				processor(cmd, &env);
 				i += cmd->len + 1;
+				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);
 			}
 		}
 	}

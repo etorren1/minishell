@@ -12,11 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_pwd(void)
+void	ft_pwd(int fd)
 {
 	char	*pwd;
 
 	pwd = get_pwd();
-	ft_putendl_fd(pwd, 1);
+	ft_putendl_fd(pwd, fd);
 	free(pwd);
 }

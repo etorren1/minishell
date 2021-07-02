@@ -18,11 +18,11 @@ void	processor(t_cmd *cmd, char *(**envp))
 	if (!ft_strcmp(cmd->args[0], "echo"))
 		ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
-		ft_pwd();
+		ft_pwd(cmd->fd_to);
 	else if (!ft_strcmp(cmd->args[0], "cd"))
 		ft_cd(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "env"))
-		ft_env(*envp);
+		ft_env(cmd->fd_to, *envp);
 	else if (!ft_strcmp(cmd->args[0], "export"))
 		ft_export(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "unset"))
@@ -78,7 +78,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 				j++;
 			if (!temp[j])
 			{
-				printf("minishell: %s: command not found\n\e[31merrno:\e[0m %s\n\e[31merr_id:\e[0m %d\n", cmd->args[0], strerror(errno), errno);
+				printf("minishell: %s: command not found\n", cmd->args[0]);
 				exit(-1);
 			}
 		}

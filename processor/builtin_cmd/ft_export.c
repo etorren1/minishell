@@ -29,7 +29,7 @@ static int	find_environment_mod(char *env, char **envp)
 	return (-1);
 }
 
-static void	output_envvar(char **envp)
+static void	output_envvar(int fd, char **envp)
 {
 	char	**tmp;
 	int	 	size;
@@ -40,7 +40,7 @@ static void	output_envvar(char **envp)
 	ft_qsort_s(tmp, 0, ft_arrsize(tmp) - 1);
 	size = 0;
 	while (tmp[size])
-		ft_putendl_fd(tmp[size++], 1);
+		ft_putendl_fd(tmp[size++], fd);
 	ft_arrfree(tmp);
 }
 
@@ -68,7 +68,7 @@ void	ft_export(t_cmd *cmd, char *(**envp))
 {
 
 	if (!cmd->args[1])
-		output_envvar(*envp);
+		output_envvar(cmd->fd_to, *envp);
 	else
 		add_envvar(cmd, envp);
 }

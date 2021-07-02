@@ -46,7 +46,7 @@ static	int manual_fd_input(char *line, t_cmd *cmd, int *i)
 
 	j = *i;
 	from = j;
-	while (line[--from])
+	while (from && line[--from])
 		if (!ft_isdigit(line[from]))
 		{
 			if (ft_isspace(line[from]) && from != j - 1)
@@ -65,18 +65,21 @@ static	int manual_fd_input(char *line, t_cmd *cmd, int *i)
 
 static	void define_output_fd(char *line, t_cmd *cmd, int *j, int from)
 {
-	int mode;
-	char *file_name;
+	int	mode;
+	char	*file_name;
+	int	is_valid_ampersand;
 
+	is_valid_ampersand = 0;
 	mode = count_symbols(&line[*j], '>');
 	*j += mode;
 	if (line[*j] == '&')
 		if (is_next_word_number(&line[++(*j)]))
 		{
 			cmd->fd_to = ft_atoi(&line[*j]);
+			is_valid_ampersand = 1;
 			*j += is_next_word_number(&line[*j]);
 		}
-	if (!cmd->fd_to) {
+	if (!is_valid_ampersand) {
 		while (ft_isspace(line[*j]))
 			(*j)++;
 		from = *j;
@@ -98,7 +101,6 @@ char *redirect_output(char *line, int *i, t_cmd *cmd)
 	char *prefix;
 
 	j = *i;
-	cmd->fd_to = 0;
 	from = manual_fd_input(line, cmd, i);
 	define_output_fd(line, cmd, &j, from);
 	prefix = ft_substr(line, 0, from);

@@ -93,6 +93,8 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	i = preparser(command_line);
 	if (i <= 0)
 		return (i);
+	cmd->fd_from = 0;
+	cmd->fd_to = 1;
 	i = -1;
 	cmd->len = find_end(command_line);
 	line = ft_substr(command_line, 0, cmd->len);
@@ -126,6 +128,7 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	retrieve_args(line, cmd);
 	retrieve_flags(cmd);
 	free(line);
+//	printf("command line pointer at %c\n", command_line[cmd->len]);
 	return (1);
 }
 
@@ -144,16 +147,18 @@ int	parser(char *command_line, char **env, t_cmd *cmd)
 	char *case5 = "echo \"$USER\"";
 	char *case6 = "echo -n $USER $USER";
 	char *case7 = "echo test > 1";
-	char *case8 = "echo test >&1";
+	char *case8 = "echo test >&0";
 	char *case9 = "cat 1 < 2 >&1";
 	char *case10 = "echo test > 1 > 2 > 3";
 	char *case11 = "cat > 2\\>2";
 	char *case12 = "cat > $USER";
 	char *case13 = "echo > $USER";
 	char *case14 = "cat < 1 < 2";
+	char *case15 = "> 1 > 2";
+	char *case16 = "> 1 > 2 | cat -e";
 
 
-	printf("%d\n", parser(case14, env, cmd));
+	printf("%d\n", parser(case16, env, cmd));
 
 	int i = -1;
 	while (cmd->args[++i])

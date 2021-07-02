@@ -509,6 +509,8 @@ int	main(int argc, char **argv, char **envp)
 				processor(cmd, &env);
 				i += cmd->len + 1;
 				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);
+				if (cmd->fd_to > 1)
+					close(cmd->fd_to);
 			}
 		}
 	}

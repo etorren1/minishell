@@ -37,6 +37,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 		if (pid == 0)
 		{
 			dup2(cmd->fd_to, 1);
+			dup2(cmd->fd_from, 0);
 			char **temp;
 
 			temp = malloc(sizeof(temp) * 2);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: etorren <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: masharla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 11:21:53 by etorren           #+#    #+#             */
-/*   Updated: 2021/05/16 19:00:15 by etorren          ###   ########.fr       */
+/*   Updated: 2021/07/02 18:01:19 by masharla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -497,20 +497,11 @@ int	main(int argc, char **argv, char **envp)
 			*cmd->args = NULL;
 			cmd->flags = NULL;
 			int i = 0;
-//			while (command_line[i]) {
-//				parser(&command_line[i], env, cmd);
-//				processor(cmd, &env);
-//				i += cmd->len + 1;
-//				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);
-//			}
 			while (command_line[i]) {
 				parser(&command_line[i], env, cmd);
-				if (command_line[i + cmd->len] == '|')
 				processor(cmd, &env);
 				i += cmd->len + 1;
 				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);
-				if (cmd->fd_to > 1)
-					close(cmd->fd_to);
 			}
 		}
 	}

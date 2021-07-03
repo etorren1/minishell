@@ -562,7 +562,7 @@ int	main(int argc, char **argv, char **envp)
 						else
 						{
 							waitpid(pid, &status, 0);
-							if (j != k)
+							if (j != k - 1)
 								close(fds[j][1]);
 							if (j != 0)
 								close(fds[j - 1][0]);

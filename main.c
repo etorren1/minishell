@@ -16,7 +16,7 @@
 #include <dirent.h>
 #define	BUF_SIZE	12
 #define PROMPT		26
-#define	MINISHELL	"\033[1;32mminishell-0.4$ \033[0m"
+#define	MINISHELL	"\033[1;32mminishell-0.5$ \033[0m"
 #define HISTORY		".minishell_history"
 
 int count_sumlen(t_cmd **cmd)
@@ -192,6 +192,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 			clear_buf(buf, BUF_SIZE);
 			i = read(0, buf, BUF_SIZE);
+			//printf("    >>%s=%d|\n", buf, buf[0]);
 				// key_up for output previous command
 			if (!ft_strcmp(buf, "\e[A"))
 			{
@@ -484,6 +485,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 		}
+		//printf("\e[35mCL=\"%s\"\e[0m\n", command_line);
 		tcsetattr(0, TCSANOW, &saveterm);
 		if (ft_strcmp(buf, "\4"))
 		{
@@ -506,7 +508,8 @@ int	main(int argc, char **argv, char **envp)
 				histnode = histnode->next;
 
 			int i = 0;
-			while (command_line[i]) {
+			while (command_line[i]) 
+			{
 				if (cmd)
 					free_arrcmd(cmd);
 				cmd = (t_cmd **)malloc(sizeof(cmd));
@@ -518,7 +521,7 @@ int	main(int argc, char **argv, char **envp)
 				while (cmd[k])
 					k++;
 				// если без пайпов
-				if (k == 1)
+				if (k == 1) 
 					processor(*cmd, &env);
 				// если пайпы
 				else if (k > 1)
@@ -534,16 +537,25 @@ int	main(int argc, char **argv, char **envp)
 					{
 						if (j < k - 1)
 							if (pipe(fds[j]))
+							{
+								ft_putendl_fd("Pipe ERROR\n",2);
 								return (100);
+							}
 						pid = fork();
 						if (pid < 0)
 							return (101);
 						else if (pid == 0)
 						{
 							if (j < k - 1)
+							{
+								cmd[j]->fd_to = fds[j][1];
 								dup2(fds[j][1], 1);
+							}
 							if (j != 0)
+							{
+								cmd[j]->fd_from = fds[j - 1][0];
 								dup2(fds[j - 1][0], 0);
+							}
 							processor(cmd[j], &env);
 							exit(0);
 						}
@@ -554,10 +566,8 @@ int	main(int argc, char **argv, char **envp)
 								close(fds[j][1]);
 							if (j != 0)
 								close(fds[j - 1][0]);
-							j++;
 						}
 					}
-
 				}
 
 				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);

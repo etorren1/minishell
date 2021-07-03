@@ -512,7 +512,7 @@ int	main(int argc, char **argv, char **envp)
 				cmd = (t_cmd **)malloc(sizeof(cmd));
 				*cmd = NULL;
 				parser(&command_line[i], env, &cmd);
-				i += count_sumlen(cmd);
+				i += count_sumlen(cmd) + 1;
 				// считаем элементы
 				int k = 0;
 				while (cmd[k])
@@ -520,6 +520,46 @@ int	main(int argc, char **argv, char **envp)
 				// если без пайпов
 				if (k == 1)
 					processor(*cmd, &env);
+				// если пайпы
+				else if (k > 1)
+				{
+					int **fds = (int **)malloc(sizeof (int *) * (k - 1));
+					int j = -1;
+					int pid;
+					int status;
+					while (++j < k)
+						fds[j] = (int *)malloc(sizeof(int) * 2);
+					j = -1;
+					while (++j < k)
+					{
+						if (j < k - 1)
+							if (pipe(fds[j]))
+								return (100);
+						pid = fork();
+						if (pid < 0)
+							return (101);
+						else if (pid == 0)
+						{
+							if (j < k - 1)
+								dup2(fds[j][1], 1);
+							if (j != 0)
+								dup2(fds[j - 1][0], 0);
+							processor(cmd[j], &env);
+							exit(0);
+						}
+						else
+						{
+							waitpid(pid, &status, 0);
+							if (j != k)
+								close(fds[j][1]);
+							if (j != 0)
+								close(fds[j - 1][0]);
+							j++;
+						}
+					}
+
+				}
+
 				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);
 			}
 		}

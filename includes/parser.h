@@ -22,3 +22,4 @@ char	*dollar(char *str, int *i, char **env);
 int		preparser(const char *command_line);
 char	*redirect_output(char *line, int *i, t_cmd *cmd);
 char	*redirect_input(char *line, int *i, t_cmd *cmd);
+void	free_arrcmd(t_cmd **cmd);

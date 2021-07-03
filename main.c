@@ -19,6 +19,18 @@
 #define	MINISHELL	"\033[1;32mminishell-0.4$ \033[0m"
 #define HISTORY		".minishell_history"
 
+int count_sumlen(t_cmd **cmd)
+{
+	int count;
+	int i;
+
+	count = 0;
+	i = -1;
+	while (cmd[++i])
+		count += cmd[i]->len;
+	return count;
+}
+
 int	ft_putint(int ch)
 {
 	write (1, &ch, 1);
@@ -143,11 +155,10 @@ int	main(int argc, char **argv, char **envp)
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
 	up_shlvl(&env);
-	t_cmd *cmd;
+	t_cmd **cmd;
 
 	tgetent(0, "xterm-256color");
 
-	cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	tcgetattr(0, &saveterm);
 	tcgetattr(0, &term);
 
@@ -493,14 +504,22 @@ int	main(int argc, char **argv, char **envp)
 			}
 			else
 				histnode = histnode->next;
-			cmd->args = malloc(sizeof (char *));
-			*cmd->args = NULL;
-			cmd->flags = NULL;
+
 			int i = 0;
 			while (command_line[i]) {
-				parser(&command_line[i], env, cmd);
-				processor(cmd, &env);
-				i += cmd->len + 1;
+				if (cmd)
+					free_arrcmd(cmd);
+				cmd = (t_cmd **)malloc(sizeof(cmd));
+				*cmd = NULL;
+				parser(&command_line[i], env, &cmd);
+				i += count_sumlen(cmd);
+				// считаем элементы
+				int k = 0;
+				while (cmd[k])
+					k++;
+				// если без пайпов
+				if (k == 1)
+					processor(*cmd, &env);
 				//printf("\nfd_from=%d\nft_to=%d\n", cmd->fd_from, cmd->fd_to);
 			}
 		}

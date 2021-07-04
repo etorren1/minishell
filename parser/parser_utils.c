@@ -23,42 +23,35 @@ char	*join_and_free(char *prefix, char *body, char *postfix)
 	return (result);
 }
 
-long long	ft_strchr_mod(const char *str, char c)
+int	find_end(const char *line)
 {
-	long	i;
+	int	i;
 
-	if (!str)
-		return (-2);
 	i = -1;
-	while (str[++i])
-		if (str[i] == c)
-			return (i);
-	return (-1);
+	while (line[++i])
+	{
+		if (line[i] == '\'')
+		{
+			i++;
+			while (line[i] != '\'')
+				i++;
+		}
+		else if (line[i] == '"')
+		{
+			i++;
+			while (line[i] != '"')
+				i++;
+		}
+		else if (line[i] == ';' || line[i] == '|')
+			break ;
+	}
+	return (i);
 }
 
-char	*ft_strstr(const char *haystack, const char *needle)
+int	non_valid_redirect(const char *line)
 {
-	char	*ptr;
-	size_t	i;
-	size_t	size;
-
-	ptr = (char *)haystack;
-	if (!needle || needle[0] == '\0')
-		return (ptr);
-	size = ft_strlen(needle);
-	while (*ptr)
-	{
-		if (*ptr == needle[0])
-		{
-			i = 0;
-			while (ptr[i] && needle[i] && ptr[i] == needle[i])
-				i++;
-			if (size == i)
-				return (ptr);
-		}
-		ptr++;
-	}
-	return (0);
+	return (*line == '>' && *(line + 1) && *(line + 1) == '>' && *(line + 2)
+		&& (*(line + 2) == '>' || *(line + 2) == '<' || *(line + 2) == '|'));
 }
 
 int	ft_strstr_mod(const char *haystack, const char *needle)

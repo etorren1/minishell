@@ -12,14 +12,14 @@
 
 #include "../includes/parser.h"
 
-char *redirect_input(char *line, int *i, t_cmd *cmd)
+char	*redirect_input(char *line, int *i, t_cmd *cmd)
 {
-	int from;
-	int j;
-	char *prefix;
+	int		from;
+	int		j;
+	char	*prefix;
 
 	j = *i + 1;
-	while(line[j] && ft_isspace(line[j]))
+	while (line[j] && ft_isspace(line[j]))
 		j++;
 	from = j;
 	while (line[j] && !ft_isspace(line[j]))

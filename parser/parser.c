@@ -12,7 +12,7 @@
 
 #include "../includes/parser.h"
 
-void	retrieve_flags(t_cmd *cmd)
+static void	retrieve_flags(t_cmd *cmd)
 {
 	char	*flags;
 
@@ -32,7 +32,7 @@ void	retrieve_flags(t_cmd *cmd)
 	cmd->flags = flags;
 }
 
-void	retrieve_args(const char *str, t_cmd *cmd)
+static void	retrieve_args(const char *str, t_cmd *cmd)
 {
 	int	start;
 	int	end;
@@ -42,12 +42,13 @@ void	retrieve_args(const char *str, t_cmd *cmd)
 	start = 0;
 	while (str[start])
 	{
-		if (!ft_isspace(str[start])) {
+		if (!ft_isspace(str[start]))
+		{
 			end = start;
 			while (str[end] && !ft_isspace(str[end]))
 				end++;
 			cmd->args = ft_arradd_str_mod(cmd->args, ft_substr(str, start,
-					end - start), arg++);
+						end - start), arg++);
 			start = end - 1;
 		}
 		start++;
@@ -55,128 +56,69 @@ void	retrieve_args(const char *str, t_cmd *cmd)
 	cmd->args[arg] = NULL;
 }
 
-int	find_end(const char *line)
+static void	parse_symbols(char **line, char **env)
 {
-	int	i;
+	int	j;
 
-	i = -1;
-	while (line[++i]){
-		if (line[i] == '\'')
-		{
-			i++;
-			while (line[i] != '\'')
-				i++;
-		}
-		else if (line[i] == '"')
-		{
-			i++;
-			while (line[i] != '"')
-				i++;
-		}
-		else if(line[i] == ';' || line[i] == '|')
-			break ;
-	}
-	return (i);
-}
-
-int	non_valid_redirect(char *line)
-{
-	return (*line == '>' && *(line + 1) && *(line + 1) == '>' && *(line + 2)
-		&& (*(line + 2) == '>' || *(line + 2) == '<' || *(line + 2) == '|'));
-}
-
-void free_cmd(t_cmd *cmd)
-{
-	int	i;
-
-	i = -1;
-	while (cmd->args[++i])
-		free(cmd->args[i]);
-	if (cmd->flags)
-		free(cmd->flags);
-	free(cmd);
-}
-
-void free_arrcmd(t_cmd **cmd)
-{
-	int	i;
-
-	i = -1;
-	while (cmd[++i])
-		free_cmd(cmd[i]);
-	free(cmd);
-}
-
-t_cmd	**ft_arrcmd_addelem(t_cmd **arr, t_cmd *elem)
-{
-	int	size;
-	int	i;
-	t_cmd	**new_arr;
-
-	size = 0;
-	i = -1;
-	while (arr[++i])
-		size++;
-	new_arr = malloc(sizeof(t_cmd) * size + sizeof(t_cmd) * 2);
-	i = -1;
-	while (arr[++i])
+	j = -1;
+	while ((*line)[++j])
 	{
-		new_arr[i] = arr[i];
-		arr[i] = NULL;
+		if (!ft_isspace((*line)[j]))
+		{
+			if ((*line)[j] == '\'')
+				*line = single_quotes(*line, &j);
+			else if ((*line)[j] == '"')
+				*line = double_quotes(*line, env, &j);
+			else if ((*line)[j] == '\\')
+				*line = backslash(*line, &j);
+			else if ((*line)[j] == '$')
+				*line = dollar(*line, &j, env);
+		}
 	}
-	new_arr[i++] = elem;
-	new_arr[i] = NULL;
-	free_arrcmd(arr);
-	return new_arr;
+}
+
+static int	parse_redirects(char **line, t_cmd *tmp)
+{
+	int	j;
+
+	j = -1;
+	while ((*line)[++j])
+	{
+		if (!ft_isspace((*line)[j]))
+		{
+			if (non_valid_redirect(*line))
+				return (-3);
+			else if ((*line)[j] == '>')
+				*line = redirect_output(*line, &j, tmp);
+			else if ((*line)[j] == '<')
+				*line = redirect_input(*line, &j, tmp);
+			if (!*line)
+				return (-1);
+		}
+	}
+	return (1);
 }
 
 int	parser(char *command_line, char **env, t_cmd ***cmd)
 {
-	int	i;
-	int j;
+	int		i;
+	int		res;
 	char	*line;
 	t_cmd	*tmp;
 
-	i = preparser(command_line);
-	if (i <= 0)
-		return (i);
+	res = preparser(command_line);
+	if (res <= 0)
+		return (res);
 	i = 0;
 	while (!i || command_line[i - 1] == '|')
 	{
-		tmp = malloc(sizeof(t_cmd));
-		tmp->args = malloc(sizeof (char *));
-		*tmp->args = NULL;
-		tmp->flags = NULL;
-		tmp->fd_from = 1;
-		tmp->fd_to = 1;
+		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		j = -1;
-		while (line[++j])
-			if (!ft_isspace(line[j]))
-			{
-				if (line[j] == '\'')
-					line = single_quotes(line, &j);
-				else if (line[j] == '"')
-					line = double_quotes(line, env, &j);
-				else if (line[j] == '\\')
-					line = backslash(line, &j);
-				else if (line[j] == '$')
-					line = dollar(line, &j, env);
-			}
-		j = -1;
-		while (line[++j])
-			if (!ft_isspace(line[j]))
-			{
-				if (non_valid_redirect(line))
-					return (-3);
-				else if (line[j] == '>')
-					line = redirect_output(line, &j, tmp);
-				else if (line[j] == '<')
-					line = redirect_input(line, &j, tmp);
-				if (!line)
-					return (-1);
-			}
+		parse_symbols(&line, env);
+		res = parse_redirects(&line, tmp);
+		if (res < 0)
+			return (res);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
 		i += tmp->len;
@@ -185,9 +127,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 		free(line);
 		*cmd = ft_arrcmd_addelem(*cmd, tmp);
 	}
-
-//	printf("command line pointer at %c\n", command_line[cmd->len]);
-	return (1);
+	return (res);
 }
 
 /*int	main(int argc, char **argv, char **env)
@@ -213,9 +153,10 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 	char *case15 = "> 1 > 2";
 	char *case16 = "> 1 > 2 | cat -e";
 	char *case17 = "ls | cat -e | grep 1 ; cd parser";
+	char *case18 = "echo $?$USER";
 
 
-	printf("%d\n", parser(case17, env, &cmd));
+	printf("%d\n", parser(case18, env, &cmd));
 
 	int i = -1;
 	while (cmd[++i])
@@ -230,7 +171,4 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 		printf("fd_to = %d\n", cmd[i]->fd_to);
 	}
 }*/
-
-// Если cat и !arg[1] то печатаем из fd_from. Если cat и arg[1] то печатаем с
-// arg[1]
 

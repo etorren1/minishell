@@ -514,7 +514,12 @@ int	main(int argc, char **argv, char **envp)
 					free_arrcmd(cmd);
 				cmd = (t_cmd **)malloc(sizeof(cmd));
 				*cmd = NULL;
-				parser(&command_line[i], env, &cmd);
+				if (parser(&command_line[i], env, &cmd) < 0)
+				{
+					// нада обработать ошибку парсера
+					printf("Parser error\n");
+					break ;
+				}
 				i += count_sumlen(cmd) + 1;
 				// считаем элементы
 				int k = 0;
@@ -548,7 +553,7 @@ int	main(int argc, char **argv, char **envp)
 						{
 							if (j < k - 1)
 							{
-								cmd[j]->fd_to = fds[j][1];
+//								cmd[j]->fd_to = fds[j][1];
 								dup2(fds[j][1], 1);
 							}
 							if (j != 0)

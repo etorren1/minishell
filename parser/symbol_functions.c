@@ -24,40 +24,6 @@ char	*backslash(char *str, int *i)
 	return (join_and_free(prefix, ft_strdup(""), postfix));
 }
 
-// $? $$ $'' $2abc $'2'abc
-char	*dollar(char *str, int *i, char **env)
-{
-	int		start;
-	int		e;
-	char	*prefix;
-	char	*body;
-	char	*postfix;
-
-	start = (*i)++;
-//	if (!ft_isalpha(str[*i + 1]) && str[*i] != '_')
-	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-		(*i)++;
-	if (*i == start + 1)
-		return (str);
-	prefix = ft_strjoin(ft_substr(str, start + 1, *i - start - 1), "=");
-	e = -1;
-	while (env[++e])
-		if (ft_strstr_mod(env[e], prefix) == 0)
-			break ;
-	if (env[e])
-		body = ft_substr(env[e], ft_strlen(prefix),
-				ft_strlen(env[e]) - ft_strlen(prefix));
-	else
-		body = ft_strdup("");
-	e = ft_strlen(body) - ft_strlen(prefix);
-	free(prefix);
-	prefix = ft_substr(str, 0, start);
-	postfix = ft_strdup(&str[*i]);
-	*i += e;
-	free(str);
-	return (join_and_free(prefix, body, postfix));
-}
-
 char	*single_quotes(char *str, int *i)
 {
 	int		start;

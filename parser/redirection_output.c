@@ -12,16 +12,17 @@
 
 #include "../includes/parser.h"
 
-int is_next_word_number(char *str) {
+int	is_next_word_number(char *str)
+{
 	int	i;
 
 	i = 0;
 	while (*str && ft_isspace(*str))
 		str++;
-	while(str[i])
+	while (str[i])
 	{
 		if (ft_isspace(str[i]))
-			break;
+			break ;
 		if (!ft_isdigit(str[i]))
 			return (0);
 		i++;
@@ -29,24 +30,25 @@ int is_next_word_number(char *str) {
 	return (i);
 }
 
-int count_symbols(char *line, char c)
+int	count_symbols(char *line, char c)
 {
 	int	count;
 
 	count = 0;
 	while (*line == c)
 		line++ && count++;
-	return count;
+	return (count);
 }
 
-static	int manual_fd_input(char *line, t_cmd *cmd, int *i)
+static int	manual_fd_input(char *line, t_cmd *cmd, int *i)
 {
-	int j;
-	int from;
+	int	j;
+	int	from;
 
 	j = *i;
 	from = j;
 	while (from && line[--from])
+	{
 		if (!ft_isdigit(line[from]))
 		{
 			if (ft_isspace(line[from]) && from != j - 1)
@@ -60,28 +62,29 @@ static	int manual_fd_input(char *line, t_cmd *cmd, int *i)
 				from = j;
 			break ;
 		}
-	return from;
+	}
+	return (from);
 }
 
-static	void define_output_fd(char *line, t_cmd *cmd, int *j, int from)
+static void	define_output_fd(char *line, t_cmd *cmd, int *j, int from)
 {
-	int	mode;
+	int		mode;
 	char	*file_name;
-	int	is_valid_ampersand;
+	int		is_valid_ampersand;
 
 	is_valid_ampersand = 0;
 	mode = count_symbols(&line[*j], '>');
 	*j += mode;
 	if (cmd->fd_to > 2)
 		close(cmd->fd_to);
-	if (line[*j] == '&')
-		if (is_next_word_number(&line[++(*j)]))
-		{
-			cmd->fd_to = ft_atoi(&line[*j]);
-			is_valid_ampersand = 1;
-			*j += is_next_word_number(&line[*j]);
-		}
-	if (!is_valid_ampersand) {
+	if (line[*j] == '&' && is_next_word_number(&line[++(*j)]))
+	{
+		cmd->fd_to = ft_atoi(&line[*j]);
+		is_valid_ampersand = 1;
+		*j += is_next_word_number(&line[*j]);
+	}
+	if (!is_valid_ampersand)
+	{
 		while (ft_isspace(line[*j]))
 			(*j)++;
 		from = *j;
@@ -96,11 +99,11 @@ static	void define_output_fd(char *line, t_cmd *cmd, int *j, int from)
 	}
 }
 
-char *redirect_output(char *line, int *i, t_cmd *cmd)
+char	*redirect_output(char *line, int *i, t_cmd *cmd)
 {
-	int from;
-	int j;
-	char *prefix;
+	int		from;
+	int		j;
+	char	*prefix;
 
 	j = *i;
 	from = manual_fd_input(line, cmd, i);

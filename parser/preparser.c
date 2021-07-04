@@ -12,7 +12,7 @@
 
 #include "../includes/parser.h"
 
-int is_pair(const char *str, char c, int *i)
+int	is_pair(const char *str, char c, int *i)
 {
 	int	res;
 
@@ -20,10 +20,10 @@ int is_pair(const char *str, char c, int *i)
 	while (!res && str[++(*i)])
 		if (str[*i] == c)
 			res = 1;
-	return res;
+	return (res);
 }
 
-int less_of_limit(const char *str, char c, int *i, int limit)
+int	less_of_limit(const char *str, char c, int *i, int limit)
 {
 	int	res;
 
@@ -42,7 +42,7 @@ int less_of_limit(const char *str, char c, int *i, int limit)
 
 int	is_empty(const char *str)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (str[++i])
@@ -53,10 +53,15 @@ int	is_empty(const char *str)
 	return (0);
 }
 
-// returns 0 if nothing to parse, -1 if multiline
-int preparser(const char *command_line)
+int	is_token(char c)
 {
-	int i;
+	return (c == '>' || c == '<' || c == '|' || c == '&');
+}
+
+// returns 0 if nothing to parse, -1 if multiline
+int	preparser(const char *command_line)
+{
+	int	i;
 
 	i = -1;
 	if (!command_line || is_empty(command_line))
@@ -67,6 +72,19 @@ int preparser(const char *command_line)
 			return (-1);
 		if (command_line[i] == '"' && !is_pair(command_line, '"', &i))
 			return (-1);
+		if (command_line[i] == '>')
+		{
+			if (command_line[i - 1] && is_token(command_line[i - 1]))
+				continue;
+			if (command_line[i + 1] && command_line[i + 1] == '>' &&
+				command_line[i + 2] && is_token(command_line[i + 2]))
+				return (-1);
+		}
+		else if (is_token(command_line[i]))
+		{
+			if (command_line[i + 1] && is_token(command_line[i + 1]))
+				return (-1);
+		}
 	}
 	return (1);
 }

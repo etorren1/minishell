@@ -66,31 +66,42 @@ static int	manual_fd_input(char *line, t_cmd *cmd, int *i)
 	return (from);
 }
 
-static void	define_output_fd(char *line, t_cmd *cmd, int *j, int from)
+static void	define_output_fd(char **line, t_cmd *cmd, int *j, int from, char
+**env)
 {
 	int		mode;
 	char	*file_name;
 	int		is_valid_ampersand;
 
 	is_valid_ampersand = 0;
-	mode = count_symbols(&line[*j], '>');
+	mode = count_symbols(*line + *j, '>');
 	*j += mode;
 	if (cmd->fd_to > 2)
 		close(cmd->fd_to);
-	if (line[*j] == '&' && is_next_word_number(&line[++(*j)]))
+	if ((*line)[*j] == '&' && is_next_word_number(*line + ++(*j)))
 	{
-		cmd->fd_to = ft_atoi(&line[*j]);
+		cmd->fd_to = ft_atoi(*line + *j);
 		is_valid_ampersand = 1;
-		*j += is_next_word_number(&line[*j]);
+		*j += is_next_word_number(*line + *j);
 	}
 	if (!is_valid_ampersand)
 	{
-		while (ft_isspace(line[*j]))
+		while (ft_isspace((*line)[*j]))
 			(*j)++;
 		from = *j;
-		while (line[*j] && !ft_isspace(line[*j]))
+		while ((*line)[*j] && !ft_isspace((*line)[*j]))
+		{
+			if ((*line)[*j] == '\'')
+				*line = single_quotes(*line, j);
+			else if ((*line)[*j] == '"')
+				*line = double_quotes(*line, env, j);
+			else if ((*line)[*j] == '\\')
+				*line = backslash(*line, j);
+			else if ((*line)[*j] == '$')
+				*line = dollar(*line, j, env);
 			(*j)++;
-		file_name = ft_substr(line, from, *j - from);
+		}
+		file_name = ft_substr(*line, from, *j - from);
 		if (mode > 1)
 			cmd->fd_to = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else
@@ -99,15 +110,16 @@ static void	define_output_fd(char *line, t_cmd *cmd, int *j, int from)
 	}
 }
 
-char	*redirect_output(char *line, int *i, t_cmd *cmd)
+char	*redirect_output(char **line, int *i, t_cmd *cmd, char **env)
 {
 	int		from;
 	int		j;
 	char	*prefix;
 
 	j = *i;
-	from = manual_fd_input(line, cmd, i);
-	define_output_fd(line, cmd, &j, from);
-	prefix = ft_substr(line, 0, from);
-	return (join_and_free(prefix, ft_strdup(""), ft_strdup(&line[j])));
+	from = manual_fd_input(*line, cmd, i);
+	define_output_fd(line, cmd, &j, from, env);
+	prefix = ft_substr(*line, 0, from);
+	(*i)--;
+	return (join_and_free(prefix, ft_strdup(""), ft_strdup(*line + j)));
 }

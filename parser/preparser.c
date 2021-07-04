@@ -55,7 +55,7 @@ int	is_empty(const char *str)
 
 int	is_token(char c)
 {
-	return (c == '>' || c == '<' || c == '|' || c == '&');
+	return (c == '>' || c == '<' || c == '|' || c == '&' || c == ';');
 }
 
 // returns 0 if nothing to parse, -1 if multiline

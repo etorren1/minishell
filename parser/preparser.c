@@ -68,16 +68,15 @@ int	preparser(const char *command_line)
 		return (0);
 	while (command_line[++i])
 	{
-		if (command_line[i] == '\'' && !is_pair(command_line, '\'', &i))
-			return (-1);
-		if (command_line[i] == '"' && !is_pair(command_line, '"', &i))
+		if ((command_line[i] == '\'' && !is_pair(command_line, '\'', &i))
+			|| (command_line[i] == '"' && !is_pair(command_line, '"', &i)))
 			return (-1);
 		if (command_line[i] == '>')
 		{
 			if (command_line[i - 1] && is_token(command_line[i - 1]))
-				continue;
-			if (command_line[i + 1] && command_line[i + 1] == '>' &&
-				command_line[i + 2] && is_token(command_line[i + 2]))
+				continue ;
+			if (command_line[i + 1] && command_line[i + 1] == '>'
+				&& command_line[i + 2] && is_token(command_line[i + 2]))
 				return (-1);
 		}
 		else if (is_token(command_line[i]))

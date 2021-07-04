@@ -32,66 +32,62 @@ static void	retrieve_flags(t_cmd *cmd)
 	cmd->flags = flags;
 }
 
-static void	retrieve_args(const char *str, t_cmd *cmd)
+static void	retrieve_next_arg(const char *str, t_cmd *cmd, int from, int to)
 {
-	int	start;
-	int	end;
-	int	arg;
+	char	*arg;
+	int		arg_num;
 
-	arg = 0;
-	start = 0;
-	while (str[start])
-	{
-		if (!ft_isspace(str[start]))
-		{
-			end = start;
-			while (str[end] && !ft_isspace(str[end]))
-				end++;
-			cmd->args = ft_arradd_str_mod(cmd->args, ft_substr(str, start,
-						end - start), arg++);
-			start = end - 1;
-		}
-		start++;
-	}
-	cmd->args[arg] = NULL;
+	arg = ft_substr(str, from, to - from);
+	arg_num = 0;
+	while (cmd->args[arg_num])
+		arg_num++;
+	cmd->args = ft_arradd_str_mod(cmd->args, arg, arg_num);
 }
 
-static void	parse_symbols(char **line, char **env)
+static void	parse_symbols(char **line, char **env, t_cmd *cmd)
 {
-	int	j;
+	int	i;
+	int	start;
 
-	j = -1;
-	while ((*line)[++j])
+	i = 0;
+	while (ft_isspace((*line)[i]))
+		i++;
+	start = i;
+	while ((*line)[i])
 	{
-		if (!ft_isspace((*line)[j]))
+		if ((*line)[i] == '\'')
+			*line = single_quotes(*line, &i);
+		else if ((*line)[i] == '"')
+			*line = double_quotes(*line, env, &i);
+		else if ((*line)[i] == '\\')
+			*line = backslash(*line, &i);
+		else if ((*line)[i] == '$')
+			*line = dollar(*line, &i, env);
+		if ((i++) && (ft_isspace((*line)[i]) || !(*line)[i]))
 		{
-			if ((*line)[j] == '\'')
-				*line = single_quotes(*line, &j);
-			else if ((*line)[j] == '"')
-				*line = double_quotes(*line, env, &j);
-			else if ((*line)[j] == '\\')
-				*line = backslash(*line, &j);
-			else if ((*line)[j] == '$')
-				*line = dollar(*line, &j, env);
+			retrieve_next_arg(*line, cmd, start, i);
+			while (ft_isspace((*line)[i]))
+				i++;
+			start = i;
 		}
 	}
 }
 
 static int	parse_redirects(char **line, t_cmd *tmp)
 {
-	int	j;
+	int	i;
 
-	j = -1;
-	while ((*line)[++j])
+	i = -1;
+	while ((*line)[++i])
 	{
-		if (!ft_isspace((*line)[j]))
+		if (!ft_isspace((*line)[i]))
 		{
 			if (non_valid_redirect(*line))
 				return (-3);
-			else if ((*line)[j] == '>')
-				*line = redirect_output(*line, &j, tmp);
-			else if ((*line)[j] == '<')
-				*line = redirect_input(*line, &j, tmp);
+			else if ((*line)[i] == '>')
+				*line = redirect_output(*line, &i, tmp);
+			else if ((*line)[i] == '<')
+				*line = redirect_input(*line, &i, tmp);
 			if (!*line)
 				return (-1);
 		}
@@ -115,14 +111,12 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		parse_symbols(&line, env);
-		res = parse_redirects(&line, tmp);
-		if (res < 0)
-			return (res);
+		parse_symbols(&line, env, tmp);
+		if (parse_redirects(&line, tmp) < 0)
+			return (-1);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
 		i += tmp->len;
-		retrieve_args(line, tmp);
 		retrieve_flags(tmp);
 		free(line);
 		*cmd = ft_arrcmd_addelem(*cmd, tmp);
@@ -130,45 +124,46 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 	return (res);
 }
 
-/*int	main(int argc, char **argv, char **env)
-{
-	t_cmd	**cmd = malloc(sizeof(cmd));
-	cmd[0] = NULL;
-
-	char *case0 = "  			1";
-	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
-	char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
-	char *case3 = "echo $USER";
-	char *case4 = "ls -l -a arg1 arg2 ' ' \" ' \" arg3";
-	char *case5 = "echo \"$USER\"";
-	char *case6 = "echo -n $USER $USER";
-	char *case7 = "echo test > 1";
-	char *case8 = "echo test >&0";
-	char *case9 = "cat 1 < 2 >&1";
-	char *case10 = "echo test > 1 > 2 > 3";
-	char *case11 = "cat > 2\\>2";
-	char *case12 = "cat > $USER";
-	char *case13 = "echo > $USER";
-	char *case14 = "cat < 1";
-	char *case15 = "> 1 > 2";
-	char *case16 = "> 1 > 2 | cat -e";
-	char *case17 = "ls | cat -e | grep 1 ; cd parser";
-	char *case18 = "echo $?$USER";
-
-
-	printf("%d\n", parser(case18, env, &cmd));
-
-	int i = -1;
-	while (cmd[++i])
-	{
-		printf("Element %d\n", i);
-		int j = -1;
-		while (cmd[i]->args[++j])
-			printf("arg[%d] = %s\n", j, cmd[i]->args[j]);
-		if (cmd[i]->flags)
-			printf("flags = %s\n", cmd[i]->flags);
-		printf("fd_from = %d\n", cmd[i]->fd_from);
-		printf("fd_to = %d\n", cmd[i]->fd_to);
-	}
-}*/
-
+//int	main(int argc, char **argv, char **env)
+//{
+//	t_cmd	**cmd = malloc(sizeof(cmd));
+//	cmd[0] = NULL;
+//
+//	char *case0 = "  			1";
+//	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
+//	char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
+//	char *case3 = "echo $USER";
+//	char *case4 = "ls -l -a arg1 arg2 ' ' \" ' \" arg3";
+//	char *case5 = "echo \"$USER\"";
+//	char *case6 = "echo -n $USER $USER";
+//	char *case7 = "echo test > 1";
+//	char *case8 = "echo test >&0";
+//	char *case9 = "cat 1 < 2 >&1";
+//	char *case10 = "echo test > 1 > 2 > 3";
+//	char *case11 = "cat > 2\\>2";
+//	char *case12 = "cat > $USER";
+//	char *case13 = "echo > $USER";
+//	char *case14 = "cat < 1";
+//	char *case15 = "> 1 > 2";
+//	char *case16 = "> 1 > 2 | cat -e";
+//	char *case17 = "ls | cat -e | grep 1 ; cd parser";
+//	char *case18 = "echo $?$USER";
+//	char *case19 = "echo test ; echo test1 ;   echo test2";
+//	char *case20 = "echo $?";
+//
+//
+//	printf("%d\n", parser(case17, env, &cmd));
+//
+//	int i = -1;
+//	while (cmd[++i])
+//	{
+//		printf("Element %d\n", i);
+//		int j = -1;
+//		while (cmd[i]->args[++j])
+//			printf("arg[%d] = %s\n", j, cmd[i]->args[j]);
+//		if (cmd[i]->flags)
+//			printf("flags = %s\n", cmd[i]->flags);
+//		printf("fd_from = %d\n", cmd[i]->fd_from);
+//		printf("fd_to = %d\n", cmd[i]->fd_to);
+//	}
+//}

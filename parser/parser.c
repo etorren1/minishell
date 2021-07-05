@@ -46,7 +46,6 @@ static void	retrieve_next_arg(const char *str, t_cmd *cmd, int from, int to)
 
 static int	parse_redirects(char **line, t_cmd *tmp, int *i, char **env)
 {
-
 	while ((*line)[*i])
 	{
 		if (!ft_isspace((*line)[*i]))
@@ -56,17 +55,16 @@ static int	parse_redirects(char **line, t_cmd *tmp, int *i, char **env)
 			else if ((*line)[*i] == '>')
 				*line = redirect_output(line, i, tmp, env);
 			else if ((*line)[*i] == '<')
-				*line = redirect_input(*line, i, tmp);
+				*line = redirect_input(line, i, tmp, env);
 			if (!*line)
 				return (-1);
 		}
 		(*i)++;
 	}
-	(*i)--;
 	return (1);
 }
 
-static void	parse_symbols(char **line, char **env, t_cmd *cmd)
+static int	parse_symbols(char **line, char **env, t_cmd *cmd)
 {
 	int	i;
 	int	start;
@@ -77,16 +75,10 @@ static void	parse_symbols(char **line, char **env, t_cmd *cmd)
 	start = i;
 	while ((*line)[i])
 	{
-		if ((*line)[i] == '\'')
-			*line = single_quotes(*line, &i);
-		else if ((*line)[i] == '"')
-			*line = double_quotes(*line, env, &i);
-		else if ((*line)[i] == '\\')
-			*line = backslash(*line, &i);
-		else if ((*line)[i] == '$')
-			*line = dollar(*line, &i, env);
-		else if ((*line)[i] == '>' || (*line)[i] == '<')
-			parse_redirects(line, cmd, &i, env);
+		handle_basic_tokens(line, &i, env);
+		if (((*line)[i] == '>' || (*line)[i] == '<')
+				&& parse_redirects(line, cmd, &i, env) < 0)
+			return (-1);
 		if ((*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
 		{
 			retrieve_next_arg(*line, cmd, start, i);
@@ -95,6 +87,7 @@ static void	parse_symbols(char **line, char **env, t_cmd *cmd)
 			start = i;
 		}
 	}
+	return (1);
 }
 
 int	parser(char *command_line, char **env, t_cmd ***cmd)
@@ -113,9 +106,8 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		parse_symbols(&line, env, tmp);
-//		if (parse_redirects(&line, tmp) < 0)
-//			return (-1);
+		if (parse_symbols(&line, env, tmp) < 0)
+			return (-1);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
 		i += tmp->len;
@@ -141,20 +133,24 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case7 = "echo test > 1";
 //	char *case8 = "echo test >&0";
 //	char *case9 = "cat 1 < 2 >&1";
-//	char *case10 = "echo test > $USER > 3";
+//	char *case10 = "cat < 1 < 1 < 1 < 1";
 //	char *case11 = "cat > 2\\>2";
 //	char *case12 = "cat > $USER";
 //	char *case13 = "echo > $USER";
 //	char *case14 = "cat < 1";
 //	char *case15 = "> 1 > 2";
-//	char *case16 = "ls | cat";
+//	char *case16 = "ls | ls | cat -e";
 //	char *case17 = "ls | cat -e | grep 1 ; cd parser";
-//	char *case18 = "echo $?$USER";
+//	char *case18 = "\'\\\"$USER\'";
 //	char *case19 = "echo test ; echo test1 ;   echo test2";
 //	char *case20 = "echo $?";
+//	char *case21 = "echo \\\"$USER\\\"\\\"";
+//	char *case22 = "echo \\\"\\\"";
+//	char *case23 = "echo t";
+//	char *case24 = "ls > 1 > $USER | cat -e";
 //
 //
-//	printf("%d\n", parser(case16, env, &cmd));
+//	printf("%d\n", parser(case10, env, &cmd));
 //
 //	int i = -1;
 //	while (cmd[++i])

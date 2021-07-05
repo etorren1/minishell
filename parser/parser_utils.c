@@ -33,13 +33,15 @@ int	find_end(const char *line)
 		if (line[i] == '\'')
 		{
 			i++;
-			while (line[i] != '\'')
+			while (line[i] != '\''
+				|| (line[i] == '\'' && is_backslahed(line, i)))
 				i++;
 		}
 		else if (line[i] == '"')
 		{
 			i++;
-			while (line[i] != '"')
+			while (line[i] != '"'
+				|| (line[i] == '"' && is_backslahed(line, i)))
 				i++;
 		}
 		else if (line[i] == ';' || line[i] == '|')

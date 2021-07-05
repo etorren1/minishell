@@ -19,7 +19,6 @@ char	*backslash(char *str, int *i)
 
 	prefix = ft_substr(str, 0, *i);
 	postfix = ft_strdup(&str[*i + 1]);
-	(*i)--;
 	free(str);
 	return (join_and_free(prefix, ft_strdup(""), postfix));
 }
@@ -55,7 +54,10 @@ char	*double_quotes(char *str, char **env, int *i)
 	{
 		if (str[*i] == '\\' && (str[*i + 1] == '\\' || str[*i + 1] == '$'
 				|| str[*i + 1] == '"'))
+		{
 			str = backslash(str, i);
+			(*i)++;
+		}
 		if (str[*i] == '$')
 			str = dollar(str, i, env);
 		if (str[*i] == '"')
@@ -67,4 +69,16 @@ char	*double_quotes(char *str, char **env, int *i)
 	*i -= 2;
 	free(str);
 	return (join_and_free(prefix, body, postfix));
+}
+
+void	handle_basic_tokens(char **line, int *i, char **env)
+{
+	if ((*line)[*i] == '\'')
+		*line = single_quotes(*line, i);
+	else if ((*line)[*i] == '"')
+		*line = double_quotes(*line, env, i);
+	else if ((*line)[*i] == '\\')
+		*line = backslash(*line, i);
+	else if ((*line)[*i] == '$')
+		*line = dollar(*line, i, env);
 }

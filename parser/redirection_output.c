@@ -12,7 +12,7 @@
 
 #include "../includes/parser.h"
 
-int	is_next_word_number(char *str)
+static int	is_next_word_number(char *str)
 {
 	int	i;
 
@@ -28,16 +28,6 @@ int	is_next_word_number(char *str)
 		i++;
 	}
 	return (i);
-}
-
-int	count_symbols(char *line, char c)
-{
-	int	count;
-
-	count = 0;
-	while (*line == c)
-		line++ && count++;
-	return (count);
 }
 
 static int	manual_fd_input(char *line, t_cmd *cmd, int *i)
@@ -63,51 +53,61 @@ static int	manual_fd_input(char *line, t_cmd *cmd, int *i)
 			break ;
 		}
 	}
+	while (line[from - 1] && ft_isspace(line[from - 1]))
+		from--;
 	return (from);
 }
 
-static void	define_output_fd(char *line, t_cmd *cmd, int *j, int from)
+static void	prepare_fd_to(char **line, t_cmd *cmd, int *j,	int *is_valid_amp)
+{
+	if (cmd->fd_to > 2)
+		close(cmd->fd_to);
+	if ((*line)[*j] == '&' && is_next_word_number(*line + ++(*j)))
+	{
+		cmd->fd_to = ft_atoi(*line + *j);
+		*is_valid_amp = 1;
+		*j += is_next_word_number(*line + *j);
+	}
+}
+
+static void	define_output_fd(char **line, t_cmd *cmd, int *j, char **env)
 {
 	int		mode;
+	int		from;
 	char	*file_name;
 	int		is_valid_ampersand;
 
 	is_valid_ampersand = 0;
-	mode = count_symbols(&line[*j], '>');
+	from = manual_fd_input(*line, cmd, j);
+	mode = count_symbols(*line + *j, '>');
 	*j += mode;
-	if (cmd->fd_to > 2)
-		close(cmd->fd_to);
-	if (line[*j] == '&' && is_next_word_number(&line[++(*j)]))
-	{
-		cmd->fd_to = ft_atoi(&line[*j]);
-		is_valid_ampersand = 1;
-		*j += is_next_word_number(&line[*j]);
-	}
+	prepare_fd_to(line, cmd, j, &is_valid_ampersand);
 	if (!is_valid_ampersand)
 	{
-		while (ft_isspace(line[*j]))
+		while (ft_isspace((*line)[*j]))
 			(*j)++;
 		from = *j;
-		while (line[*j] && !ft_isspace(line[*j]))
+		while ((*line)[*j] && !ft_isspace((*line)[*j]))
+		{
+			handle_basic_tokens(line, j, env);
 			(*j)++;
-		file_name = ft_substr(line, from, *j - from);
-		if (mode > 1)
-			cmd->fd_to = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else
-			cmd->fd_to = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		}
+		file_name = ft_substr(*line, from, *j - from);
+		file_operations(file_name, cmd, mode);
 		free(file_name);
 	}
 }
 
-char	*redirect_output(char *line, int *i, t_cmd *cmd)
+char	*redirect_output(char **line, int *i, t_cmd *cmd, char **env)
 {
 	int		from;
 	int		j;
 	char	*prefix;
 
 	j = *i;
-	from = manual_fd_input(line, cmd, i);
-	define_output_fd(line, cmd, &j, from);
-	prefix = ft_substr(line, 0, from);
-	return (join_and_free(prefix, ft_strdup(""), ft_strdup(&line[j])));
+	from = manual_fd_input(*line, cmd, i);
+	define_output_fd(line, cmd, &j, env);
+	prefix = ft_substr(*line, 0, from);
+	*i = from;
+	return (join_and_free(prefix, ft_strdup(""), ft_strdup(*line + j)));
 }

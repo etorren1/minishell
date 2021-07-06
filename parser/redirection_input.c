@@ -12,27 +12,31 @@
 
 #include "../includes/parser.h"
 
-char	*redirect_input(char *line, int *i, t_cmd *cmd)
+char	*redirect_input(char **line, int *i, t_cmd *cmd, char **env)
 {
 	int		from;
 	int		j;
 	char	*prefix;
 
 	j = *i + 1;
-	while (line[j] && ft_isspace(line[j]))
+	while ((*line)[j] && ft_isspace((*line)[j]))
 		j++;
 	from = j;
-	while (line[j] && !ft_isspace(line[j]))
+	while ((*line)[j] && !ft_isspace((*line)[j]))
+	{
+		handle_basic_tokens(line, &j, env);
 		j++;
+	}
 	if (*i == j)
 		return (NULL);
-	prefix = ft_substr(line, from, j - from);
+	prefix = ft_substr(*line, from, j - from);
 	if (cmd->fd_from > 2)
 		close(cmd->fd_from);
-	cmd->fd_from = open(prefix, O_RDONLY, 0644);
-	free(prefix);
-	if (cmd->fd_from < 3)
+	if (file_operations(prefix, cmd, 0) < 3)
 		return (NULL);
-	prefix = ft_substr(line, 0, *i);
-	return (join_and_free(prefix, ft_strdup(""), ft_strdup(&line[j])));
+	free(prefix);
+	while ((*line)[*i - 1] && ft_isspace((*line)[*i - 1]))
+		(*i)--;
+	prefix = ft_substr(*line, 0, *i);
+	return (join_and_free(prefix, ft_strdup(""), ft_strdup(*line + j)));
 }

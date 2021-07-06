@@ -12,14 +12,8 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_exit(t_cmd *cmd)
+void	ft_exit(t_cmd *cmd, t_rl *rl, char **envp)
 {
-	/*struct	termios term;
-	tcgetattr(0, &term);
-	term.c_lflag |= (ECHO);
-	term.c_lflag |= (ICANON);
-	tcsetattr(0, TCSANOW, &term);*/
-
-	printf("exit(doesn't work)\n");
+	clear_exit(rl, envp);
 	exit(0);
 }

@@ -85,10 +85,9 @@ int	read_history(int fd, t_node **node)
 	}
 	rd = get_next_line(fd, &line);
 	ft_nodeadd_back(node, ft_nodenew(line));
-	if (*node)
-		*node = ft_nodelast(*node);
-	else
-		*node = ft_nodenew("\n");
+	if (ft_nodesize(*node) == 1)
+		ft_nodeadd_back(node, ft_nodenew(ft_strdup("\n")));
+	*node = ft_nodelast(*node);
 	i++;
 	if (rd == -1)
 		return (-1);
@@ -485,7 +484,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 		}
-		//printf("\e[35mCL=\"%s\"\e[0m\n", command_line);
+		printf("\e[35mCL=\"%s\"\e[0m\n", command_line);
 		tcsetattr(0, TCSANOW, &saveterm);
 		if (ft_strcmp(buf, "\4"))
 		{
@@ -496,6 +495,7 @@ int	main(int argc, char **argv, char **envp)
 			command_line[count_symb - PROMPT] = 0;
 			if (ft_strcmp(histnode->content, command_line))
 			{
+				printf("HERE\n");
 				histnode = histnode->next;
 				free(histnode->content);
 				histnode->content = ft_strdup(command_line);

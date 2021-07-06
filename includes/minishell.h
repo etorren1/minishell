@@ -20,6 +20,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <errno.h>
+# include <signal.h>
 
 typedef struct  s_cmd {
 	char        *flags;
@@ -37,5 +38,6 @@ char			*get_pwd(void);
 void			up_shlvl(char ***envp);
 char 			**get_dir_content(char *str);
 void 			free_arrcmd(t_cmd **cmd);
+void			ctrl_c_handler(int sig);
 
 #endif

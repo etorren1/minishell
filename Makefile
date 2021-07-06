@@ -12,7 +12,8 @@
 
 SRCS		= main.c\
 			$(wildcard ./processor/*.c ./processor/builtin_cmd/*.c\
-			./utils/*.c ./parser/*.c)
+			./utils/*.c ./parser/*.c ./readterm/casecore/*.c\
+			./readterm/*.c)
 
 OBJS		= $(SRCS:.c=.o)
 

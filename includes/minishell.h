@@ -21,6 +21,11 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <signal.h>
+# include <dirent.h>
+# define BUF_SIZE	12
+# define PROMPT		26
+# define MINISHELL	"\033[1;32mminishell-0.5$ \033[0m"
+# define HISTORY	".minishell_history"
 
 typedef struct  s_cmd {
 	char        *flags;

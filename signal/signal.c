@@ -10,10 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/signal.h"
+#include "../includes/minishell.h"
 
 void	ctrl_c_handler(int sig)
 {
 	signal(SIGINT, ctrl_c_handler);
-	ft_putstr_fd("\n", 0);
+	write (1, MINISHELL, PROMPT);
 }

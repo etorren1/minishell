@@ -15,5 +15,11 @@
 void	ctrl_c_handler(int sig)
 {
 	signal(SIGINT, ctrl_c_handler);
+	write (1, "\n", 1);
 	write (1, MINISHELL, PROMPT);
+}
+
+void 	ctrl_backslash_handler(int sig)
+{
+	;
 }

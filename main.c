@@ -143,6 +143,7 @@ int	main(int argc, char **argv, char **envp)
 	ft_arrcpy(env, envp);
 	up_shlvl(&env);
 	signal(SIGINT, ctrl_c_handler);
+	signal(SIGQUIT, ctrl_backslash_handler);
 	while (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0)
 	{
 		preread(rl, &term);

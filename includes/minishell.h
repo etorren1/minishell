@@ -20,6 +20,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <errno.h>
+# include <signal.h>
 # include <dirent.h>
 # define BUF_SIZE	12
 # define PROMPT		26
@@ -55,6 +56,8 @@ char			*get_pwd(void);
 void			up_shlvl(char ***envp);
 char 			**get_dir_content(char *str);
 void 			free_arrcmd(t_cmd **cmd);
+void			ctrl_c_handler(int sig);
+void			ctrl_backslash_handler(int sig);
 void			clear_exit(t_rl *rl, char **env);
 
 #endif

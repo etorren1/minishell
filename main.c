@@ -40,9 +40,9 @@ void	clear_exit(t_rl *rl, char **env)
 	write (1, "exit\n", 5);
 	free(rl->history);
 	free(rl->command_line);
+	close (rl->fd);
 	free(rl);
 	ft_arrfree(env);
-	close (rl->fd);
 }
 
 int		omg(t_rl *rl, char ***env)

@@ -7,7 +7,7 @@ void	writehist(t_rl *rl)
 	rl->histnode = ft_nodelast(rl->histnode);
 	rl->histnode = rl->histnode->prev;
 	rl->command_line[rl->count_symb - PROMPT] = 0;
-	if (ft_strcmp(rl->histnode->content, rl->command_line))
+	if (ft_strcmp(rl->histnode->content, rl->command_line) && ft_strcmp("", rl->command_line))
 	{
 		rl->histnode = rl->histnode->next;
 		free(rl->histnode->content);

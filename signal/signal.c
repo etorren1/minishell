@@ -23,3 +23,8 @@ void 	ctrl_backslash_handler(int sig)
 {
 	;
 }
+
+void	print_ouit(int sig)
+{
+	write(1, "Quit\n", 5);
+}

@@ -142,7 +142,6 @@ int	main(int argc, char **argv, char **envp)
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
 	up_shlvl(&env);
-	signal(SIGINT, ctrl_c_handler);
 	signal(SIGQUIT, ctrl_backslash_handler);
 	while (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0)
 	{

@@ -2,9 +2,10 @@
 
 void	readterm(t_rl *rl, t_node **histnode)
 {
-	while (ft_strcmp(rl->buf, "\n")
+	while (ft_strcmp(rl->buf, "\n") && ft_strcmp(rl->buf, "\3")
 			&& (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0))
-	{
+	{ 
+		signal(SIGINT, ctrl_c_handler);
 		correct_rl(rl);
 		read(0, rl->buf, BUF_SIZE);
 		if (!ft_strcmp(rl->buf, "\e[A"))

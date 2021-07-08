@@ -13,7 +13,74 @@
 #include "../includes/minishell.h"
 #include "../includes/processor.h"
 
-void	processor(t_cmd *cmd, char *(**envp))
+void	get_paths(char *path, char *bin, char *(**temp), int ret)
+{
+	int		i = -1;
+	int		prev = 0;
+	char	*sub;
+
+	while (path[++i])
+	{
+		if (path[i] == ':')
+		{
+			path[i++] = '/';
+			sub = ft_substr(path, prev, i - prev);
+			sub = ft_strjoin(sub, bin);
+			prev = i;
+			(*temp) = ft_arradd_str_mod((*temp), sub, ft_arrsize(*temp));
+		}
+	}
+	path[i++] = '/';
+	sub = ft_substr(path, prev, i - prev);
+	sub = ft_strjoin(sub, bin);
+	prev = i;
+	(*temp) = ft_arradd_str_mod((*temp), sub, ft_arrsize(*temp));
+	free(path);
+}
+
+void	subprocess(t_cmd *cmd, char **envp)
+{
+	char **temp;
+	int ret;
+	int j;
+	char *str;
+
+	dup2(cmd->fd_to, 1);
+	dup2(cmd->fd_from, 0);
+	temp = malloc(sizeof(temp) * 2);
+	temp[0] = malloc(ft_strlen(cmd->args[0]) + 1);
+	temp[1] = NULL;
+	ft_strcpy(temp[0], cmd->args[0]);	
+	ret = find_environment("PATH", envp);
+	if (ret != -1)
+		get_paths(ft_strdup(envp[ret]), cmd->args[0], &temp, ret);
+	j = 0;
+	while (execve(temp[j], cmd->args, envp) == -1 && temp[j])
+		j++;
+	if (!temp[j])
+	{
+		printf("minishell: %s: command not found\n", cmd->args[0]);
+		ft_arrfree(temp);
+		exit(-1);
+	}
+	ft_arrfree(temp);
+}
+
+void	binary_cmd(t_cmd *cmd, char **envp)
+{
+	pid_t pid = fork();
+	
+	if (cmd->flags)
+		cmd->args = ft_arradd_str(cmd->args, cmd->flags, 1);
+	if (pid == 0)
+		subprocess(cmd, envp);
+	else if (pid == -1)
+		printf("PID Error!!!!!!!!!!!!!!!\n");
+	else
+		wait(NULL);
+}
+
+void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 {
 	/////
 	printf("\e[34m>>CMD_INFO<<\n");
@@ -36,65 +103,7 @@ void	processor(t_cmd *cmd, char *(**envp))
 	else if (!ft_strcmp(cmd->args[0], "unset"))
 		ft_unset(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "exit"))
-		ft_exit(cmd);
+		ft_exit(cmd, rl, *envp);
 	else
-	{
-		pid_t pid = fork();
-		if (cmd->flags)
-			cmd->args = ft_arradd_str(cmd->args, cmd->flags, 1);
-		if (pid == 0)
-		{
-			dup2(cmd->fd_to, 1);
-			dup2(cmd->fd_from, 0);
-			char **temp;
-
-			temp = malloc(sizeof(temp) * 2);
-			temp[0] = malloc(ft_strlen(cmd->args[0]) + 1);
-			temp[1] = NULL;
-			ft_strcpy(temp[0], cmd->args[0]);
-			int ret;
-			char *str;
-
-			ret = find_environment("PATH", *envp);
-			if (ret != -1)
-			{
-				//printf("%s\n", (*envp)[ret]);
-				int		i = -1;
-				int		prev = 0;
-				char	*sub;
-				str = ft_substr((*envp)[ret], 5, ft_strlen((*envp)[ret]) - 5);
-				while (str[++i])
-				{
-					if (str[i] == ':')
-					{
-						str[i++] = '/';
-						sub = ft_substr(str, prev, i - prev);
-						sub = ft_strjoin(sub, cmd->args[0]);
-						prev = i;
-						temp = ft_arradd_str_mod(temp, sub, ft_arrsize(temp));
-					}
-				}
-				str[i++] = '/';
-				sub = ft_substr(str, prev, i - prev);
-				sub = ft_strjoin(sub, cmd->args[0]);
-				prev = i;
-				temp = ft_arradd_str_mod(temp, sub, ft_arrsize(temp));
-			}
-			int j = 0;
-			//while (temp[j])
-			//	printf(">>%s\n", temp[j++]);
-			j = 0;
-			while (execve(temp[j], cmd->args, *envp) == -1 && temp[j])
-				j++;
-			if (!temp[j])
-			{
-				printf("minishell: %s: command not found\n", cmd->args[0]);
-				exit(-1);
-			}
-		}
-		else if (pid == -1)
-			printf("PID Error!!!!!!!!!!!!!!!\n");
-		else
-			wait(NULL);
-	}
+		binary_cmd(cmd, *envp);
 }

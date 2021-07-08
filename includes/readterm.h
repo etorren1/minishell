@@ -5,19 +5,6 @@
 #include <termios.h>
 #include "minishell.h"
 
-typedef struct	s_rl
-{
-	int		count_symb;
-	int		cursor_pos;
-	int		len;
-    int		fd;
-	char	*command_line;
-	char	*last_insert;
-	char	*buf;
-	char	*history;
-	t_node	*histnode;
-}				t_rl;
-
 int		ft_putint(int ch);
 int		read_history(int fd, t_node **node);
 void	clear_buf(char *buf, int size);

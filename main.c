@@ -45,7 +45,7 @@ void	clear_exit(t_rl *rl, char **env)
 	close (rl->fd);
 }
 
-int		omg(t_rl *rl, char **env)
+int		omg(t_rl *rl, char ***env)
 {
 	t_cmd **cmd;
 
@@ -62,7 +62,7 @@ int		omg(t_rl *rl, char **env)
 			cmd = (t_cmd **)malloc(sizeof(cmd));
 			*cmd = NULL;
 			
-			if (parser(&rl->command_line[i], env, &cmd) < 0)
+			if (parser(&rl->command_line[i], (*env), &cmd) < 0)
 			{
 				// нада обработать ошибку парсера
 				printf("Parser error\n");
@@ -76,7 +76,7 @@ int		omg(t_rl *rl, char **env)
 				k++;
 			// если без пайпов
 			if (k == 1)
-				processor(*cmd, &env);
+				processor(*cmd, env, rl);
 			// если пайпы
 			else if (k > 1)
 			{
@@ -110,7 +110,7 @@ int		omg(t_rl *rl, char **env)
 							cmd[j]->fd_from = fds[j - 1][0];
 							dup2(fds[j - 1][0], 0);
 						}
-						processor(cmd[j], &env);
+						processor(cmd[j], env, rl);
 						exit(0);
 					}
 					else
@@ -138,10 +138,10 @@ int	main(int argc, char **argv, char **envp)
 	tgetent(0, "xterm-256color");
 	tcgetattr(0, &saveterm);
 	tcgetattr(0, &term);
+	rl = init_rl(argv[0]);
 	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(env, envp);
 	up_shlvl(&env);
-	rl = init_rl(argv[0]);
 	signal(SIGINT, ctrl_c_handler);
 	while (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0)
 	{
@@ -149,7 +149,7 @@ int	main(int argc, char **argv, char **envp)
 		readterm(rl, &rl->histnode);
 		printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
 		tcsetattr(0, TCSANOW, &saveterm);
-		omg(rl, env); // parser and processor part
+		omg(rl, &env); // parser and processor part
 	}
 	clear_exit(rl, env);
 	return (0);

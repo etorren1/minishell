@@ -35,8 +35,21 @@ typedef struct  s_cmd {
 	int			len;
 }               t_cmd;
 
+typedef struct	s_rl
+{
+	int		count_symb;
+	int		cursor_pos;
+	int		len;
+    int		fd;
+	char	*command_line;
+	char	*last_insert;
+	char	*buf;
+	char	*history;
+	t_node	*histnode;
+}				t_rl;
+
 int				parser(char *command_line, char **env, t_cmd ***cmd);
-void			processor(t_cmd *cmd, char *(**envp));
+void			processor(t_cmd *cmd, char *(**envp), t_rl *rl);
 int				find_environment(char *env, char **envp);
 char			*get_absolute_path_process(char *proc);
 char			*get_pwd(void);
@@ -44,5 +57,6 @@ void			up_shlvl(char ***envp);
 char 			**get_dir_content(char *str);
 void 			free_arrcmd(t_cmd **cmd);
 void			ctrl_c_handler(int sig);
+void			clear_exit(t_rl *rl, char **env);
 
 #endif

@@ -71,6 +71,7 @@ void	binary_cmd(t_cmd *cmd, char **envp)
 	pid_t pid = fork();
 	
 	signal(SIGQUIT, print_ouit);
+	signal(SIGINT, ctrl_c_handler);
 	if (cmd->flags)
 		cmd->args = ft_arradd_str(cmd->args, cmd->flags, 1);
 	if (pid == 0)

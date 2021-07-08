@@ -4,14 +4,15 @@ void	readterm(t_rl *rl, t_node **histnode)
 {
 	while (ft_strcmp(rl->buf, "\n") && ft_strcmp(rl->buf, "\3")
 			&& (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0))
-	{ 
-		signal(SIGINT, ctrl_c_handler);
+	{
 		correct_rl(rl);
 		read(0, rl->buf, BUF_SIZE);
 		if (!ft_strcmp(rl->buf, "\e[A"))
 			previous_cmd(rl, histnode);
 		else if (!ft_strcmp(rl->buf, "\e[B"))
 			next_cmd(rl, histnode);
+		else if (!ft_strcmp(rl->buf, "\3"))
+			sig_c(rl);
 		else if (!ft_strcmp(rl->buf, "\t"))
 			tabkey(rl);
 		else if (!ft_strcmp(rl->buf, "\177"))
@@ -33,7 +34,7 @@ void	readterm(t_rl *rl, t_node **histnode)
 		// another keys catch (debug feature)
 		else if (rl->buf[0] == -47 || rl->buf[0] == -48)
 			printf(" \033[31mWarning:\033[0m Choose an English keyboard layout\n");
-		else if ((!ft_isprint(rl->buf[0]) || rl->buf[1] != 0) && rl->buf[0] != '\4')
+		else if ((!ft_isprint(rl->buf[0]) || rl->buf[1] != 0) && rl->buf[0] != '\4' && rl->buf[0] != '\3')
 		{
 			clear_buf(rl->buf, BUF_SIZE);
 			//printf(" \033[31mWarning:\033[0m Non visible symbol\n");

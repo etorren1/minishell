@@ -13,6 +13,7 @@ void	next_cmd(t_rl *rl, t_node **histnode);
 void	addchar(t_rl *rl);
 void	delchar(t_rl *rl);
 void	showchar(t_rl *rl);
+void	sig_c(t_rl *rl);
 void	end(t_rl *rl);
 void	home(t_rl *rl);
 void	left(t_rl *rl);

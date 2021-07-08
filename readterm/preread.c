@@ -2,7 +2,7 @@
 
 void	preread(t_rl *rl, struct termios *term)
 {
-	term->c_lflag &= ~(ICANON|ECHO);
+	term->c_lflag &= ~(ISIG|ICANON|ECHO);
 	tcsetattr(0, TCSANOW, term);
 	rl->cursor_pos = PROMPT;
 	rl->count_symb = PROMPT;

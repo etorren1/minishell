@@ -78,7 +78,6 @@ static void	define_output_fd(char **line, t_cmd *cmd, int *j, char **env)
 	int		is_valid_ampersand;
 
 	is_valid_ampersand = 0;
-	from = manual_fd_input(*line, cmd, j);
 	mode = count_symbols(*line + *j, '>');
 	*j += mode;
 	prepare_fd_to(line, cmd, j, &is_valid_ampersand);
@@ -93,6 +92,8 @@ static void	define_output_fd(char **line, t_cmd *cmd, int *j, char **env)
 			(*j)++;
 		}
 		file_name = ft_substr(*line, from, *j - from);
+		while (ft_isspace((*line)[*j]))
+			(*j)++;
 		file_operations(file_name, cmd, mode);
 		free(file_name);
 	}

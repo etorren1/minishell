@@ -68,7 +68,9 @@ int		omg(t_rl *rl, char ***env)
 				printf("Parser error\n");
 				break ;
 			}
-			i += count_sumlen(cmd) + 1;
+			i += count_sumlen(cmd);
+			if (rl->command_line[i])
+				i++;
 			// считаем элементы
 			int k = 0;
 			

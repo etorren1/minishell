@@ -4,7 +4,7 @@ t_rl    *init_rl(char *argv)
 {
     t_rl *rl;
 
-    rl = malloc(sizeof(rl));
+    rl = malloc(sizeof(t_rl));
 	rl->len = 2;
 	rl->histnode = NULL;
 	rl->history = ft_strjoin(get_absolute_path_process(argv), HISTORY);

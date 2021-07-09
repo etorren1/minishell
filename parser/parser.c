@@ -119,10 +119,23 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 	return (res);
 }
 
+//int count_sumlen(t_cmd **cmd)
+//{
+//	int count;
+//	int i;
+//
+//	count = 0;
+//	i = -1;
+//	while (cmd[++i])
+//		count += cmd[i]->len;
+//	return count;
+//}
+//
 //int	main(int argc, char **argv, char **env)
 //{
 //	t_cmd	**cmd = malloc(sizeof(cmd));
 //	cmd[0] = NULL;
+//	int len = 0;
 //
 //	char *case0 = "  			1";
 //	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
@@ -149,20 +162,32 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case22 = "echo \\\"\\\"";
 //	char *case23 = "echo t";
 //	char *case24 = "ls > 1 > 2 > 3 > $USER | cat < $USER";
+//	char *case25 = "ls|ls|ls";
+//	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //
-//
-//	printf("%d\n", parser(case24, env, &cmd));
-//
-//	int i = -1;
-//	while (cmd[++i])
-//	{
-//		printf("Element %d\n", i);
-//		int j = -1;
-//		while (cmd[i]->args[++j])
-//			printf("arg[%d] = %s\n", j, cmd[i]->args[j]);
-//		if (cmd[i]->flags)
-//			printf("flags = %s\n", cmd[i]->flags);
-//		printf("fd_from = %d\n", cmd[i]->fd_from);
-//		printf("fd_to = %d\n", cmd[i]->fd_to);
+//	char *mainCase = case26;
+//	while (mainCase[len]) {
+//		if (cmd)
+//			free_arrcmd(cmd);
+//		cmd = (t_cmd **)malloc(sizeof(cmd));
+//		*cmd = NULL;
+//		printf("%s\n", &mainCase[len]);
+//		printf("%d\n", parser(&mainCase[len], env, &cmd));
+//		len += count_sumlen(cmd);
+//		if (mainCase[len])
+//			len++;
+//		int i = -1;
+//		while (cmd[++i])
+//		{
+//			printf("Element %d\n", i);
+//			int j = -1;
+//			while (cmd[i]->args[++j])
+//				printf("arg[%d] = %s$\n", j, cmd[i]->args[j]);
+//			if (cmd[i]->flags)
+//				printf("flags = %s\n", cmd[i]->flags);
+//			printf("fd_from = %d\n", cmd[i]->fd_from);
+//			printf("fd_to = %d\n", cmd[i]->fd_to);
+//		}
 //	}
+//
 //}

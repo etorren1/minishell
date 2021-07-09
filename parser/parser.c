@@ -59,7 +59,8 @@ static int	parse_redirects(char **line, t_cmd *tmp, int *i, char **env)
 			if (!*line)
 				return (-1);
 		}
-		(*i)++;
+		if ((*line)[*i])
+			(*i)++;
 	}
 	return (1);
 }
@@ -79,8 +80,9 @@ static int	parse_symbols(char **line, char **env, t_cmd *cmd)
 		if (((*line)[i] == '>' || (*line)[i] == '<')
 				&& parse_redirects(line, cmd, &i, env) < 0)
 			return (-1);
-		if ((!(*line)[i] && start < i)
-				|| (*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
+		if (!(*line)[i] && start >= i)
+			break ;
+		if ((*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
 		{
 			retrieve_next_arg(*line, cmd, start, i);
 			while (ft_isspace((*line)[i]))
@@ -147,8 +149,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //
 //int	main(int argc, char **argv, char **env)
 //{
-//	t_cmd	**cmd = malloc(sizeof(cmd));
-//	cmd[0] = NULL;
+//	t_cmd	**cmd;
 //	int len = 0;
 //
 //	char *case0 = "  			1";
@@ -179,7 +180,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //
-//	char *mainCase = case26;
+//	char *mainCase = case16;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);
@@ -203,5 +204,8 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //			printf("fd_to = %d\n", cmd[i]->fd_to);
 //		}
 //	}
-//
+//	if (cmd)
+//		free_arrcmd(cmd);
+//	while (1)
+//		;
 //}

@@ -71,7 +71,7 @@ char	*double_quotes(char *str, char **env, int *i)
 	return (join_and_free(prefix, body, postfix));
 }
 
-void	handle_basic_tokens(char **line, int *i, char **env)
+int	handle_basic_tokens(char **line, int *i, char **env)
 {
 	if ((*line)[*i] == '\'')
 		*line = single_quotes(*line, i);
@@ -81,4 +81,5 @@ void	handle_basic_tokens(char **line, int *i, char **env)
 		*line = backslash(*line, i);
 	else if ((*line)[*i] == '$')
 		*line = dollar(*line, i, env);
+	return (1);
 }

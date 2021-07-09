@@ -79,7 +79,8 @@ static int	parse_symbols(char **line, char **env, t_cmd *cmd)
 		if (((*line)[i] == '>' || (*line)[i] == '<')
 				&& parse_redirects(line, cmd, &i, env) < 0)
 			return (-1);
-		if ((*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
+		if ((!(*line)[i] && start < i)
+				|| (*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
 		{
 			retrieve_next_arg(*line, cmd, start, i);
 			while (ft_isspace((*line)[i]))
@@ -147,10 +148,10 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case21 = "echo \\\"$USER\\\"\\\"";
 //	char *case22 = "echo \\\"\\\"";
 //	char *case23 = "echo t";
-//	char *case24 = "ls > 1 > $USER | cat -e";
+//	char *case24 = "ls > 1 > 2 > 3 > $USER | cat < $USER";
 //
 //
-//	printf("%d\n", parser(case10, env, &cmd));
+//	printf("%d\n", parser(case24, env, &cmd));
 //
 //	int i = -1;
 //	while (cmd[++i])

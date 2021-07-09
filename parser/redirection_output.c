@@ -108,6 +108,6 @@ char	*redirect_output(char **line, int *i, t_cmd *cmd, char **env)
 	from = manual_fd_input(*line, cmd, i);
 	define_output_fd(line, cmd, &j, env);
 	prefix = ft_substr(*line, 0, from);
-	*i = from;
+	*i = from - 1;
 	return (join_and_free(prefix, ft_strdup(""), ft_strdup(*line + j)));
 }

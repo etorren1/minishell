@@ -49,7 +49,7 @@ int		omg(t_rl *rl, char ***env)
 {
 	t_cmd **cmd;
 
-	if (ft_strcmp(rl->buf, "\4"))
+	if (ft_strcmp(rl->buf, "\4") && ft_strcmp(rl->buf, "\3"))
 	{
 		writehist(rl);
 		int i = 0;
@@ -125,7 +125,18 @@ int		omg(t_rl *rl, char ***env)
 					}
 				}
 			}
+			if (cmd[k - 1]->fd_to > 1)
+				close(cmd[k - 1]->fd_to);
 			//printf("\nrl->fd_from=%d\nft_to=%d\n", cmd->rl->fd_from, cmd->rl->fd_to);
+		}
+		int z = 0;
+		while (cmd[z])
+		{
+			ft_arrfree(cmd[z]->args);
+			if (cmd[z]->flags)
+				free(cmd[z]->flags);
+			free(cmd[z]);
+			z++;
 		}
 	}
 }

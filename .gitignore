@@ -11,6 +11,7 @@ CMakeLists.txt
 
 # tmp
 .minishell_history
+.minishell_history_backup
 a.out
 tests.c
 test.c

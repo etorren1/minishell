@@ -9,6 +9,6 @@ void	preread(t_rl *rl, struct termios *term)
 	rl->last_insert = NULL;	
 	write (1, MINISHELL, PROMPT);
 	tputs(tgetstr("sc", 0), 1, ft_putint);
-	clear_buf(rl->command_line, rl->len);
+	clear_buf(rl->command_line, rl->len + 1);
 	clear_buf(rl->buf, BUF_SIZE);
 }

@@ -31,14 +31,9 @@ void	readterm(t_rl *rl, t_node **histnode)
 			end(rl);
 		else if (rl->buf[0] == '\n')
 			write (1, rl->buf, 1);
-		// another keys catch (debug feature)
-		else if (rl->buf[0] == -47 || rl->buf[0] == -48)
-			printf(" \033[31mWarning:\033[0m Choose an English keyboard layout\n");
-		else if ((!ft_isprint(rl->buf[0]) || rl->buf[1] != 0) && rl->buf[0] != '\4' && rl->buf[0] != '\3')
-		{
+		else if ((!ft_isprint(rl->buf[0]) || rl->buf[1] != 0) && rl->buf[0] != '\4'
+			 && rl->buf[0] != '\3' && rl->buf[0] != -47 && rl->buf[0] != -48)
 			clear_buf(rl->buf, BUF_SIZE);
-			//printf(" \033[31mWarning:\033[0m Non visible symbol\n");
-		}
 		else if (rl->cursor_pos < rl->count_symb)
 			addchar(rl);
 		else

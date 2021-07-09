@@ -146,8 +146,9 @@ int	main(int argc, char **argv, char **envp)
 	{
 		preread(rl, &term);
 		readterm(rl, &rl->histnode);
-		printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
 		tcsetattr(0, TCSANOW, &saveterm);
+		add_rus(rl);
+		printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
 		omg(rl, &env); // parser and processor part
 	}
 	clear_exit(rl, env);

@@ -26,5 +26,6 @@ t_rl    *init_rl(char *argv);
 void	writehist(t_rl *rl);
 void    readterm(t_rl *rl, t_node **histnode);
 void	preread(t_rl *rl, struct termios *term);
+void	add_rus(t_rl *rl);
 
 #endif

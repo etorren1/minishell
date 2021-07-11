@@ -68,7 +68,7 @@ void	readterm(t_rl *rl, t_node **histnode)
 			stoper = ft_substr((const char *)bufstr, i, end - i);
 			stoper = ft_strtrim(stoper, " \t");
 			bufstr[i] = 0;
-			printf("beg=%d end=%d |%s|\nbufstr=%s|\ntail=|%s|\n", i, end, stoper, bufstr, tail);
+			//printf("beg=%d end=%d |%s|\nbufstr=%s|\ntail=|%s|\n", i, end, stoper, bufstr, tail);
 			while (ft_strcmp(rl->command_line, stoper) && ft_strcmp(rl->buf, "\3")
 				&& (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0))
 			{
@@ -80,9 +80,18 @@ void	readterm(t_rl *rl, t_node **histnode)
 				clear_buf(rl->command_line, rl->len);
 				clear_buf(rl->buf, BUF_SIZE);
 				casecore(rl, histnode);
+				if (ft_strcmp(rl->command_line, stoper))
+				{
+					bufstr = ft_strjoin(bufstr, rl->command_line);
+					bufstr = ft_strjoin(bufstr, "\n");
+				}
 			}
+			bufstr = ft_strjoin(bufstr, tail);
 		}
 		i++;
 	}
-	free(bufstr);
+	free(rl->command_line);
+	rl->command_line = bufstr;
+	rl->len = ft_strlen(rl->command_line);
+	//free(bufstr);
 }

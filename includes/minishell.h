@@ -42,6 +42,8 @@ typedef struct	s_rl
 	int		len;
     int		fd;
 	int		plen;
+	int		*mode;
+	int		status;
 	char	*command_line;
 	char	*last_insert;
 	char	*buf;

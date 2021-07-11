@@ -2,7 +2,7 @@
 
 void	left(t_rl *rl)
 {
-	if (rl->cursor_pos > PROMPT)
+	if (rl->cursor_pos > rl->plen)
 	{
 		rl->cursor_pos--;
 		tputs(tgetstr("le", 0), 1, ft_putint);
@@ -21,7 +21,7 @@ void	right(t_rl *rl)
 void	home(t_rl *rl)
 {
 	tputs(tgetstr("rc", 0), 1, ft_putint);
-	rl->cursor_pos = PROMPT;
+	rl->cursor_pos = rl->plen;
 }
 
 void	end(t_rl *rl)

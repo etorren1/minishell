@@ -7,7 +7,7 @@ void	wordbegin(t_rl *rl)
 	int		check = 0;;
 	char	ch;
 
-	while (k < rl->cursor_pos - PROMPT)
+	while (k < rl->cursor_pos - rl->plen)
 	{
 		ch = rl->command_line[k];
 		if (!ft_isalnum(ch))
@@ -20,10 +20,10 @@ void	wordbegin(t_rl *rl)
 		k++;
 	}
 	tputs(tgetstr("rc", 0), 1, ft_putint);
-	rl->cursor_pos = PROMPT;
-	if (rl->cursor_pos < beg + PROMPT)
+	rl->cursor_pos = rl->plen;
+	if (rl->cursor_pos < beg + rl->plen)
 	{
-		tputs(tgoto(tgetstr("RI", 0), 0, beg + PROMPT - rl->cursor_pos), 1, ft_putint);
-		rl->cursor_pos = beg + PROMPT;
+		tputs(tgoto(tgetstr("RI", 0), 0, beg + rl->plen - rl->cursor_pos), 1, ft_putint);
+		rl->cursor_pos = beg + rl->plen;
 	}
 }

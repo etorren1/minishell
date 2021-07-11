@@ -54,14 +54,13 @@ int		omg(t_rl *rl, char ***env)
 		writehist(rl);
 		int i = 0;
 		cmd = NULL;
+					
 		while (rl->command_line[i]) 
 		{
-			
 			if (cmd)
 				free_arrcmd(cmd);
 			cmd = (t_cmd **)malloc(sizeof(cmd));
 			*cmd = NULL;
-			
 			if (parser(&rl->command_line[i], (*env), &cmd) < 0)
 			{
 				// нада обработать ошибку парсера
@@ -128,7 +127,7 @@ int		omg(t_rl *rl, char ***env)
 			//printf("\nrl->fd_from=%d\nft_to=%d\n", cmd->rl->fd_from, cmd->rl->fd_to);
 		}
 		int z = 0;
-		while (cmd[z])
+		while (cmd && cmd[z])
 		{
 			ft_arrfree(cmd[z]->args);
 			if (cmd[z]->flags)

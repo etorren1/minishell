@@ -9,7 +9,7 @@ void	wordend(t_rl *rl)
 
 	while (k < rl->count_symb)
 	{
-		ch = rl->command_line[k - PROMPT];
+		ch = rl->command_line[k - rl->plen];
 		if (ft_isalnum(ch))
 			check = 1;
 		if (!ft_isalnum(ch) && check == 1)

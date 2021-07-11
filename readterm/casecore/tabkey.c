@@ -7,10 +7,10 @@ char	**get_filenames(t_rl *rl)
 	char	*tmp;
 	int		size;
 
-	size = rl->cursor_pos - PROMPT - 1;
+	size = rl->cursor_pos - rl->plen - 1;
 	while (rl->command_line[size] && rl->command_line[size] != ' ')
 		size--;
-	ptr = ft_substr(rl->command_line, size + 1, rl->cursor_pos - PROMPT
+	ptr = ft_substr(rl->command_line, size + 1, rl->cursor_pos - rl->plen
 			 - size - 1);
 	tmp = get_absolute_path_process(ptr);
 	name = get_dir_content(tmp);
@@ -33,7 +33,7 @@ void		show_same(t_rl *rl, int size, int wordlen, char *name)
 	tputs(tgetstr("im", 0), 1, ft_putint);
 	ft_putstr_fd(name, 1);
 	tputs(tgetstr("ei", 0), 1, ft_putint);
-	tail = ft_substr(rl->command_line, rl->cursor_pos - PROMPT, rl->count_symb - rl->cursor_pos - PROMPT);
+	tail = ft_substr(rl->command_line, rl->cursor_pos - rl->plen, rl->count_symb - rl->cursor_pos - rl->plen);
 	while (ft_strlen(rl->command_line) + ft_strlen(name) > rl->len)
 	{
 		rl->len += rl->len;
@@ -56,10 +56,10 @@ void	try_complete(t_rl *rl, char **name)
 	char	*ptr;
 	int wordlen;
 
-	size = rl->cursor_pos - PROMPT - 1;
+	size = rl->cursor_pos - rl->plen - 1;
 	while (rl->command_line[size] && rl->command_line[size] != ' ' && rl->command_line[size] != '/')
 		size--;
-	wordlen = rl->cursor_pos - size - PROMPT - 1;
+	wordlen = rl->cursor_pos - size - rl->plen - 1;
 	ptr = ft_substr(rl->command_line, size + 1, wordlen);
 	while (name[++i])
 		if (!ft_strncmp(ptr, name[i], wordlen) && ptr[0])
@@ -96,7 +96,7 @@ void	show_all(t_rl *rl, char **name)
 		}
 	}
 	tputs(tgetstr("do", 0), 1, ft_putint);
-	write (1, MINISHELL, PROMPT);
+	write (1, MINISHELL, rl->plen);
 	tputs(tgetstr("sc", 0), 1, ft_putint);
 	ft_putstr_fd(rl->command_line, 1);
 }
@@ -107,8 +107,8 @@ void	tabkey(t_rl *rl)
 	
 	name = get_filenames(rl);
 	tputs(tgetstr("vi", 0), 1, ft_putint);
-	if (rl->command_line[rl->cursor_pos - PROMPT - 1] != ' '
-		 && rl->command_line[rl->cursor_pos - PROMPT - 1] != '/' && rl->command_line[0])
+	if (rl->command_line[rl->cursor_pos - rl->plen - 1] != ' '
+		 && rl->command_line[rl->cursor_pos - rl->plen - 1] != '/' && rl->command_line[0])
 		try_complete(rl, name);
 	else
 		show_all(rl, name);

@@ -19,8 +19,8 @@ void	next_cmd(t_rl *rl, t_node **histnode)
 			ft_strcpy(rl->command_line, rl->last_insert);
 		else
 			ft_strcpy(rl->command_line, (*histnode)->content);
-		rl->cursor_pos = ft_strlen(rl->command_line) + PROMPT;
-		rl->count_symb = ft_strlen(rl->command_line) + PROMPT;
+		rl->cursor_pos = ft_strlen(rl->command_line) + rl->plen;
+		rl->count_symb = ft_strlen(rl->command_line) + rl->plen;
 		write (1, rl->command_line, ft_strlen(rl->command_line));
 	}
 }

@@ -19,7 +19,7 @@ char	*double_quotes(char *str, char** env, int *i);
 int		ft_strstr_mod(const char *haystack, const char *needle);
 char	*dollar(char *str, int *i, char **env);
 int		preparser(const char *command_line);
-void	handle_basic_tokens(char **line, int *i, char **env);
+int		handle_basic_tokens(char **line, int *i, char **env);
 char	*redirect_output(char **line, int *i, t_cmd *cmd, char **env);
 char	*redirect_input(char **line, int *i, t_cmd *cmd, char **env);
 t_cmd	*new_cmd();
@@ -29,4 +29,5 @@ int		non_valid_redirect(const char *line);
 int		count_symbols(char *line, char c);
 int		file_operations(char *file_name, t_cmd *cmd, int mode);
 int		is_backslahed(const char *str, int i);
+int		is_line_empty(char *line);
 

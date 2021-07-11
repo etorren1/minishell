@@ -23,10 +23,7 @@ char	*redirect_input(char **line, int *i, t_cmd *cmd, char **env)
 		j++;
 	from = j;
 	while ((*line)[j] && !ft_isspace((*line)[j]))
-	{
-		handle_basic_tokens(line, &j, env);
-		j++;
-	}
+		handle_basic_tokens(line, &j, env) && j++;
 	if (*i == j)
 		return (NULL);
 	prefix = ft_substr(*line, from, j - from);
@@ -38,5 +35,6 @@ char	*redirect_input(char **line, int *i, t_cmd *cmd, char **env)
 	while ((*line)[*i - 1] && ft_isspace((*line)[*i - 1]))
 		(*i)--;
 	prefix = ft_substr(*line, 0, *i);
+	free(*line);
 	return (join_and_free(prefix, ft_strdup(""), ft_strdup(*line + j)));
 }

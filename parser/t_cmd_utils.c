@@ -32,6 +32,7 @@ void	free_cmd(t_cmd *cmd)
 	i = -1;
 	while (cmd->args[++i])
 		free(cmd->args[i]);
+	free(cmd->args);
 	if (cmd->flags)
 		free(cmd->flags);
 	free(cmd);

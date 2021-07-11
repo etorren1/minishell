@@ -6,7 +6,7 @@
 /*   By: masharla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 11:21:53 by etorren           #+#    #+#             */
-/*   Updated: 2021/07/02 18:01:19 by masharla         ###   ########.fr       */
+/*   Updated: 2021/07/11 14:48:45 by masharla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,9 @@ int		omg(t_rl *rl, char ***env)
 				printf("Parser error\n");
 				break ;
 			}
-			i += count_sumlen(cmd) + 1;
+			i += count_sumlen(cmd);
+			if (rl->command_line[i])
+				i++;
 			// считаем элементы
 			int k = 0;
 			

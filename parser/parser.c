@@ -59,7 +59,8 @@ static int	parse_redirects(char **line, t_cmd *tmp, int *i, char **env)
 			if (!*line)
 				return (-1);
 		}
-		(*i)++;
+		if ((*line)[*i])
+			(*i)++;
 	}
 	return (1);
 }
@@ -79,8 +80,9 @@ static int	parse_symbols(char **line, char **env, t_cmd *cmd)
 		if (((*line)[i] == '>' || (*line)[i] == '<')
 				&& parse_redirects(line, cmd, &i, env) < 0)
 			return (-1);
-		if ((!(*line)[i] && start < i)
-				|| (*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
+		if (!(*line)[i] && start >= i)
+			break ;
+		if ((*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
 		{
 			retrieve_next_arg(*line, cmd, start, i);
 			while (ft_isspace((*line)[i]))
@@ -107,7 +109,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		if (parse_symbols(&line, env, tmp) < 0)
+		if (is_line_empty(line) || parse_symbols(&line, env, tmp) < 0)
 			return (-1);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
@@ -133,12 +135,24 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 	return (res);
 }
 
+//int count_sumlen(t_cmd **cmd)
+//{
+//	int count;
+//	int i;
+//
+//	count = 0;
+//	i = -1;
+//	while (cmd[++i])
+//		count += cmd[i]->len;
+//	return count;
+//}
+//
 //int	main(int argc, char **argv, char **env)
 //{
-//	t_cmd	**cmd = malloc(sizeof(cmd));
-//	cmd[0] = NULL;
+//	t_cmd	**cmd;
+//	int len = 0;
 //
-//	char *case0 = "  			1";
+//	char *case0 = "   ;";
 //	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
 //	char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
 //	char *case3 = "echo $USER";
@@ -163,20 +177,35 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case22 = "echo \\\"\\\"";
 //	char *case23 = "echo t";
 //	char *case24 = "ls > 1 > 2 > 3 > $USER | cat < $USER";
+//	char *case25 = "ls|ls|ls";
+//	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //
-//
-//	printf("%d\n", parser(case24, env, &cmd));
-//
-//	int i = -1;
-//	while (cmd[++i])
-//	{
-//		printf("Element %d\n", i);
-//		int j = -1;
-//		while (cmd[i]->args[++j])
-//			printf("arg[%d] = %s\n", j, cmd[i]->args[j]);
-//		if (cmd[i]->flags)
-//			printf("flags = %s\n", cmd[i]->flags);
-//		printf("fd_from = %d\n", cmd[i]->fd_from);
-//		printf("fd_to = %d\n", cmd[i]->fd_to);
+//	char *mainCase = case26;
+//	while (mainCase[len]) {
+//		if (cmd)
+//			free_arrcmd(cmd);
+//		cmd = (t_cmd **)malloc(sizeof(cmd));
+//		*cmd = NULL;
+//		printf("%s\n", &mainCase[len]);
+//		printf("%d\n", parser(&mainCase[len], env, &cmd));
+//		len += count_sumlen(cmd);
+//		if (mainCase[len])
+//			len++;
+//		int i = -1;
+//		while (cmd[++i])
+//		{
+//			printf("Element %d\n", i);
+//			int j = -1;
+//			while (cmd[i]->args[++j])
+//				printf("arg[%d] = %s$\n", j, cmd[i]->args[j]);
+//			if (cmd[i]->flags)
+//				printf("flags = %s\n", cmd[i]->flags);
+//			printf("fd_from = %d\n", cmd[i]->fd_from);
+//			printf("fd_to = %d\n", cmd[i]->fd_to);
+//		}
 //	}
+//	if (cmd)
+//		free_arrcmd(cmd);
+//	while (1)
+//		;
 //}

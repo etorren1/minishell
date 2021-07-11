@@ -51,7 +51,6 @@ int		omg(t_rl *rl, char ***env)
 
 	if (ft_strcmp(rl->buf, "\4") && ft_strcmp(rl->buf, "\3"))
 	{
-		writehist(rl);
 		int i = 0;
 		cmd = NULL;
 					

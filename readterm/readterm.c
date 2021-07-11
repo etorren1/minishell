@@ -44,6 +44,7 @@ void	casecore(t_rl *rl, t_node **histnode)
 void	readterm(t_rl *rl, t_node **histnode)
 {
 	casecore(rl, histnode);
+	writehist(rl);
 	int i = 1;
 	char	*bufstr;
 
@@ -86,6 +87,12 @@ void	readterm(t_rl *rl, t_node **histnode)
 					bufstr = ft_strjoin(bufstr, "\n");
 				}
 			}
+			char *tmp;
+
+			tmp = malloc(2);
+			tmp[0] = -1;
+			tmp[1] = 0;
+			bufstr = ft_strjoin(bufstr, tmp);
 			bufstr = ft_strjoin(bufstr, tail);
 		}
 		i++;

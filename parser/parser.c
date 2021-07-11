@@ -96,7 +96,7 @@ static int	parse_symbols(char **line, char **env, t_cmd *cmd)
 	return (1);
 }
 
-int	parser(char *command_line, char **env, t_cmd ***cmd)
+int	parser(char *command_line, char **env, t_cmd ***cmd, t_rl *rl)
 {
 	int		i;
 	int		res;
@@ -137,7 +137,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 	///////
 	return (res);
 }
-//
+
 //int count_sumlen(t_cmd **cmd)
 //{
 //	int count;

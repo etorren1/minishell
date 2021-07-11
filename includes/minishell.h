@@ -49,7 +49,7 @@ typedef struct	s_rl
 	t_node	*histnode;
 }				t_rl;
 
-int				parser(char *command_line, char **env, t_cmd ***cmd);
+int				parser(char *command_line, char **env, t_cmd ***cmd, t_rl *rl);
 void			processor(t_cmd *cmd, char *(**envp), t_rl *rl);
 int				find_environment(char *env, char **envp);
 char			*get_absolute_path_process(char *proc);

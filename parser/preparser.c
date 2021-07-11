@@ -75,6 +75,14 @@ int	preparser(const char *c_line)
 				&& c_line[i + 2] && is_token(c_line[i + 2]))
 				return (-1);
 		}
+		else if (c_line[i] == '<')
+		{
+			if (c_line[i - 1] && is_token(c_line[i - 1]))
+				continue ;
+			if (c_line[i + 1] && c_line[i + 1] == '<'
+				&& c_line[i + 2] && is_token(c_line[i + 2]))
+				return (-1);
+		}
 		else if (is_token(c_line[i])
 			&& c_line[i + 1] && is_token(c_line[i + 1]))
 			return (-1);

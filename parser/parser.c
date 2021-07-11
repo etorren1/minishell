@@ -77,12 +77,15 @@ static int	parse_symbols(char **line, char **env, t_cmd *cmd)
 	while ((*line)[i])
 	{
 		handle_basic_tokens(line, &i, env);
+		if ((*line)[i] == '<' && (*line)[i + 1] &&(*line)[i + 1] == '<')
+			*line = heredoc(line, &i, cmd, env);
 		if (((*line)[i] == '>' || (*line)[i] == '<')
 				&& parse_redirects(line, cmd, &i, env) < 0)
 			return (-1);
 		if (!(*line)[i] && start >= i)
 			break ;
-		if ((*line)[i++] && (!(*line)[i] || ft_isspace((*line)[i])))
+		if (!(*line)[i] || (*line)[i++]
+			&& (!(*line)[i] || ft_isspace((*line)[i])))
 		{
 			retrieve_next_arg(*line, cmd, start, i);
 			while (ft_isspace((*line)[i]))
@@ -134,7 +137,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 	///////
 	return (res);
 }
-
+//
 //int count_sumlen(t_cmd **cmd)
 //{
 //	int count;
@@ -151,6 +154,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //{
 //	t_cmd	**cmd;
 //	int len = 0;
+//	int res;
 //
 //	char *case0 = "   ;";
 //	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
@@ -180,14 +184,19 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //
-//	char *mainCase = case26;
+//	// ---------------
+//	char *case30 = "cat <<lolkek\xff test ; echo <<   asjkd$USER\xff | cat -e";
+//
+//	char *mainCase = case30;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);
 //		cmd = (t_cmd **)malloc(sizeof(cmd));
 //		*cmd = NULL;
 //		printf("%s\n", &mainCase[len]);
-//		printf("%d\n", parser(&mainCase[len], env, &cmd));
+//		printf("%d\n", (res = parser(&mainCase[len], env, &cmd)));
+//		if (res < 0)
+//			return (0);
 //		len += count_sumlen(cmd);
 //		if (mainCase[len])
 //			len++;

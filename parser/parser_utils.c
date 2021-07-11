@@ -80,3 +80,17 @@ int	ft_strstr_mod(const char *haystack, const char *needle)
 	}
 	return (-1);
 }
+
+int is_line_empty(char *line)
+{
+	int	i;
+
+	i = -1;
+	while (line[++i])
+	{
+		if (!ft_isspace(line[i]))
+			return (0);
+	}
+	free(line);
+	return (1);
+}

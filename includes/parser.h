@@ -29,4 +29,5 @@ int		non_valid_redirect(const char *line);
 int		count_symbols(char *line, char c);
 int		file_operations(char *file_name, t_cmd *cmd, int mode);
 int		is_backslahed(const char *str, int i);
+int		is_line_empty(char *line);
 

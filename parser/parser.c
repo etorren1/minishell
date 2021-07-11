@@ -109,7 +109,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		if (parse_symbols(&line, env, tmp) < 0)
+		if (is_line_empty(line) || parse_symbols(&line, env, tmp) < 0)
 			return (-1);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
@@ -152,7 +152,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	t_cmd	**cmd;
 //	int len = 0;
 //
-//	char *case0 = "  			1";
+//	char *case0 = "   ;";
 //	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
 //	char *case2 = "echo 12345\" я $USER	\"123 ; \";\" ls ;";
 //	char *case3 = "echo $USER";
@@ -180,7 +180,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //
-//	char *mainCase = case16;
+//	char *mainCase = case26;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);

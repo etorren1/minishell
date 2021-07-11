@@ -6,7 +6,7 @@
 /*   By: masharla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 11:21:53 by etorren           #+#    #+#             */
-/*   Updated: 2021/07/02 18:01:19 by masharla         ###   ########.fr       */
+/*   Updated: 2021/07/11 14:48:45 by masharla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ int		omg(t_rl *rl, char ***env)
 			//printf("\nrl->fd_from=%d\nft_to=%d\n", cmd->rl->fd_from, cmd->rl->fd_to);
 		}
 		int z = 0;
-		while (cmd[z])
+		while (cmd && cmd[z])
 		{
 			ft_arrfree(cmd[z]->args);
 			if (cmd[z]->flags)

@@ -41,10 +41,33 @@ void	casecore(t_rl *rl, t_node **histnode)
 	}
 }
 
+int		*ft_arradd_int(int	*arr, int size, int	val)
+{
+	int *tmp;
+
+	if (!arr)
+	{
+		arr = malloc(sizeof(int));
+		arr[0] = val;
+		return (arr);
+	}
+	else
+	{
+		tmp = malloc(sizeof(int) * (size));
+		tmp[--size] = val;
+		while (--size >= 0)
+			tmp[size] = arr[size];
+		free(arr);
+		return (tmp);
+	}
+}
+
 void	readterm(t_rl *rl, t_node **histnode)
 {
 	casecore(rl, histnode);
+	writehist(rl);
 	int i = 1;
+	int z = 0;
 	char	*bufstr;
 
 	bufstr = ft_strdup(rl->command_line);
@@ -57,9 +80,9 @@ void	readterm(t_rl *rl, t_node **histnode)
 			end = ++i;
 			while (ft_isspace(bufstr[end]))
 				end++;
-			while (!ft_isspace(bufstr[end]))
+			while (bufstr[end] && !ft_isspace(bufstr[end]))
 				end++;
-			while (ft_isspace(bufstr[end]))
+			while (bufstr[end] && ft_isspace(bufstr[end]))
 				end++;
 			char *stoper;
 			char *tail;
@@ -67,8 +90,17 @@ void	readterm(t_rl *rl, t_node **histnode)
 			tail = ft_substr(bufstr, end, ft_strlen(bufstr) - end);
 			stoper = ft_substr((const char *)bufstr, i, end - i);
 			stoper = ft_strtrim(stoper, " \t");
+			if ((stoper[0] == '\'' || stoper [0] == '\"') 
+				&& (stoper[ft_strlen(stoper) - 1] == '\'' || stoper [ft_strlen(stoper) - 1] == '\"'))
+			{
+				stoper = ft_strtrim(stoper, "\'\"");
+				rl->mode = ft_arradd_int(rl->mode, ++z, 1);
+			}
+			else
+				rl->mode = ft_arradd_int(rl->mode, ++z, 0);
 			bufstr[i] = 0;
 			//printf("beg=%d end=%d |%s|\nbufstr=%s|\ntail=|%s|\n", i, end, stoper, bufstr, tail);
+			clear_buf(rl->command_line, rl->len);			
 			while (ft_strcmp(rl->command_line, stoper) && ft_strcmp(rl->buf, "\3")
 				&& (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0))
 			{
@@ -84,12 +116,23 @@ void	readterm(t_rl *rl, t_node **histnode)
 				{
 					bufstr = ft_strjoin(bufstr, rl->command_line);
 					bufstr = ft_strjoin(bufstr, "\n");
+					i += ft_strlen(rl->command_line) + 1;
 				}
 			}
+			char *tmp;
+
+			tmp = malloc(2);
+			tmp[0] = -1;
+			tmp[1] = 0;
+			bufstr = ft_strjoin(bufstr, tmp);
 			bufstr = ft_strjoin(bufstr, tail);
+			free(tmp);
 		}
-		i++;
+		i += 2;
 	}
+	int o = -1;
+	while (z > ++o)
+		printf("mode[%d]=%d\n", o, rl->mode[o]);
 	free(rl->command_line);
 	rl->command_line = bufstr;
 	rl->len = ft_strlen(rl->command_line);

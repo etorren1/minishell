@@ -7,6 +7,7 @@ t_rl    *init_rl(char *argv)
     rl = malloc(sizeof(t_rl));
 	rl->len = 2;
 	rl->histnode = NULL;
+	rl->mode = NULL;
 	rl->history = ft_strjoin(get_absolute_path_process(argv), HISTORY);
 	rl->fd = open(rl->history, O_RDWR | O_CREAT, 660); //0777
 	read_history(rl->fd, &rl->histnode);

@@ -26,7 +26,7 @@ static int	ft_chrcmp(char const *set, char const c)
 	return (1);
 }
 
-char	*ft_strtrim(char const *s1, char const *set)
+char	*ft_strtrim(char *s1, char const *set)
 {
 	size_t		i;
 	size_t		start;
@@ -43,5 +43,6 @@ char	*ft_strtrim(char const *s1, char const *set)
 		i--;
 	i++;
 	str = ft_substr(s1, start, i - start);
+	free(s1);
 	return (str);
 }

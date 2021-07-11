@@ -41,7 +41,7 @@ static int	is_token(char c)
 	return (c == '>' || c == '<' || c == '|' || c == '&' || c == ';');
 }
 
-static int	is_right_num_of_tokens(char *c_line, int i)
+static int	is_right_num_of_tokens(const char *c_line, int i)
 {
 	if (c_line[i] == '>')
 	{

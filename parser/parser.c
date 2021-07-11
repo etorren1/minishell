@@ -160,7 +160,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	rl->env = env;
 //	rl->mode = malloc(sizeof(int) * 2);
 //	rl->mode[0] = 0;
-//	rl->mode[1] = 1;
+//	rl->mode[1] = 0;
 //	rl->mode_count = 0;
 //	rl->status = 0;
 //
@@ -193,7 +193,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //
 //	// ---------------
-//	char *case30 = "cat <<lolkek\xff test ; echo <<   asjkd$USER\xff | cat -e";
+//	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";
 //
 //	char *mainCase = case30;
 //	while (mainCase[len]) {

@@ -40,7 +40,7 @@ char	*heredoc(char **line, int *i, t_cmd *cmd, t_rl *rl)
 			handle_heredoc_tokens(&tmp, &k, rl);
 	}
 	rl->mode_count++;
-	j += 2;
+	j += 1 + (ft_isspace((*line)[j + 1]));
 	cmd->fd_from = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	write(cmd->fd_from, tmp, ft_strlen(tmp));
 	free(tmp);

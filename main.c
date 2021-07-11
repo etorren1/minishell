@@ -53,14 +53,15 @@ int		omg(t_rl *rl, char ***env)
 	{
 		int i = 0;
 		cmd = NULL;
-					
+		rl->mode_count = 0;
 		while (rl->command_line[i]) 
 		{
 			if (cmd)
 				free_arrcmd(cmd);
 			cmd = (t_cmd **)malloc(sizeof(cmd));
 			*cmd = NULL;
-			if (parser(&rl->command_line[i], (*env), &cmd) < 0)
+			rl->env = *env;
+			if (parser(&rl->command_line[i], rl, &cmd) < 0)
 			{
 				// нада обработать ошибку парсера
 				printf("Parser error\n");
@@ -127,15 +128,8 @@ int		omg(t_rl *rl, char ***env)
 				close(cmd[k - 1]->fd_to);
 			//printf("\nrl->fd_from=%d\nft_to=%d\n", cmd->rl->fd_from, cmd->rl->fd_to);
 		}
-		int z = 0;
-		while (cmd && cmd[z])
-		{
-			ft_arrfree(cmd[z]->args);
-			if (cmd[z]->flags)
-				free(cmd[z]->flags);
-			free(cmd[z]);
-			z++;
-		}
+		if (cmd)
+			free_arrcmd(cmd);
 	}
 }
 

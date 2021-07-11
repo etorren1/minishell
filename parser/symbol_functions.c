@@ -42,7 +42,7 @@ char	*single_quotes(char *str, int *i)
 	return (join_and_free(prefix, body, postfix));
 }
 
-char	*double_quotes(char *str, char **env, int *i)
+char	*double_quotes(char *str, t_rl *rl, int *i)
 {
 	int		start;
 	char	*prefix;
@@ -59,7 +59,7 @@ char	*double_quotes(char *str, char **env, int *i)
 			(*i)++;
 		}
 		if (str[*i] == '$')
-			str = dollar(str, i, env);
+			str = dollar(str, i, rl);
 		if (str[*i] == '"')
 			break ;
 	}
@@ -71,15 +71,15 @@ char	*double_quotes(char *str, char **env, int *i)
 	return (join_and_free(prefix, body, postfix));
 }
 
-int	handle_basic_tokens(char **line, int *i, char **env)
+int	handle_basic_tokens(char **line, int *i, t_rl *rl)
 {
 	if ((*line)[*i] == '\'')
 		*line = single_quotes(*line, i);
 	else if ((*line)[*i] == '"')
-		*line = double_quotes(*line, env, i);
+		*line = double_quotes(*line, rl, i);
 	else if ((*line)[*i] == '\\')
 		*line = backslash(*line, i);
 	else if ((*line)[*i] == '$')
-		*line = dollar(*line, i, env);
+		*line = dollar(*line, i, rl);
 	return (1);
 }

@@ -70,7 +70,7 @@ static void	prepare_fd_to(char **line, t_cmd *cmd, int *j,	int *is_valid_amp)
 	}
 }
 
-static void	define_output_fd(char **line, t_cmd *cmd, int *j, char **env)
+static void	define_output_fd(char **line, t_cmd *cmd, int *j, t_rl *rl)
 {
 	int		mode;
 	int		from;
@@ -88,7 +88,7 @@ static void	define_output_fd(char **line, t_cmd *cmd, int *j, char **env)
 		from = *j;
 		while ((*line)[*j] && !ft_isspace((*line)[*j]))
 		{
-			handle_basic_tokens(line, j, env);
+			handle_basic_tokens(line, j, rl);
 			(*j)++;
 		}
 		file_name = ft_substr(*line, from, *j - from);
@@ -99,7 +99,7 @@ static void	define_output_fd(char **line, t_cmd *cmd, int *j, char **env)
 	}
 }
 
-char	*redirect_output(char **line, int *i, t_cmd *cmd, char **env)
+char	*redirect_output(char **line, int *i, t_cmd *cmd, t_rl *rl)
 {
 	int		from;
 	int		j;
@@ -107,7 +107,7 @@ char	*redirect_output(char **line, int *i, t_cmd *cmd, char **env)
 
 	j = *i;
 	from = manual_fd_input(*line, cmd, i);
-	define_output_fd(line, cmd, &j, env);
+	define_output_fd(line, cmd, &j, rl);
 	prefix = ft_substr(*line, 0, from);
 	*i = from - 1;
 	free(*line);

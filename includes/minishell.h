@@ -43,15 +43,17 @@ typedef struct	s_rl
     int		fd;
 	int		plen;
 	int		*mode;
+	int 	mode_count;
 	int		status;
 	char	*command_line;
 	char	*last_insert;
 	char	*buf;
 	char	*history;
+	char 	**env;
 	t_node	*histnode;
 }				t_rl;
 
-int				parser(char *command_line, char **env, t_cmd ***cmd, t_rl *rl);
+int				parser(char *command_line, t_rl *rl, t_cmd ***cmd);
 void			processor(t_cmd *cmd, char *(**envp), t_rl *rl);
 int				find_environment(char *env, char **envp);
 char			*get_absolute_path_process(char *proc);

@@ -14,6 +14,6 @@
 
 void	ft_exit(t_cmd *cmd, t_rl *rl, char **envp)
 {
-	clear_exit(rl, envp);
+	clear_exit(rl);
 	exit(0);
 }

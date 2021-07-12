@@ -22,7 +22,7 @@ void	wordend(t_rl *rl);
 void	wordbegin(t_rl *rl);
 void	tabkey(t_rl *rl);
 void	correct_rl(t_rl *rl);
-t_rl    *init_rl(char *argv);
+t_rl    *init_rl(char *argv, char **envp);
 void	writehist(t_rl *rl);
 void    readterm(t_rl *rl, t_node **histnode);
 void	preread(t_rl *rl, struct termios *term);

@@ -63,6 +63,6 @@ char 			**get_dir_content(char *str);
 void 			free_arrcmd(t_cmd **cmd);
 void			ctrl_c_handler(int sig);
 void			print_ouit(int sig);
-void			clear_exit(t_rl *rl, char **env);
+void			clear_exit(t_rl *rl);
 
 #endif

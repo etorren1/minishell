@@ -26,7 +26,7 @@ int count_sumlen(t_cmd **cmd)
 	return count;
 }
 
-void	clear_exit(t_rl *rl, char **env)
+void	clear_exit(t_rl *rl)
 {
 	close(rl->fd);
 	rl->fd = open(rl->history, O_WRONLY | O_TRUNC, 0777);
@@ -42,10 +42,10 @@ void	clear_exit(t_rl *rl, char **env)
 	free(rl->command_line);
 	close (rl->fd);
 	free(rl);
-	ft_arrfree(env);
+	ft_arrfree(rl->env);
 }
 
-int		omg(t_rl *rl, char ***env)
+int		omg(t_rl *rl)
 {
 	t_cmd **cmd;
 
@@ -53,14 +53,12 @@ int		omg(t_rl *rl, char ***env)
 	{
 		int i = 0;
 		cmd = NULL;
-		rl->mode_count = 0;
 		while (rl->command_line[i]) 
 		{
 			if (cmd)
 				free_arrcmd(cmd);
 			cmd = (t_cmd **)malloc(sizeof(cmd));
 			*cmd = NULL;
-			rl->env = *env;
 			if (parser(&rl->command_line[i], rl, &cmd) < 0)
 			{
 				// нада обработать ошибку парсера
@@ -77,7 +75,7 @@ int		omg(t_rl *rl, char ***env)
 				k++;
 			// если без пайпов
 			if (k == 1)
-				processor(*cmd, env, rl);
+				processor(*cmd, &rl->env, rl);
 			// если пайпы
 			else if (k > 1)
 			{
@@ -101,17 +99,17 @@ int		omg(t_rl *rl, char ***env)
 						return (101);
 					else if (pid == 0)
 					{
-						if (j < k - 1)
+						if (j < k - 1 && cmd[j]->fd_to == 1)
 						{
-							//cmd[j]->rl->fd_to = fds[j][1];
-							dup2(fds[j][1], 1);
+							cmd[j]->fd_to = fds[j][1];
+							//dup2(fds[j][1], 1);
 						}
 						if (j != 0)
 						{
 							cmd[j]->fd_from = fds[j - 1][0];
-							dup2(fds[j - 1][0], 0);
+							//dup2(fds[j - 1][0], 0);
 						}
-						processor(cmd[j], env, rl);
+						processor(cmd[j], &rl->env, rl);
 						exit(0);
 					}
 					else
@@ -130,6 +128,8 @@ int		omg(t_rl *rl, char ***env)
 		}
 		if (cmd)
 			free_arrcmd(cmd);
+		if (rl->mode)
+			free(rl->mode);
 	}
 }
 
@@ -143,10 +143,8 @@ int	main(int argc, char **argv, char **envp)
 	tgetent(0, "xterm-256color");
 	tcgetattr(0, &saveterm);
 	tcgetattr(0, &term);
-	rl = init_rl(argv[0]);
-	env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
-	ft_arrcpy(env, envp);
-	up_shlvl(&env);
+	rl = init_rl(argv[0], envp);
+	up_shlvl(&rl->env);
 	while (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0)
 	{
 		preread(rl, &term);
@@ -154,8 +152,8 @@ int	main(int argc, char **argv, char **envp)
 		tcsetattr(0, TCSANOW, &saveterm);
 		add_rus(rl);
 		printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
-		omg(rl, &env); // parser and processor part
+		omg(rl); // parser and processor part
 	}
-	clear_exit(rl, env);
+	clear_exit(rl);
 	return (0);
 }

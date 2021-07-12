@@ -136,5 +136,4 @@ void	readterm(t_rl *rl, t_node **histnode)
 	free(rl->command_line);
 	rl->command_line = bufstr;
 	rl->len = ft_strlen(rl->command_line);
-	//free(bufstr);
 }

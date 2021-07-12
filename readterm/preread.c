@@ -7,7 +7,9 @@ void	preread(t_rl *rl, struct termios *term)
 	rl->plen = PROMPT;
 	rl->cursor_pos = rl->plen;
 	rl->count_symb = rl->plen;
-	rl->last_insert = NULL;	
+	rl->last_insert = NULL;
+	rl->mode_count = 0;
+	rl->mode = NULL;
 	write (1, MINISHELL, rl->plen);
 	tputs(tgetstr("sc", 0), 1, ft_putint);
 	clear_buf(rl->command_line, rl->len);

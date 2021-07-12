@@ -12,18 +12,6 @@
 
 #include "../includes/parser.h"
 
-int	is_backslahed(const char *str, int i)
-{
-	int	count;
-
-	count = 0;
-	while (str[--i] && str[i] == '\\')
-		count++;
-	if (count && (count % 2))
-		return (1);
-	return (0);
-}
-
 static int	is_pair(const char *str, char c, int *i, int mode)
 {
 	int	res;
@@ -53,10 +41,35 @@ static int	is_token(char c)
 	return (c == '>' || c == '<' || c == '|' || c == '&' || c == ';');
 }
 
+static int	is_right_num_of_tokens(const char *c_line, int i)
+{
+	if (c_line[i] == '>')
+	{
+		if (c_line[i - 1] && is_token(c_line[i - 1]))
+			return (2);
+		if (c_line[i + 1] && c_line[i + 1] == '>'
+			&& c_line[i + 2] && is_token(c_line[i + 2]))
+			return (0);
+	}
+	else if (c_line[i] == '<')
+	{
+		if (c_line[i - 1] && is_token(c_line[i - 1]))
+			return (2);
+		if (c_line[i + 1] && c_line[i + 1] == '<'
+			&& c_line[i + 2] && is_token(c_line[i + 2]))
+			return (0);
+	}
+	else if (is_token(c_line[i])
+		&& c_line[i + 1] && is_token(c_line[i + 1]))
+		return (0);
+	return (1);
+}
+
 // returns 0 if nothing to parse, -1 if multiline
 int	preparser(const char *c_line)
 {
 	int	i;
+	int	res;
 
 	i = -1;
 	if (!c_line || is_empty(c_line))
@@ -67,25 +80,11 @@ int	preparser(const char *c_line)
 				&& !is_pair(c_line, '\'', &i, 0)) || (c_line[i] == '"'
 				&& !is_backslahed(c_line, i) && !is_pair(c_line, '"', &i, 1)))
 			return (-1);
-		if (c_line[i] == '>')
-		{
-			if (c_line[i - 1] && is_token(c_line[i - 1]))
-				continue ;
-			if (c_line[i + 1] && c_line[i + 1] == '>'
-				&& c_line[i + 2] && is_token(c_line[i + 2]))
-				return (-1);
-		}
-		else if (c_line[i] == '<')
-		{
-			if (c_line[i - 1] && is_token(c_line[i - 1]))
-				continue ;
-			if (c_line[i + 1] && c_line[i + 1] == '<'
-				&& c_line[i + 2] && is_token(c_line[i + 2]))
-				return (-1);
-		}
-		else if (is_token(c_line[i])
-			&& c_line[i + 1] && is_token(c_line[i + 1]))
+		res = is_right_num_of_tokens(c_line, i);
+		if (!res)
 			return (-1);
+		if (res == 2)
+			continue ;
 	}
 	return (1);
 }

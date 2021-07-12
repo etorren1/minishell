@@ -12,7 +12,7 @@
 
 #include "../includes/parser.h"
 
-char	*redirect_input(char **line, int *i, t_cmd *cmd, char **env)
+char	*redirect_input(char **line, int *i, t_cmd *cmd, t_rl *rl)
 {
 	int		from;
 	int		j;
@@ -23,7 +23,7 @@ char	*redirect_input(char **line, int *i, t_cmd *cmd, char **env)
 		j++;
 	from = j;
 	while ((*line)[j] && !ft_isspace((*line)[j]))
-		handle_basic_tokens(line, &j, env) && j++;
+		handle_basic_tokens(line, &j, rl) && j++;
 	if (*i == j)
 		return (NULL);
 	prefix = ft_substr(*line, from, j - from);

@@ -44,7 +44,7 @@ static void	retrieve_next_arg(const char *str, t_cmd *cmd, int from, int to)
 	cmd->args = ft_arradd_str_mod(cmd->args, arg, arg_num);
 }
 
-static int	parse_redirects(char **line, t_cmd *tmp, int *i, char **env)
+static int	parse_redirects(char **line, t_cmd *tmp, int *i, t_rl *rl)
 {
 	while ((*line)[*i])
 	{
@@ -53,9 +53,9 @@ static int	parse_redirects(char **line, t_cmd *tmp, int *i, char **env)
 			if (non_valid_redirect(*line))
 				return (-3);
 			else if ((*line)[*i] == '>')
-				*line = redirect_output(line, i, tmp, env);
+				*line = redirect_output(line, i, tmp, rl);
 			else if ((*line)[*i] == '<')
-				*line = redirect_input(line, i, tmp, env);
+				*line = redirect_input(line, i, tmp, rl);
 			if (!*line)
 				return (-1);
 		}
@@ -65,30 +65,29 @@ static int	parse_redirects(char **line, t_cmd *tmp, int *i, char **env)
 	return (1);
 }
 
-static int	parse_symbols(char **line, char **env, t_cmd *cmd)
+static int	parse_symbols(char **ln, t_rl *rl, t_cmd *cmd)
 {
 	int	i;
 	int	start;
 
 	i = 0;
-	while (ft_isspace((*line)[i]))
+	while (ft_isspace((*ln)[i]))
 		i++;
 	start = i;
-	while ((*line)[i])
+	while ((*ln)[i])
 	{
-		handle_basic_tokens(line, &i, env);
-		if ((*line)[i] == '<' && (*line)[i + 1] &&(*line)[i + 1] == '<')
-			*line = heredoc(line, &i, cmd, env);
-		if (((*line)[i] == '>' || (*line)[i] == '<')
-				&& parse_redirects(line, cmd, &i, env) < 0)
+		handle_basic_tokens(ln, &i, rl);
+		if ((*ln)[i] == '<' && (*ln)[i + 1] && (*ln)[i + 1] == '<')
+			*ln = heredoc(ln, &i, cmd, rl);
+		if (((*ln)[i] == '>' || (*ln)[i] == '<')
+				&& parse_redirects(ln, cmd, &i, rl) < 0)
 			return (-1);
-		if (!(*line)[i] && start >= i)
+		if (!(*ln)[i] && start >= i)
 			break ;
-		if (!(*line)[i] || (*line)[i++]
-			&& (!(*line)[i] || ft_isspace((*line)[i])))
+		if (!(*ln)[i] || (*ln)[i++] && (!(*ln)[i] || ft_isspace((*ln)[i])))
 		{
-			retrieve_next_arg(*line, cmd, start, i);
-			while (ft_isspace((*line)[i]))
+			retrieve_next_arg(*ln, cmd, start, i);
+			while (ft_isspace((*ln)[i]))
 				i++;
 			start = i;
 		}
@@ -96,7 +95,7 @@ static int	parse_symbols(char **line, char **env, t_cmd *cmd)
 	return (1);
 }
 
-int	parser(char *command_line, char **env, t_cmd ***cmd)
+int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 {
 	int		i;
 	int		res;
@@ -112,7 +111,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		if (is_line_empty(line) || parse_symbols(&line, env, tmp) < 0)
+		if (is_line_empty(line) || parse_symbols(&line, rl, tmp) < 0)
 			return (-1);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
@@ -137,7 +136,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 	///////
 	return (res);
 }
-//
+
 //int count_sumlen(t_cmd **cmd)
 //{
 //	int count;
@@ -155,6 +154,15 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	t_cmd	**cmd;
 //	int len = 0;
 //	int res;
+//
+//	t_rl *rl = malloc(sizeof(t_rl));
+//	rl->env = malloc(sizeof(env));
+//	rl->env = env;
+//	rl->mode = malloc(sizeof(int) * 2);
+//	rl->mode[0] = 0;
+//	rl->mode[1] = 0;
+//	rl->mode_count = 0;
+//	rl->status = 0;
 //
 //	char *case0 = "   ;";
 //	char *case1 = "echo co'mma'nd\"000\"\"00\\$00\"'brbrbr'";
@@ -185,7 +193,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //
 //	// ---------------
-//	char *case30 = "cat <<lolkek\xff test ; echo <<   asjkd$USER\xff | cat -e";
+//	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";
 //
 //	char *mainCase = case30;
 //	while (mainCase[len]) {
@@ -194,7 +202,7 @@ int	parser(char *command_line, char **env, t_cmd ***cmd)
 //		cmd = (t_cmd **)malloc(sizeof(cmd));
 //		*cmd = NULL;
 //		printf("%s\n", &mainCase[len]);
-//		printf("%d\n", (res = parser(&mainCase[len], env, &cmd)));
+//		printf("%d\n", (res = parser(&mainCase[len], rl, &cmd)));
 //		if (res < 0)
 //			return (0);
 //		len += count_sumlen(cmd);

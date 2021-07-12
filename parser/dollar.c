@@ -65,7 +65,7 @@ static char	*take_from_env(char *str, char **env, int *i, int *e)
 }
 
 //$'' $2abc $'2'abc
-char	*dollar(char *str, int *i, char **env)
+char	*dollar(char *str, int *i, t_rl *rl)
 {
 	int		start;
 	int		e;
@@ -77,11 +77,11 @@ char	*dollar(char *str, int *i, char **env)
 	e = 0;
 	if (str[*i] && str[*i] == '?')
 	{
-		body = take_from_op_status(0, i);
+		body = take_from_op_status(rl->status, i);
 		e -= 2;
 	}
 	else
-		body = take_from_env(str, env, i, &e);
+		body = take_from_env(str, rl->env, i, &e);
 	prefix = ft_substr(str, 0, start);
 	postfix = ft_strdup(&str[*i]);
 	*i += e;

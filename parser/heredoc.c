@@ -44,6 +44,8 @@ char	*heredoc(char **line, int *i, t_cmd *cmd, t_rl *rl)
 	cmd->fd_from = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	write(cmd->fd_from, tmp, ft_strlen(tmp));
 	free(tmp);
+	close(cmd->fd_from);
+	cmd->fd_from = open(".heredoc", O_RDONLY, 0644);
 	prefix = ft_substr(*line, 0, *i);
 	postfix = ft_strdup(&(*line)[j]);
 	free(*line);

@@ -45,6 +45,16 @@ void	subprocess(t_cmd *cmd, char **envp)
 	int j;
 	char *str;
 
+	/*/
+	int fd;
+
+	if (!ft_strcmp(cmd->args[0], "cat"))
+	{
+		printf("CAT!\n");
+		fd = open(".heredoc", O_RDONLY, 0777);
+		cmd->fd_from = fd;
+	}
+	*/
 	dup2(cmd->fd_to, 1);
 	dup2(cmd->fd_from, 0);
 	temp = malloc(sizeof(temp) * 2);
@@ -79,7 +89,13 @@ void	binary_cmd(t_cmd *cmd, char **envp)
 	else if (pid == -1)
 		printf("PID Error!!!!!!!!!!!!!!!\n");
 	else
+	{
+		if (cmd->fd_from > 1)
+			close(cmd->fd_from);
+		if (cmd->fd_to > 1)
+			close(cmd->fd_to);
 		wait(NULL);
+	}
 }
 
 void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)

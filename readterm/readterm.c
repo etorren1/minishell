@@ -78,9 +78,9 @@ void	readterm(t_rl *rl, t_node **histnode)
 			int end;
 
 			end = ++i;
-			while (ft_isspace(bufstr[end]))
+			while (bufstr[end] && ft_isspace(bufstr[end]))
 				end++;
-			while (bufstr[end] && !ft_isspace(bufstr[end]))
+			while (bufstr[end] && !ft_isspace(bufstr[end]) && !ft_strchr(";|<>", bufstr[end]))
 				end++;
 			while (bufstr[end] && ft_isspace(bufstr[end]))
 				end++;
@@ -99,7 +99,7 @@ void	readterm(t_rl *rl, t_node **histnode)
 			else
 				rl->mode = ft_arradd_int(rl->mode, ++z, 0);
 			bufstr[i] = 0;
-			//printf("beg=%d end=%d |%s|\nbufstr=%s|\ntail=|%s|\n", i, end, stoper, bufstr, tail);
+			printf("beg=%d end=%d |%s|\nbufstr=%s|\ntail=|%s|\n", i, end, stoper, bufstr, tail);
 			clear_buf(rl->command_line, rl->len);			
 			while (ft_strcmp(rl->command_line, stoper) && ft_strcmp(rl->buf, "\3")
 				&& (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0))

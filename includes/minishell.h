@@ -20,6 +20,8 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <errno.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 # include <signal.h>
 # include <dirent.h>
 # define BUF_SIZE	12
@@ -55,6 +57,7 @@ typedef struct	s_rl
 
 int				parser(char *command_line, t_rl *rl, t_cmd ***cmd);
 void			processor(t_cmd *cmd, char *(**envp), t_rl *rl);
+void    		put_error(char *prefix, char *cmd, char *args, char *err);
 int				find_environment(char *env, char **envp);
 char			*get_absolute_path_process(char *proc);
 char			*get_pwd(void);

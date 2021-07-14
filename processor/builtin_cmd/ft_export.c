@@ -44,7 +44,22 @@ static void	output_envvar(int fd, char **envp)
 	ft_arrfree(tmp);
 }
 
-static void	add_envvar(t_cmd *cmd, char *(**envp))
+static int	ft_othersymb(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (ft_isalpha(str[i]) || ft_isdigit(str[i]))
+			i++;
+		else
+			return (1);
+	}
+	return (0);
+}
+
+static int	add_envvar(t_cmd *cmd, char *(**envp))
 {
 	int		i;
 	int		res;
@@ -52,23 +67,41 @@ static void	add_envvar(t_cmd *cmd, char *(**envp))
 	i = 1;
 	while (cmd->args[i])
 	{
+		if (ft_atoi(cmd->args[i]) != 0)
+		{
+			put_error(NULL, cmd->args[0], cmd->args[i], "not an identifier");
+			return (1);
+		}
+		else if (ft_othersymb(cmd->args[i]))
+		{
+			put_error(NULL, cmd->args[0], cmd->args[i], "not valid in this context");
+			return (1);
+		}
 		res = find_environment_mod(cmd->args[i], *envp);
 		if (res >= 0)
 		{
 			(*envp)[res] = ft_realloc((*envp)[res], ft_strlen(cmd->args[i]) + 1);
 			ft_strcpy((*envp)[res], cmd->args[i]);
 		}
-		else if (res == -1)
+		else
+		{
+			if (res == -2)
+				cmd->args[i] = ft_strjoin(cmd->args[i], "=");
 			*envp = ft_arradd_str(*envp, cmd->args[i], ft_arrsize(*envp) - 1);
+		}
 		i++;
 	}
+	return (0);
 }
 
-void	ft_export(t_cmd *cmd, char *(**envp))
+int	ft_export(t_cmd *cmd, char *(**envp))
 {
 
 	if (!cmd->args[1])
+	{
 		output_envvar(cmd->fd_to, *envp);
+		return (0);
+	}
 	else
-		add_envvar(cmd, envp);
+		return (add_envvar(cmd, envp));
 }

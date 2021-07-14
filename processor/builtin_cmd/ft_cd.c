@@ -49,7 +49,7 @@ static char *make_pwdenv(char *var, char *val)
 	return(env);
 }
 
-static void	new_pwd(t_cmd *cmd, char ***envp)
+static int	new_pwd(t_cmd *cmd, char ***envp)
 {
 	char	*oldpwd;
 	char	*newpwd;
@@ -58,21 +58,28 @@ static void	new_pwd(t_cmd *cmd, char ***envp)
 	if (chdir(cmd->args[1]) == -1)
 	{
 		free(oldpwd);
-		printf("cd: no such file or directory: %s\n", cmd->args[1]);
+		put_error(NULL, cmd->args[0], cmd->args[1], "No such file or directory");
+		return (1);
 	}
 	else if (find_environment("PWD", *envp) > -1)
 	{
 		newpwd = make_pwdenv("PWD", get_pwd());
 		change_envp(envp, oldpwd, newpwd);
+		return (0);
 	}
+	return (0);
 }
 
-void	ft_cd(t_cmd *cmd, char ***envp)
+int		ft_cd(t_cmd *cmd, char ***envp)
 {
 	if (cmd->args[1] == 0)
 		get_home_dir(*envp);
 	else if (cmd->args[2])
-		printf("cd: too many arguments\n");
+	{
+		put_error(NULL, cmd->args[0], NULL, "too many arguments");
+		return (1);
+	}
 	else
-		new_pwd(cmd, envp);
+		return (new_pwd(cmd, envp));
+	return (0);
 }

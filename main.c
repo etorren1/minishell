@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "./includes/readterm.h"
-# include <sys/types.h>
-# include <sys/wait.h>
 
 int count_sumlen(t_cmd **cmd)
 {
@@ -81,23 +79,28 @@ int		omg(t_rl *rl)
 			{
 				int **fds = (int **)malloc(sizeof (int *) * (k - 1));
 				int j = -1;
-				int pid;
+				int *pid;
 				int status;
+
+				pid = malloc(sizeof(int) * k);
 				while (++j < k)
 					fds[j] = (int *)malloc(sizeof(int) * 2);
 				j = -1;
 				while (++j < k)
 				{
 					if (j < k - 1)
+					{
 						if (pipe(fds[j]))
 						{
 							ft_putendl_fd("Pipe ERROR\n",2);
 							return (100);
 						}
-					pid = fork();
-					if (pid < 0)
+						printf("fds[%d][0]=%d fds[%d]=%d\n", j, fds[j][0], j, fds[j][1]);
+					}
+					pid[j] = fork();
+					if (pid[j] < 0)
 						return (101);
-					else if (pid == 0)
+					else if (pid[j] == 0)
 					{
 						if (j < k - 1 && cmd[j]->fd_to == 1)
 						{
@@ -110,31 +113,39 @@ int		omg(t_rl *rl)
 							//dup2(fds[j - 1][0], 0);
 						}
 						processor(cmd[j], &rl->env, rl);
+						close(fds[j][0]);
 						exit(0);
 					}
-					else
-					{
-						waitpid(pid, &status, 0);
-						if (j != k - 1)
-							close(fds[j][1]);
-						if (j != 0)
-							close(fds[j - 1][0]);
-					}
 				}
+				j = -1;
+				while (++j < k)
+				{
+					if (fds[j][1] > 1)
+						close(fds[j][1]);
+					if (fds[j][0] > 1)
+						close(fds[j][0]);
+					/*if (j < k - 1 && cmd[j]->fd_to == 1)
+						close(cmd[j]->fd_to);
+					if (j != 0)
+						close(cmd[j]->fd_from);*/
+					//kill(pid[j], 0);
+					waitpid(pid[j], &rl->status, 0);
+					if (rl->status > 255)
+						rl->status /= 256;
+				}
+				//printf("$?=%d\n", rl->status);
 				j = -1;
 				while (++j < k)
 					free(fds[j]);
 				free(fds);
 			}
-			if (cmd[k - 1]->fd_to > 1)
-				close(cmd[k - 1]->fd_to);
-			//printf("\nrl->fd_from=%d\nft_to=%d\n", cmd->rl->fd_from, cmd->rl->fd_to);
 		}
 		if (cmd)
 			free_arrcmd(cmd);
 		if (rl->mode)
 			free(rl->mode);
 	}
+	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -154,7 +165,6 @@ int	main(int argc, char **argv, char **envp)
 		preread(rl, &term);
 		readterm(rl, &rl->histnode);
 		tcsetattr(0, TCSANOW, &saveterm);
-		add_rus(rl);
 		printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
 		omg(rl); // parser and processor part
 	}

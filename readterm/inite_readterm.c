@@ -5,8 +5,9 @@ t_rl    *init_rl(char *argv, char **envp)
     t_rl *rl;
 
     rl = malloc(sizeof(t_rl));
-	rl->len = 2;
+	rl->len = 128;
 	rl->histnode = NULL;
+	rl->status = 0;
 	rl->env = malloc(sizeof(envp) * (ft_arrsize(envp) + 1));
 	ft_arrcpy(rl->env, envp);
 	rl->history = ft_strjoin(get_absolute_path_process(argv), HISTORY);

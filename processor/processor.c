@@ -13,7 +13,7 @@
 #include "../includes/minishell.h"
 #include "../includes/processor.h"
 
-void	get_paths(char *path, char *bin, char *(**temp), int ret)
+static void	get_paths(char *path, char *bin, char *(**temp), int ret)
 {
 	int		i = -1;
 	int		prev = 0;
@@ -38,23 +38,13 @@ void	get_paths(char *path, char *bin, char *(**temp), int ret)
 	free(path);
 }
 
-void	subprocess(t_cmd *cmd, char **envp)
+static void	subprocess(t_cmd *cmd, char **envp)
 {
 	char **temp;
 	int ret;
 	int j;
 	char *str;
 
-	/*/
-	int fd;
-
-	if (!ft_strcmp(cmd->args[0], "cat"))
-	{
-		printf("CAT!\n");
-		fd = open(".heredoc", O_RDONLY, 0777);
-		cmd->fd_from = fd;
-	}
-	*/
 	dup2(cmd->fd_to, 1);
 	dup2(cmd->fd_from, 0);
 	temp = malloc(sizeof(temp) * 2);
@@ -65,18 +55,22 @@ void	subprocess(t_cmd *cmd, char **envp)
 	if (ret != -1)
 		get_paths(ft_strdup(envp[ret]), cmd->args[0], &temp, ret);
 	j = 0;
-	while (execve(temp[j], cmd->args, envp) == -1 && temp[j])
+	while (temp[j] && execve(temp[j], cmd->args, envp) == -1 )
 		j++;
 	if (!temp[j])
 	{
-		printf("minishell: %s: command not found\n", cmd->args[0]);
+		put_error("minishell: ", cmd->args[0], NULL, "command not found");
 		ft_arrfree(temp);
-		exit(-1);
+		exit(127);
 	}
+	/*if (cmd->fd_from > 1)
+		close(cmd->fd_from);
+	if (cmd->fd_to > 1)
+		close(cmd->fd_to);*/
 	ft_arrfree(temp);
 }
 
-void	binary_cmd(t_cmd *cmd, char **envp)
+static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 {
 	pid_t pid = fork();
 	
@@ -90,11 +84,9 @@ void	binary_cmd(t_cmd *cmd, char **envp)
 		printf("PID Error!!!!!!!!!!!!!!!\n");
 	else
 	{
-		if (cmd->fd_from > 1)
-			close(cmd->fd_from);
-		if (cmd->fd_to > 1)
-			close(cmd->fd_to);
-		wait(NULL);
+		waitpid(pid, &rl->status, 0);
+		if (rl->status == 3 || rl->status == 2)
+			rl->status += 128;
 	}
 }
 
@@ -109,19 +101,26 @@ void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 	printf(">>END<<\e[0m\n");
 	///////
 	if (!ft_strcmp(cmd->args[0], "echo"))
-		ft_echo(cmd);
+		rl->status =ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
-		ft_pwd(cmd->fd_to);
+		rl->status =ft_pwd(cmd->fd_to);
 	else if (!ft_strcmp(cmd->args[0], "cd"))
-		ft_cd(cmd, envp);
+		rl->status = ft_cd(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "env"))
-		ft_env(cmd->fd_to, *envp);
+		rl->status = ft_env(cmd, *envp);
 	else if (!ft_strcmp(cmd->args[0], "export"))
-		ft_export(cmd, envp);
+		rl->status = ft_export(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "unset"))
-		ft_unset(cmd, envp);
+		rl->status = rl->status = ft_unset(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "exit"))
 		ft_exit(cmd, rl, *envp);
 	else
-		binary_cmd(cmd, *envp);
+		binary_cmd(cmd, rl, *envp);
+	if (rl->status > 255)
+		rl->status /= 256;
+	//printf("$?=%d\n", rl->status);
+	/*if (cmd->fd_from > 1)
+		close(cmd->fd_from);
+	if (cmd->fd_to > 1)
+		close(cmd->fd_to);*/
 }

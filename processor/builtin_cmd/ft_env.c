@@ -12,11 +12,17 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_env(int fd, char **envp)
+int		ft_env(t_cmd *cmd, char **envp)
 {
 	int i;
 
 	i = 0;
+	if (cmd->args[1])
+	{
+		put_error(NULL, cmd->args[0], cmd->args[1], "No such file or directory");
+		return (127);
+	}
 	while (envp[i])
-		ft_putendl_fd(envp[i++], fd);
+		ft_putendl_fd(envp[i++], cmd->fd_to);
+	return (0);
 }

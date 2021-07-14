@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_unset(t_cmd *cmd, char *(**envp))
+int 	ft_unset(t_cmd *cmd, char *(**envp))
 {
     int     res;
     int     i;
@@ -25,4 +25,5 @@ void	ft_unset(t_cmd *cmd, char *(**envp))
             *envp = ft_arrdel_str(*envp, res);
         i++;
     }
+    return (0);
 }

@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-void	 ft_echo(t_cmd *cmd)
+int	 ft_echo(t_cmd *cmd)
 {
 	int	i;
 	int	size;
@@ -38,4 +38,5 @@ void	 ft_echo(t_cmd *cmd)
 		}
 		write(cmd->fd_to, "\n", 1);
 	}
+	return (0);
 }

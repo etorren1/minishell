@@ -65,6 +65,7 @@ int		*ft_arradd_int(int	*arr, int size, int	val)
 void	readterm(t_rl *rl, t_node **histnode)
 {
 	casecore(rl, histnode);
+	add_rus(rl);
 	writehist(rl);
 	int i = 1;
 	int z = 0;
@@ -99,7 +100,7 @@ void	readterm(t_rl *rl, t_node **histnode)
 			else
 				rl->mode = ft_arradd_int(rl->mode, ++z, 0);
 			bufstr[i] = 0;
-			printf("beg=%d end=%d |%s|\nbufstr=%s|\ntail=|%s|\n", i, end, stoper, bufstr, tail);
+			//printf("beg=%d end=%d |%s|\nbufstr=%s|\ntail=|%s|\n", i, end, stoper, bufstr, tail);
 			clear_buf(rl->command_line, rl->len);			
 			while (ft_strcmp(rl->command_line, stoper) && ft_strcmp(rl->buf, "\3")
 				&& (ft_strcmp(rl->buf, "\4") || rl->command_line[0] != 0))
@@ -130,10 +131,11 @@ void	readterm(t_rl *rl, t_node **histnode)
 		}
 		i += 2;
 	}
-	int o = -1;
+	/*int o = -1;
 	while (z > ++o)
-		printf("mode[%d]=%d\n", o, rl->mode[o]);
+		printf("mode[%d]=%d\n", o, rl->mode[o]);*/
 	free(rl->command_line);
 	rl->command_line = bufstr;
 	rl->len = ft_strlen(rl->command_line);
+	
 }

@@ -84,14 +84,14 @@ void	binary_cmd(t_cmd *cmd, char **envp)
 
 void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 {
-	/*////
+	/////
 	printf("\e[34m>>CMD_INFO<<\n");
 	int l = -1;
 	while (cmd->args[++l])
 		printf("args[%d]=%s\n",l, cmd->args[l]);
 	printf("fd_from=%d  fd_to=%d\n", cmd->fd_from, cmd->fd_to);
 	printf(">>END<<\e[0m\n");
-	*///////
+	///////
 	if (!ft_strcmp(cmd->args[0], "echo"))
 		ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))

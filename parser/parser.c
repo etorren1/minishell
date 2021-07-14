@@ -120,7 +120,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 		free(line);
 		*cmd = ft_arrcmd_addelem(*cmd, tmp);
 	}
-	/////
+	/*////
 	int z = 0;
 	int l = -1;
 	while ((*cmd)[z])
@@ -133,7 +133,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 		printf(">>END[\e[31m%d\e[34m]<<\e[0m\n", z);
 		z++;
 	}
-	///////
+	/*//////
 	return (res);
 }
 

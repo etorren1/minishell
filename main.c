@@ -121,6 +121,10 @@ int		omg(t_rl *rl)
 							close(fds[j - 1][0]);
 					}
 				}
+				j = -1;
+				while (++j < k)
+					free(fds[j]);
+				free(fds);
 			}
 			if (cmd[k - 1]->fd_to > 1)
 				close(cmd[k - 1]->fd_to);

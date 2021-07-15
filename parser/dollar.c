@@ -74,6 +74,8 @@ char	*dollar(char *str, int *i, t_rl *rl)
 	char	*postfix;
 
 	start = (*i)++;
+	if (!str[*i] || (str[*i] && ft_isspace(str[*i])))
+		return (str);
 	e = 0;
 	if (str[*i] && str[*i] == '?')
 	{

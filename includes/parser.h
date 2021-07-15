@@ -31,4 +31,5 @@ int		file_operations(char *file_name, t_cmd *cmd, int mode);
 int		is_backslahed(const char *str, int i);
 int		is_line_empty(char *line);
 char	*heredoc(char **line, int *i, t_cmd *cmd, t_rl *rl);
+int		free_cmd(t_cmd *cmd);
 

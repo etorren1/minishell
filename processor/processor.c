@@ -118,7 +118,6 @@ void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 		binary_cmd(cmd, rl, *envp);
 	if (rl->status > 255)
 		rl->status /= 256;
-	//printf("$?=%d\n", rl->status);
 	/*if (cmd->fd_from > 1)
 		close(cmd->fd_from);
 	if (cmd->fd_to > 1)

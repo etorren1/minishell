@@ -128,14 +128,21 @@ void	readterm(t_rl *rl, t_node **histnode)
 			bufstr = ft_strjoin(bufstr, tmp);
 			bufstr = ft_strjoin(bufstr, tail);
 			free(tmp);
+			free(tail);
+			free(stoper);
 		}
-		i += 2;
+		i ++;
 	}
-	/*int o = -1;
-	while (z > ++o)
-		printf("mode[%d]=%d\n", o, rl->mode[o]);*/
-	free(rl->command_line);
-	rl->command_line = bufstr;
-	rl->len = ft_strlen(rl->command_line);
-	
+	if (rl->len < ft_strlen(bufstr))
+	{
+		free(rl->command_line);
+		rl->command_line = bufstr;
+		rl->len = ft_strlen(rl->command_line);
+	}
+	else
+	{
+		clear_buf(rl->command_line, rl->len);
+		ft_strcpy(rl->command_line, bufstr);
+		free(bufstr);
+	}
 }

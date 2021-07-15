@@ -7,11 +7,14 @@ int	read_history(int fd, t_node **node)
 	char	*line;
 
 	i = 0;
+	line = NULL;
 	while ((rd = get_next_line(fd, &line)) > 0)
 	{
 		ft_nodeadd_back(node, ft_nodenew(line));
 		i++;
 	}
+	if (line)
+		free(line);
 	rd = get_next_line(fd, &line);
 	ft_nodeadd_back(node, ft_nodenew(line));
 	if (ft_nodesize(*node) == 1)

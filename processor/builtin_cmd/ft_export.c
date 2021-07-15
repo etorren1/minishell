@@ -51,7 +51,7 @@ static int	ft_othersymb(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (ft_isalpha(str[i]) || ft_isdigit(str[i]))
+		if (ft_isalpha(str[i]) || ft_isdigit(str[i]) || str[i] == '_')
 			i++;
 		else
 			return (1);

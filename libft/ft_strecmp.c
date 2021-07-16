@@ -9,11 +9,11 @@ int		ft_strecmp(const char *str, const char *tail)
 
 	tmp1 = (unsigned char *)str;
 	tmp2 = (unsigned char *)tail;
-	i = ft_strlen(tail) - 1;
-	if (i == -1)
+	if (tail[0] == '\0')
 		return (0);
+	i = ft_strlen(tail) - 1;
 	j = ft_strlen(str) - 1;
-	while (i >= 0 && j >= 0 && tmp1[j] == tmp2[i])
+	while (i > 0 && j > 0 && tmp1[j] == tmp2[i])
 	{
 		i--;
 		j--;

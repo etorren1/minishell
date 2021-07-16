@@ -26,7 +26,7 @@ SRCS		= ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c \
 			  ft_lstiter.c ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c \
 			  ft_nodeadd_back.c ft_nodeadd_front.c ft_nodeclear.c ft_nodedelone.c \
 			  ft_nodeiter.c ft_nodelast.c ft_nodenew.c ft_nodesize.c ft_nodefirst.c\
-			  ft_isspace.c ft_arradd_str_mod.c
+			  ft_isspace.c ft_arradd_str_mod.c ft_arradd_str_back.c
 
 FT_H		= libft.h
 

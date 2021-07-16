@@ -102,6 +102,7 @@ char			**ft_arrcpy(char **dest, char **arr);
 char			**ft_arrdel_str(char **arr, int pos);
 char			**ft_arradd_str(char **arr, char *str, int pos);
 char			**ft_arradd_str_mod(char **arr, char *freeable_str, int pos);
+char			**ft_arradd_str_back(char **arr, char *str);
 int				ft_isspace(int c);
 
 #endif

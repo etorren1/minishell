@@ -82,6 +82,11 @@ static int	parse_symbols(char **ln, t_rl *rl, t_cmd *cmd)
 		if (((*ln)[i] == '>' || (*ln)[i] == '<')
 				&& parse_redirects(ln, cmd, &i, rl) < 0)
 			return (-1);
+		if ((*ln)[i] == '*')
+		{
+			wildcard(*ln, &i, cmd);
+			start = i;
+		}
 		if (!(*ln)[i] && start >= i)
 			break ;
 		if (!(*ln)[i] || (*ln)[i++] && (!(*ln)[i] || ft_isspace((*ln)[i])))
@@ -178,11 +183,12 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //	char *case27 = "<<\xff";
+//	char *case28 = "*";
 //
 //	// ---------------
 //	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";
 //
-//	char *mainCase = case27;
+//	char *mainCase = case28;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);

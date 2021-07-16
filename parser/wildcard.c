@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./includes/minishell.h"
+#include "../includes/minishell.h"
 
 char	**hhcore(char **tmp, char *head, int len)
 {
@@ -28,7 +28,6 @@ char	**hhcore(char **tmp, char *head, int len)
 		{
 			buf[i++] = ft_strdup(tmp[j]);
 			buf[i] = NULL;
-			printf("%s\n", buf[i - 1]); //del
 		}
 		free(tmp[j]);
 	}
@@ -51,7 +50,7 @@ char	**headhandler(char **tmp, int pos, char *str)
 	return (buf);
 }
 
-void	tailhandler(char **tmp, char *str)// int size, //t_cmd *cmd);
+void	tailhandler(char **tmp, char *str, int *pos, t_cmd *cmd)
 {
 	int		len;
 	int		j;
@@ -68,44 +67,40 @@ void	tailhandler(char **tmp, char *str)// int size, //t_cmd *cmd);
 			if (tmp[j][ft_strlen(tmp[j]) - 1] == '/')
 				tmp[j][ft_strlen(tmp[j]) - 1] = 0;
 		if (!ft_strecmp(tmp[j], tail))
-		{
-			printf("%s\n", tmp[j]); //del
-			//cmd->args = ft_arradd_str_mod(cmd->args, tmp[j], size++);
-		}
-		else
-			free(tmp[j]);
+			cmd->args = ft_arradd_str_back(cmd->args, tmp[j]);
+		free(tmp[j]);
 	}
+	*pos += len + 1;
 	free(tmp);
 	free(tail);
 }
 
-void	wildcard(int pos, t_rl *rl) // t_cmd *cmd)
+void    wildcard(char *str, int *pos, t_cmd *cmd)
 {
-	char	**tmp;
-	int		j;
-	int		i;
-	int		size;
+	char    **tmp;
+	int     j;
 
 	j = -1;
-	i = 0;
-	//size = ft_arrsize(cmd->args);
 	tmp = get_dir_content(get_pwd());
-	if ((!rl->command_line[pos + 1] || ft_isspace(rl->command_line[pos + 1]))
-		 && (pos - 1 >= 0 && ft_isspace(rl->command_line[pos - 1])))
+	if (((!str[*pos + 1] || str[*pos + 1] == '*' || ft_isspace(str[*pos + 1]))
+		&& (*pos - 1 >= 0 && (ft_isspace(str[*pos - 1])
+		|| str[*pos - 1]=='*'))))
 	{
 		while (tmp[++j])
-		{
-			printf("%s\n", tmp[j]); //del
-			//cmd->args = ft_arradd_str(cmd->args, tmp[j], size++);
-		}
+			cmd->args = ft_arradd_str_back(cmd->args, tmp[j]);
 		ft_arrfree(tmp);
+		if (!str[*pos + 1])
+			(*pos)++;
 	}
 	else
 	{
-		if (pos - 1 >= 0 && !ft_isspace(rl->command_line[pos - 1]))
-			tailhandler(headhandler(tmp, pos, rl->command_line),
-				&rl->command_line[pos + 1]); //, size);
+		if (*pos - 1 >= 0 && !ft_isspace(str[*pos - 1]))
+			tailhandler(headhandler(tmp, *pos, str), &str[*pos + 1], pos, cmd);
 		else
-			tailhandler(tmp, &rl->command_line[pos + 1]); //, size);
+			tailhandler(tmp, &str[*pos + 1], pos, cmd);
 	}
+	while (str[*pos + 1] && ft_isspace(str[*pos + 1]))
+		(*pos)++;
+	if (str[*pos] && !str[*pos + 1] && ft_isspace(str[*pos]))
+		(*pos)++;
 }

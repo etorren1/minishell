@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-char **get_dir_content(char *str)
+char	**get_dir_content(char *str)
 {
     DIR				*dir;
     struct dirent	*entry;

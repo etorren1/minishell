@@ -63,10 +63,10 @@ static void	subprocess(t_cmd *cmd, char **envp)
 		ft_arrfree(temp);
 		exit(127);
 	}
-	/*if (cmd->fd_from > 1)
-		close(cmd->fd_from);
 	if (cmd->fd_to > 1)
-		close(cmd->fd_to);*/
+		close(cmd->fd_to);
+	if (cmd->fd_from > 0)
+		close(cmd->fd_from);
 	ft_arrfree(temp);
 }
 
@@ -85,6 +85,10 @@ static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 	else
 	{
 		waitpid(pid, &rl->status, 0);
+		if (cmd->fd_to > 1)
+			close(cmd->fd_to);
+		if (cmd->fd_from > 1)
+			close(cmd->fd_from);
 		if (rl->status == 3 || rl->status == 2)
 			rl->status += 128;
 	}
@@ -92,14 +96,14 @@ static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 
 void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 {
-	/////
+	/*////
 	printf("\e[34m>>CMD_INFO<<\n");
 	int l = -1;
 	while (cmd->args[++l])
 		printf("args[%d]=%s\n",l, cmd->args[l]);
 	printf("fd_from=%d  fd_to=%d\n", cmd->fd_from, cmd->fd_to);
 	printf(">>END<<\e[0m\n");
-	///////
+	*///////
 	if (!ft_strcmp(cmd->args[0], "echo"))
 		rl->status =ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
@@ -118,8 +122,4 @@ void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 		binary_cmd(cmd, rl, *envp);
 	if (rl->status > 255)
 		rl->status /= 256;
-	/*if (cmd->fd_from > 1)
-		close(cmd->fd_from);
-	if (cmd->fd_to > 1)
-		close(cmd->fd_to);*/
 }

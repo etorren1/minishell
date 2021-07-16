@@ -20,7 +20,7 @@ t_cmd	*new_cmd(void)
 	cmd->args = malloc(sizeof (char *));
 	*cmd->args = NULL;
 	cmd->flags = NULL;
-	cmd->fd_from = 1;
+	cmd->fd_from = 0;
 	cmd->fd_to = 1;
 	return (cmd);
 }

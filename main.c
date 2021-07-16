@@ -95,59 +95,41 @@ int		omg(t_rl *rl)
 							ft_putendl_fd("Pipe ERROR\n",2);
 							return (100);
 						}
-						printf("fds[%d][0]=%d fds[%d][1]=%d\n", j, fds[j][0], j, fds[j][1]);
 					}
 					pid[j] = fork();
 					if (pid[j] < 0)
+					{
+						printf("PID ERROR!\n");
 						return (101);
+					}
 					else if (pid[j] == 0)
 					{
 						if (j < k - 1 && cmd[j]->fd_to == 1)
-						{
 							cmd[j]->fd_to = fds[j][1];
-							//dup2(fds[j][1], 1);
-						}
 						if (j != 0)
-						{
 							cmd[j]->fd_from = fds[j - 1][0];
-							//dup2(fds[j - 1][0], 0);
-						}
 						processor(cmd[j], &rl->env, rl);
 						exit(0);
 					}
-					//else if (j != 0)
-					//	waitpid(pid[j], &rl->status, 0);
+					else
+					{
+						if (j != 0)
+							close(fds[j - 1][0]);
+						if (j != k - 1)
+							close(fds[j][1]);
+						if (cmd[j]->fd_to > 1 && cmd[j]->fd_to != fds[j][1])
+							close(cmd[j]->fd_to);
+					}						
 				}
-				//waitpid(pid[0], &rl->status, 0);
 				j = -1;
 				while (++j < k)
 				{
-					/*if (fds[j][1] > 1)
-						close(fds[j][1]);
-					if (fds[j][0] > 1)
-						close(fds[j][0]);*/
-					/*if (j < k - 1)
-						close(cmd[j]->fd_to);
-					if (j != 0)
-						close(cmd[j]->fd_from);*/
-					//wait(NULL);
-					if (cmd[j]->fd_to > 1)
-						close(cmd[j]->fd_to);
-					if (fds[j][1] > 1)
-						close(fds[j][1]);
-					if (fds[j][0] > 1)
-						close(fds[j][0]);
-					if (j != 0)
-						kill(pid[j], 0);
-				}
-				waitpid(pid[0], &rl->status, 0);
-				//waitpid(pid[k - 1], &rl->status, 0);
-				if (rl->status > 255)
-					rl->status /= 256;
-				//printf("$?=%d\n", rl->status);
-				j = -1;
-				while (++j < k)
+					waitpid(pid[j], &rl->status, 0);
+					kill(pid[j], SIGKILL);
 					free(fds[j]);
+				}
+				if (rl->status > 255)
+					rl->status /= 256;				
 				free(fds);
 			}
 		}
@@ -156,7 +138,7 @@ int		omg(t_rl *rl)
 		if (rl->mode)
 			free(rl->mode);
 	}
-	return (0);
+	return (1);
 }
 
 int	main(int argc, char **argv, char **envp)

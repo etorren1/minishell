@@ -30,6 +30,8 @@ char	*heredoc(char **line, int *i, t_cmd *cmd, t_rl *rl)
 	char	*postfix;
 
 	j = *i + 2;
+	if (!(*line)[j] || (*line)[j] == -1)
+		return (*line);
 	while ((*line)[j] != -1)
 		j++;
 	tmp = ft_substr(*line, *i + 2, j - (*i + 2));

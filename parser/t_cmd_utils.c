@@ -25,7 +25,7 @@ t_cmd	*new_cmd(void)
 	return (cmd);
 }
 
-void	free_cmd(t_cmd *cmd)
+int	free_cmd(t_cmd *cmd)
 {
 	int	i;
 
@@ -36,6 +36,7 @@ void	free_cmd(t_cmd *cmd)
 	if (cmd->flags)
 		free(cmd->flags);
 	free(cmd);
+	return (1);
 }
 
 void	free_arrcmd(t_cmd **cmd)

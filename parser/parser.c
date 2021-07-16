@@ -59,7 +59,7 @@ static int	parse_redirects(char **line, t_cmd *tmp, int *i, t_rl *rl)
 			if (!*line)
 				return (-1);
 		}
-		if ((*line)[*i])
+		if ((*line)[*i] || *i < 0)
 			(*i)++;
 	}
 	return (1);
@@ -111,7 +111,8 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		if (is_line_empty(line) || parse_symbols(&line, rl, tmp) < 0)
+		if ((is_line_empty(line) || parse_symbols(&line, rl, tmp) < 0)
+			&& free_cmd(tmp))
 			return (-1);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
@@ -156,7 +157,6 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	int res;
 //
 //	t_rl *rl = malloc(sizeof(t_rl));
-//	rl->env = malloc(sizeof(env));
 //	rl->env = env;
 //	rl->mode = malloc(sizeof(int) * 2);
 //	rl->mode[0] = 0;
@@ -191,11 +191,12 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	char *case24 = "ls > 1 > 2 > 3 > $USER | cat < $USER";
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
+//	char *case27 = "<<\xff";
 //
 //	// ---------------
 //	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";
 //
-//	char *mainCase = case30;
+//	char *mainCase = case27;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);
@@ -204,7 +205,11 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //		printf("%s\n", &mainCase[len]);
 //		printf("%d\n", (res = parser(&mainCase[len], rl, &cmd)));
 //		if (res < 0)
+//		{
+//			if (cmd)
+//				free_arrcmd(cmd);
 //			return (0);
+//		}
 //		len += count_sumlen(cmd);
 //		if (mainCase[len])
 //			len++;

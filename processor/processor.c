@@ -103,7 +103,9 @@ void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 		printf("args[%d]=%s\n",l, cmd->args[l]);
 	printf("fd_from=%d  fd_to=%d\n", cmd->fd_from, cmd->fd_to);
 	printf(">>END<<\e[0m\n");
-	*///////
+	/*//////
+	if (!cmd->args[0])
+		return ;
 	if (!ft_strcmp(cmd->args[0], "echo"))
 		rl->status =ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))

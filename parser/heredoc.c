@@ -36,17 +36,13 @@ char	*heredoc(char **line, int *i, t_cmd *cmd, t_rl *rl)
 		j++;
 	tmp = ft_substr(*line, *i + 2, j - (*i + 2));
 	k = -1;
-	if (!rl->mode[rl->mode_count])
-	{
+	if (!rl->mode[rl->mode_count++])
 		while (tmp[++k])
 			handle_heredoc_tokens(&tmp, &k, rl);
-	}
-	rl->mode_count++;
 	j += 1 + (ft_isspace((*line)[j + 1]));
 	cmd->fd_from = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	write(cmd->fd_from, tmp, ft_strlen(tmp));
+	write(cmd->fd_from, tmp, ft_strlen(tmp)) && close(cmd->fd_from);
 	free(tmp);
-	close(cmd->fd_from);
 	cmd->fd_from = open(".heredoc", O_RDONLY, 0644);
 	prefix = ft_substr(*line, 0, *i);
 	postfix = ft_strdup(&(*line)[j]);

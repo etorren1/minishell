@@ -15,12 +15,12 @@
 char	**hhcore(char **tmp, char *head, int len)
 {
 	char	**buf;
-	int	 j;
-	int	 i;
+	int		j;
+	int		i;
 
 	j = -1;
 	i = 0;
-	buf = malloc(sizeof(char*) * ft_arrsize(tmp));
+	buf = malloc(sizeof(char *) * ft_arrsize(tmp));
 	buf[0] = NULL;
 	while (tmp[++j])
 	{
@@ -28,11 +28,11 @@ char	**hhcore(char **tmp, char *head, int len)
 		{
 			buf[i++] = ft_strdup(tmp[j]);
 			buf[i] = NULL;
-			printf("%s\n",buf[i - 1]); //del
+			printf("%s\n", buf[i - 1]); //del
 		}
 		free(tmp[j]);
 	}
-    return (buf);
+	return (buf);
 }
 
 char	**headhandler(char **tmp, int pos, char *str)
@@ -103,7 +103,8 @@ void	wildcard(int pos, t_rl *rl) // t_cmd *cmd)
 	else
 	{
 		if (pos - 1 >= 0 && !ft_isspace(rl->command_line[pos - 1]))
-			tailhandler(headhandler(tmp, pos, rl->command_line), &rl->command_line[pos + 1]); //, size);
+			tailhandler(headhandler(tmp, pos, rl->command_line),
+				&rl->command_line[pos + 1]); //, size);
 		else
 			tailhandler(tmp, &rl->command_line[pos + 1]); //, size);
 	}

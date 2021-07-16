@@ -121,20 +121,6 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 		free(line);
 		*cmd = ft_arrcmd_addelem(*cmd, tmp);
 	}
-	/*////
-	int z = 0;
-	int l = -1;
-	while ((*cmd)[z])
-	{
-		printf("\e[34m>>CMD_INFO[\e[31m%d\e[34m]<<\n", z);
-		l = -1;
-		while ((*cmd)[z]->args[++l])
-			printf("args[%d]=%s\n",l, (*cmd)[z]->args[l]);
-		printf("fd_from=%d  fd_to=%d\n", (*cmd)[z]->fd_from, (*cmd)[z]->fd_to);
-		printf(">>END[\e[31m%d\e[34m]<<\e[0m\n", z);
-		z++;
-	}
-	*///////
 	return (res);
 }
 

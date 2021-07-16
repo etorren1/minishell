@@ -59,8 +59,7 @@ int		omg(t_rl *rl)
 			*cmd = NULL;
 			if (parser(&rl->command_line[i], rl, &cmd) < 0)
 			{
-				// нада обработать ошибку парсера
-				printf("Parser error\n");
+				ft_putendl_fd("minishell: syntax error near unexpected token", 2);
 				break ;
 			}
 			i += count_sumlen(cmd);
@@ -92,15 +91,15 @@ int		omg(t_rl *rl)
 					{
 						if (pipe(fds[j]))
 						{
-							ft_putendl_fd("Pipe ERROR\n",2);
-							return (100);
+							ft_putendl_fd("Broken pipe", 2);
+							break ;
 						}
 					}
 					pid[j] = fork();
 					if (pid[j] < 0)
 					{
-						printf("PID ERROR!\n");
-						return (101);
+						ft_putendl_fd("pid_error", 2);
+						break ;
 					}
 					else if (pid[j] == 0)
 					{
@@ -126,11 +125,12 @@ int		omg(t_rl *rl)
 				{
 					waitpid(pid[j], &rl->status, 0);
 					kill(pid[j], SIGKILL);
-					free(fds[j]);
+					//free(fds[j]); // double free??
 				}
 				if (rl->status > 255)
 					rl->status /= 256;				
 				free(fds);
+				free(pid);
 			}
 		}
 		if (cmd)
@@ -140,6 +140,8 @@ int		omg(t_rl *rl)
 	}
 	return (1);
 }
+
+//void	wildcard(int pos, t_rl *rl);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -159,6 +161,12 @@ int	main(int argc, char **argv, char **envp)
 		readterm(rl, &rl->histnode);
 		tcsetattr(0, TCSANOW, &saveterm);
 		printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
+		/*
+		int i = -1;
+		while (rl->command_line[++i])
+			if (rl->command_line[i] == '*')
+				wildcard(i, rl);
+		*/
 		omg(rl); // parser and processor part
 	}
 	clear_exit(rl);

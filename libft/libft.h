@@ -88,6 +88,7 @@ char			*ft_strtrim(char *s1, char const *set);
 char			*ft_substr(char const *s, unsigned int start, size_t len);
 char			*ft_strcpy(char *dest, const char *src);
 int				ft_strcmp(const char *s1, const char *s2);
+int				ft_strecmp(const char *s1, const char *s2);
 char			*ft_strrev(char *str);
 int				ft_samechar(char a, char b);
 char			*ft_itoa_base(int val, int base);

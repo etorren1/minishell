@@ -131,7 +131,12 @@ void	readterm(t_rl *rl, t_node **histnode)
 			free(tail);
 			free(stoper);
 		}
-		i ++;
+		if (bufstr[i] == '*' && bufstr[i + 1] == '*')
+		{
+			ft_strcpy(&bufstr[i], &bufstr[i + 1]);
+			i--;
+		}
+		i++;
 	}
 	if (rl->len < ft_strlen(bufstr))
 	{

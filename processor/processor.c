@@ -81,7 +81,7 @@ static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 	if (pid == 0)
 		subprocess(cmd, envp);
 	else if (pid == -1)
-		printf("PID Error!!!!!!!!!!!!!!!\n");
+		ft_putendl_fd("pid_error", 2);
 	else
 	{
 		waitpid(pid, &rl->status, 0);
@@ -101,9 +101,9 @@ void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 	int l = -1;
 	while (cmd->args[++l])
 		printf("args[%d]=%s\n",l, cmd->args[l]);
-	printf("fd_from=%d  fd_to=%d\n", cmd->fd_from, cmd->fd_to);
+	printf("args[0]= %s > fd_from=%d  fd_to=%d\n", cmd->args[0], cmd->fd_from, cmd->fd_to);
 	printf(">>END<<\e[0m\n");
-	/*//////
+	*///////
 	if (!cmd->args[0])
 		return ;
 	if (!ft_strcmp(cmd->args[0], "echo"))

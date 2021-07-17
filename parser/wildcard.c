@@ -75,7 +75,7 @@ void	tailhandler(char **tmp, char *str, int *pos, t_cmd *cmd)
 	free(tail);
 }
 
-void	wildcard(char *str, int *pos, t_cmd *cmd)
+void	wildcard(char *str, int *pos, t_cmd *cmd, int *start)
 {
 	char	**tmp;
 	int		j;
@@ -88,8 +88,7 @@ void	wildcard(char *str, int *pos, t_cmd *cmd)
 		while (tmp[++j])
 			cmd->args = ft_arradd_str_back(cmd->args, tmp[j]);
 		ft_arrfree(tmp);
-		if (!str[*pos + 1])
-			(*pos)++;
+		!str[*pos + 1] && (*pos)++;
 	}
 	else
 	{
@@ -102,4 +101,5 @@ void	wildcard(char *str, int *pos, t_cmd *cmd)
 		(*pos)++;
 	if (str[*pos] && !str[*pos + 1] && ft_isspace(str[*pos]))
 		(*pos)++;
+	*start = *pos;
 }

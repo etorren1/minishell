@@ -40,6 +40,9 @@ int	file_operations(char *file_name, t_cmd *cmd, int mode)
 	else
 	{
 		cmd->fd_from = open(file_name, O_RDONLY, 0644);
+		if (cmd->fd_from < 3)
+			put_error("minishell: ", file_name, NULL,
+				"No such file or directory");
 		return (cmd->fd_from);
 	}
 }

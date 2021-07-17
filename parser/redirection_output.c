@@ -112,6 +112,9 @@ char	*redirect_output(char **line, int *i, t_cmd *cmd, t_rl *rl)
 	*i = from - 1;
 	free(*line);
 	if (cmd->fd_to < 0)
+	{
+		free(prefix);
 		return (NULL);
+	}
 	return (join_and_free(prefix, ft_strdup(""), ft_strdup(*line + j)));
 }

@@ -52,26 +52,31 @@ static void	retrieve_next_arg(const char *ln, t_cmd *cmd, int *start, int *i)
 
 static int	parse_redirects(char **line, t_cmd *tmp, int *i, t_rl *rl)
 {
+	int	res;
+
+	res = 1;
 	while ((*line)[*i])
 	{
 		if (!ft_isspace((*line)[*i]))
 		{
 			if (non_valid_redirect(*line))
-				return (-3);
+				res = -1;
 			else if ((*line)[*i] == '>')
 				*line = redirect_output(line, i, tmp, rl);
 			else if ((*line)[*i] == '<')
 				*line = redirect_input(line, i, tmp, rl);
 			if (!*line)
-				return (-1);
+				res = -2;
+			if (res < 0)
+				break ;
 		}
 		if ((*line)[*i] || *i < 0)
 			(*i)++;
 	}
-	return (1);
+	return (res);
 }
 
-static int	parse_symbols(char **ln, t_rl *rl, t_cmd *cmd)
+static int	parse_symbols(char **ln, t_rl *rl, t_cmd *cmd, int *res)
 {
 	int	i;
 	int	start;
@@ -85,19 +90,17 @@ static int	parse_symbols(char **ln, t_rl *rl, t_cmd *cmd)
 		handle_basic_tokens(ln, &i, rl);
 		if ((*ln)[i] == '<' && (*ln)[i + 1] && (*ln)[i + 1] == '<')
 			*ln = heredoc(ln, &i, cmd, rl);
-		if (((*ln)[i] == '>' || (*ln)[i] == '<')
-				&& parse_redirects(ln, cmd, &i, rl) < 0)
-			return (-1);
+		if ((*ln)[i] == '>' || (*ln)[i] == '<')
+			*res = parse_redirects(ln, cmd, &i, rl);
+		if (*res < 0)
+			return (*res);
 		if ((*ln)[i] == '*')
-		{
-			wildcard(*ln, &i, cmd);
-			start = i;
-		}
+			wildcard(*ln, &i, cmd, &start);
 		if (!(*ln)[i] && start >= i)
 			break ;
 		retrieve_next_arg(*ln, cmd, &start, &i);
 	}
-	return (1);
+	return (*res);
 }
 
 int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
@@ -116,9 +119,9 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 		tmp = new_cmd();
 		tmp->len = find_end(&command_line[i]);
 		line = ft_substr(command_line, i, tmp->len);
-		if ((is_line_empty(line) || parse_symbols(&line, rl, tmp) < 0)
+		if ((is_line_empty(line) || parse_symbols(&line, rl, tmp, &res) < 0)
 			&& free_cmd(tmp))
-			return (-1);
+			return (res);
 		if (command_line[i + tmp->len] == '|')
 			tmp->len++;
 		i += tmp->len;
@@ -178,7 +181,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	char *case20 = "echo $?";
 //	char *case21 = "echo \\\"$USER\\\"\\\"";
 //	char *case22 = "echo \\\"\\\"";
-//	char *case23 = "echo t";
+//	char *case23 = "echo < 123";
 //	char *case24 = "ls > 1 > 2 > 3 > $USER | cat < $USER";
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
@@ -188,7 +191,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	// ---------------
 //	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";
 //
-//	char *mainCase = case28;
+//	char *mainCase = case23;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);

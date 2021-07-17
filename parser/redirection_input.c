@@ -14,8 +14,10 @@
 
 int	clean_return(char *line, char *prefix)
 {
-	free(line);
-	free(prefix);
+	if (line)
+		free(line);
+	if (prefix)
+		free(prefix);
 	return (1);
 }
 
@@ -31,7 +33,7 @@ char	*redirect_input(char **line, int *i, t_cmd *cmd, t_rl *rl)
 	from = j;
 	while ((*line)[j] && !ft_isspace((*line)[j]))
 		handle_basic_tokens(line, &j, rl) && j++;
-	if (*i == j - 1)
+	if (*i == j - 1 && clean_return(*line, NULL))
 		return (NULL);
 	prefix = ft_substr(*line, from, j - from);
 	if (cmd->fd_from > 2)

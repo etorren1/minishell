@@ -82,8 +82,8 @@ void	wildcard(char *str, int *pos, t_cmd *cmd)
 
 	j = -1;
 	tmp = get_dir_content(get_pwd());
-	if ((!str[*pos + 1] || ft_isspace(str[*pos + 1])
-			&& (*pos - 1 >= 0 && ft_isspace(str[*pos - 1]))))
+	if ((!str[*pos + 1] || ft_isspace(str[*pos + 1]))
+		&& (*pos - 1 >= 0 && ft_isspace(str[*pos - 1])))
 	{
 		while (tmp[++j])
 			cmd->args = ft_arradd_str_back(cmd->args, tmp[j]);

@@ -24,6 +24,7 @@ char	**get_dir_content(char *str)
 			i++;
 		}
     }
+	free(str);
     closedir(dir);
 	return (names);
 }

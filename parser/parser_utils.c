@@ -81,7 +81,7 @@ int	ft_strstr_mod(const char *haystack, const char *needle)
 	return (-1);
 }
 
-int	is_line_empty(char *line)
+int	is_line_empty(char *line, int *res)
 {
 	int	i;
 
@@ -92,5 +92,6 @@ int	is_line_empty(char *line)
 			return (0);
 	}
 	free(line);
-	return (1);
+	*res = -1;
+	return (*res);
 }

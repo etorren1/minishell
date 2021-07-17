@@ -57,9 +57,17 @@ int		omg(t_rl *rl)
 				free_arrcmd(cmd);
 			cmd = (t_cmd **)malloc(sizeof(cmd));
 			*cmd = NULL;
-			if (parser(&rl->command_line[i], rl, &cmd) < 0)
+			int err;
+			err = parser(&rl->command_line[i], rl, &cmd);
+			if (err < 0)
 			{
-				ft_putendl_fd("minishell: syntax error near unexpected token", 2);
+				rl->status = 1;
+				if (err == -1)
+					ft_putendl_fd("minishell: syntax error near unexpected token", 2);
+				else if (err == -2)
+					rl->status = 2;
+				else
+					ft_putendl_fd("minishell: parser error", 2);
 				break ;
 			}
 			i += count_sumlen(cmd);
@@ -125,7 +133,7 @@ int		omg(t_rl *rl)
 				{
 					waitpid(pid[j], &rl->status, 0);
 					kill(pid[j], SIGKILL);
-					//free(fds[j]); // double free??
+					free(fds[j]); // double free??
 				}
 				if (rl->status > 255)
 					rl->status /= 256;				
@@ -140,8 +148,6 @@ int		omg(t_rl *rl)
 	}
 	return (1);
 }
-
-//void	wildcard(int pos, t_rl *rl);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -161,12 +167,6 @@ int	main(int argc, char **argv, char **envp)
 		readterm(rl, &rl->histnode);
 		tcsetattr(0, TCSANOW, &saveterm);
 		printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
-		/*
-		int i = -1;
-		while (rl->command_line[++i])
-			if (rl->command_line[i] == '*')
-				wildcard(i, rl);
-		*/
 		omg(rl); // parser and processor part
 	}
 	clear_exit(rl);

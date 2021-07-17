@@ -32,16 +32,22 @@ static void	retrieve_flags(t_cmd *cmd)
 	cmd->flags = flags;
 }
 
-static void	retrieve_next_arg(const char *str, t_cmd *cmd, int from, int to)
+static void	retrieve_next_arg(const char *ln, t_cmd *cmd, int *start, int *i)
 {
 	char	*arg;
 	int		arg_num;
 
-	arg = ft_substr(str, from, to - from);
-	arg_num = 0;
-	while (cmd->args[arg_num])
-		arg_num++;
-	cmd->args = ft_arradd_str_mod(cmd->args, arg, arg_num);
+	if (!(ln)[*i] || (ln)[(*i)++] && (!(ln)[*i] || ft_isspace((ln)[*i])))
+	{
+		arg = ft_substr(ln, *start, *i - *start);
+		arg_num = 0;
+		while (cmd->args[arg_num])
+			arg_num++;
+		cmd->args = ft_arradd_str_mod(cmd->args, arg, arg_num);
+		while (ft_isspace(ln[*i]))
+			(*i)++;
+		*start = *i;
+	}
 }
 
 static int	parse_redirects(char **line, t_cmd *tmp, int *i, t_rl *rl)
@@ -89,13 +95,7 @@ static int	parse_symbols(char **ln, t_rl *rl, t_cmd *cmd)
 		}
 		if (!(*ln)[i] && start >= i)
 			break ;
-		if (!(*ln)[i] || (*ln)[i++] && (!(*ln)[i] || ft_isspace((*ln)[i])))
-		{
-			retrieve_next_arg(*ln, cmd, start, i);
-			while (ft_isspace((*ln)[i]))
-				i++;
-			start = i;
-		}
+		retrieve_next_arg(*ln, cmd, &start, &i);
 	}
 	return (1);
 }
@@ -183,7 +183,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //	char *case27 = "<<\xff";
-//	char *case28 = "*";
+//	char *case28 = "cat *";
 //
 //	// ---------------
 //	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";

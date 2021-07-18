@@ -135,7 +135,7 @@ int		omg(t_rl *rl)
 				{
 					waitpid(pid[j], &rl->status, 0);
 					kill(pid[j], SIGKILL);
-					free(fds[j]); // double free??
+					free(fds[j]);
 				}
 				if (rl->status > 255)
 					rl->status /= 256;				

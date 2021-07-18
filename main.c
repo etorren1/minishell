@@ -100,6 +100,7 @@ int		omg(t_rl *rl)
 						if (pipe(fds[j]))
 						{
 							ft_putendl_fd("Broken pipe", 2);
+							rl->status = 1;
 							break ;
 						}
 					}
@@ -107,6 +108,7 @@ int		omg(t_rl *rl)
 					if (pid[j] < 0)
 					{
 						ft_putendl_fd("pid_error", 2);
+						rl->status = 1;
 						break ;
 					}
 					else if (pid[j] == 0)

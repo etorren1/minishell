@@ -85,7 +85,7 @@ void    pipes(t_rl *rl, t_cmd **cmd, int k)
     t_pip *pip;
 
     pip = malloc(sizeof(t_pip));
-    pip->fds = (int **)malloc(sizeof (int *) * (k - 1));
+    pip->fds = (int **)malloc(sizeof (int *) * k);
     pip->pid = malloc(sizeof(int) * k);
     pip->j = -1;
     while (++pip->j < k)

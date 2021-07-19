@@ -174,7 +174,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	char *case13 = "echo > $USER";
 //	char *case14 = "cat < 1";
 //	char *case15 = "> 1 > 2";
-//	char *case16 = "ls | ls | cat -e";
+//	char *case16 = "ls | ls | ls | ls | ls";
 //	char *case17 = "ls | cat -e | grep 1 ; cd parser";
 //	char *case18 = "\'\\\"$USER\'";
 //	char *case19 = "echo test ; echo test1 ;   echo test2";
@@ -191,7 +191,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	// ---------------
 //	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";
 //
-//	char *mainCase = case28;
+//	char *mainCase = case16;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);
@@ -223,6 +223,6 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	}
 //	if (cmd)
 //		free_arrcmd(cmd);
-//	while (1)
-//		;
+////	while (1)
+////		;
 //}

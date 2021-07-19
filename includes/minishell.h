@@ -55,17 +55,24 @@ typedef struct	s_rl
 	t_node	*histnode;
 }				t_rl;
 
-int				parser(char *command_line, t_rl *rl, t_cmd ***cmd);
-void			processor(t_cmd *cmd, char *(**envp), t_rl *rl);
-void    		put_error(char *prefix, char *cmd, char *args, char *err);
-int				find_environment(char *env, char **envp);
-char			*get_absolute_path_process(char *proc);
-char			*get_pwd(void);
-void			up_shlvl(char ***envp);
-char 			**get_dir_content(char *str);
-void 			free_arrcmd(t_cmd **cmd);
-void			ctrl_c_handler(int sig);
-void			print_ouit(int sig);
-void			clear_exit(t_rl *rl);
+typedef struct s_pip {
+    int **fds;
+    int *pid;
+    int j;
+}               t_pip;
+
+int			parser(char *command_line, t_rl *rl, t_cmd ***cmd);
+void		processor(t_cmd *cmd, char *(**envp), t_rl *rl);
+void		core(t_rl *rl);
+void    	put_error(char *prefix, char *cmd, char *args, char *err);
+int			find_environment(char *env, char **envp);
+char		*get_absolute_path_process(char *proc);
+char		*get_pwd(void);
+void		up_shlvl(char ***envp);
+char 		**get_dir_content(char *str);
+void 		free_arrcmd(t_cmd **cmd);
+void		ctrl_c_handler(int sig);
+void		print_ouit(int sig);
+void		clear_exit(t_rl *rl);
 
 #endif

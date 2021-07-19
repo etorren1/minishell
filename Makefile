@@ -10,16 +10,16 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS		= main.c\
+SRCS		= main.c core.c\
 			$(wildcard ./processor/*.c ./processor/builtin_cmd/*.c\
 			./utils/*.c ./parser/*.c ./readterm/casecore/*.c\
-			./readterm/*.c ./signal/*.c)
+			./readterm/*.c)
 
 OBJS		= $(SRCS:.c=.o)
 
 HEADER		= -I ./includes
 
-FLAGS		= -g #-Wall -Werror -Wextra
+FLAGS		= -g -Wall -Werror -Wextra
 
 LIB_PATH	= ./libft/libft.a
 

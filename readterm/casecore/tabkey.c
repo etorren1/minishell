@@ -34,7 +34,7 @@ void		show_same(t_rl *rl, int size, int wordlen, char *name)
 	ft_putstr_fd(name, 1);
 	tputs(tgetstr("ei", 0), 1, ft_putint);
 	tail = ft_substr(rl->command_line, rl->cursor_pos - rl->plen, rl->count_symb - rl->cursor_pos - rl->plen);
-	while (ft_strlen(rl->command_line) + ft_strlen(name) > rl->len)
+	while (ft_strlen(rl->command_line) + ft_strlen(name) > (size_t)rl->len)
 	{
 		rl->len += rl->len;
 		rl->command_line = ft_realloc(rl->command_line, rl->len);

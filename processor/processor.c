@@ -13,7 +13,7 @@
 #include "../includes/minishell.h"
 #include "../includes/processor.h"
 
-static void	get_paths(char *path, char *bin, char *(**temp), int ret)
+static void	get_paths(char *path, char *bin, char *(**temp))
 {
 	int		i = -1;
 	int		prev = 0;
@@ -43,7 +43,6 @@ static void	subprocess(t_cmd *cmd, char **envp)
 	char **temp;
 	int ret;
 	int j;
-	char *str;
 
 	dup2(cmd->fd_to, 1);
 	dup2(cmd->fd_from, 0);
@@ -53,7 +52,7 @@ static void	subprocess(t_cmd *cmd, char **envp)
 	ft_strcpy(temp[0], cmd->args[0]);	
 	ret = find_environment("PATH", envp);
 	if (ret != -1)
-		get_paths(ft_strdup(envp[ret]), cmd->args[0], &temp, ret);
+		get_paths(ft_strdup(envp[ret]), cmd->args[0], &temp);
 	j = 0;
 	while (temp[j] && execve(temp[j], cmd->args, envp) == -1 )
 		j++;
@@ -81,7 +80,10 @@ static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 	if (pid == 0)
 		subprocess(cmd, envp);
 	else if (pid == -1)
+	{
 		ft_putendl_fd("pid_error", 2);
+		rl->status = 1;
+	}
 	else
 	{
 		waitpid(pid, &rl->status, 0);
@@ -96,14 +98,6 @@ static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 
 void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 {
-	/*////
-	printf("\e[34m>>CMD_INFO<<\n");
-	int l = -1;
-	while (cmd->args[++l])
-		printf("args[%d]=%s\n",l, cmd->args[l]);
-	printf("args[0]= %s > fd_from=%d  fd_to=%d\n", cmd->args[0], cmd->fd_from, cmd->fd_to);
-	printf(">>END<<\e[0m\n");
-	*///////
 	if (!cmd->args[0])
 		return ;
 	if (!ft_strcmp(cmd->args[0], "echo"))
@@ -117,9 +111,9 @@ void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 	else if (!ft_strcmp(cmd->args[0], "export"))
 		rl->status = ft_export(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "unset"))
-		rl->status = rl->status = ft_unset(cmd, envp);
+		rl->status = ft_unset(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "exit"))
-		ft_exit(cmd, rl, *envp);
+		ft_exit(cmd, rl);
 	else
 		binary_cmd(cmd, rl, *envp);
 	if (rl->status > 255)

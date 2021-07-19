@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_exit(t_cmd *cmd, t_rl *rl, char **envp)
+void	ft_exit(t_cmd *cmd, t_rl *rl)
 {
 	int status;
 

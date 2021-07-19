@@ -1,6 +1,6 @@
 #include "../includes/readterm.h"
 
-void	replace_ruschar(t_rl *rl, int count)
+static void	replace_ruschar(t_rl *rl, int count)
 {
 	int	i;
 	int	j;
@@ -34,7 +34,7 @@ void	add_rus(t_rl *rl)
 			count++;
 	if (count > 0)
 	{
-		if (rl->len <= ft_strlen(rl->command_line) + count)
+		if (rl->len <= (int)ft_strlen(rl->command_line) + count)
 		{
 			rl->len += count;
 			rl->command_line = ft_realloc(rl->command_line, rl->len);

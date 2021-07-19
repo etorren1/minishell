@@ -14,7 +14,6 @@
 
 static int	find_environment_mod(char *env, char **envp)
 {
-	char	*str;
 	int		i;
 	int		len;
 
@@ -59,6 +58,21 @@ static int	ft_othersymb(char *str)
 	return (0);
 }
 
+static int	catcherr(t_cmd *cmd, int i)
+{
+	if (ft_atoi(cmd->args[i]) != 0)
+	{
+		put_error(NULL, cmd->args[0], cmd->args[i], "not an identifier");
+		return (1);
+	}
+	else if (ft_othersymb(cmd->args[i]))
+	{
+		put_error(NULL, cmd->args[0], cmd->args[i], "not valid in this context");
+		return (1);
+	}
+	return (0);
+}
+
 static int	add_envvar(t_cmd *cmd, char *(**envp))
 {
 	int		i;
@@ -67,16 +81,8 @@ static int	add_envvar(t_cmd *cmd, char *(**envp))
 	i = 1;
 	while (cmd->args[i])
 	{
-		if (ft_atoi(cmd->args[i]) != 0)
-		{
-			put_error(NULL, cmd->args[0], cmd->args[i], "not an identifier");
-			return (1);
-		}
-		else if (ft_othersymb(cmd->args[i]))
-		{
-			put_error(NULL, cmd->args[0], cmd->args[i], "not valid in this context");
-			return (1);
-		}
+		if (catcherr(cmd, i))
+			return (1);	
 		res = find_environment_mod(cmd->args[i], *envp);
 		if (res >= 0)
 		{
@@ -96,7 +102,6 @@ static int	add_envvar(t_cmd *cmd, char *(**envp))
 
 int	ft_export(t_cmd *cmd, char *(**envp))
 {
-
 	if (!cmd->args[1])
 	{
 		output_envvar(cmd->fd_to, *envp);

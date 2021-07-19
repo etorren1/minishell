@@ -20,6 +20,8 @@ minishell
 *.o
 *.gch
 /libft/libft.a
+.gitignore
+parser
 
 #checklist
 checklist*

@@ -18,7 +18,7 @@ void    previous_cmd(t_rl *rl, t_node **histnode)
         clear_buf(rl->command_line, rl->len);
         tputs(tgetstr("rc", 0), 1, ft_putint);
         tputs(tgetstr("ce", 0), 1, ft_putint);
-        while (ft_strlen((*histnode)->content) > rl->len)
+        while ((int)ft_strlen((*histnode)->content) > rl->len)
         {
             rl->len += rl->len;
             rl->command_line = ft_realloc(rl->command_line, rl->len);

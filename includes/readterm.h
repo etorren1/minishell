@@ -1,9 +1,14 @@
 #ifndef READTERM_H
 # define READTERM_H
 
-#include <term.h>
-#include <termios.h>
-#include "minishell.h"
+# include <term.h>
+# include <termios.h>
+# include "minishell.h"
+
+typedef struct  s_hd {
+    char    *stoper;
+    char    *tail;
+}               t_hd;
 
 int		ft_putint(int ch);
 int		read_history(int fd, t_node **node);
@@ -25,6 +30,8 @@ void	correct_rl(t_rl *rl);
 t_rl    *init_rl(char *argv, char **envp);
 void	writehist(t_rl *rl);
 void    readterm(t_rl *rl, t_node **histnode);
+void	casecore(t_rl *rl, t_node **histnode);
+char	*readheredoc(t_rl *rl);
 void	preread(t_rl *rl, struct termios *term);
 void	add_rus(t_rl *rl);
 

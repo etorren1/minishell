@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-void	core(char **arr, int beg, int end)
+static void	s_core(char **arr, int beg, int end)
 {
 	int		left;
 	int		right;
@@ -36,8 +36,8 @@ void	core(char **arr, int beg, int end)
 				arr[right--] = temp;
 			}
 		}
-		core(arr, beg, right);
-		core(arr, left, end);
+		s_core(arr, beg, right);
+		s_core(arr, left, end);
 	}
 }
 
@@ -50,7 +50,7 @@ void	ft_qsort_s(char **arr, int beg, int end)
 	{
 		if (ft_strcmp(arr[i], arr[i + 1]) > 0)
 		{
-			core(arr, beg, end);
+			s_core(arr, beg, end);
 			i = 0;
 		}
 		i++;

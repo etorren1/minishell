@@ -14,11 +14,15 @@
 
 void	ctrl_c_handler(int sig)
 {
+	if (sig > 0)
+		usleep(0);
 	write(1, "\n", 1);
 	signal(SIGINT, ctrl_c_handler);
 }
 
 void	print_ouit(int sig)
 {
+	if (sig > 0)
+		usleep(0);
 	write(1, "Quit\n", 5);
 }

@@ -2,19 +2,21 @@
 
 char	**get_dir_content(char *str)
 {
-    DIR				*dir;
-    struct dirent	*entry;
+	DIR				*dir;
+	struct dirent	*entry;
 	char			**names;
+	int				i;
 
 	names = malloc(sizeof(char *));
 	names[0] = NULL;
-    dir = opendir(str);
-    if (!dir) {
-        perror("diropen");
-        exit(1);
-    };
-	int i = 0;
-    while ( (entry = readdir(dir)) != NULL)
+	dir = opendir(str);
+	if (!dir)
+	{
+		perror("diropen");
+		exit(1);
+	}
+	i = 0;
+	while ((entry = readdir(dir)) != NULL)
 	{
 		if (entry->d_name[0] != '.')
 		{
@@ -23,8 +25,8 @@ char	**get_dir_content(char *str)
 				names[i] = ft_strjoin(names[i], "/");
 			i++;
 		}
-    }
+	}
 	free(str);
-    closedir(dir);
+	closedir(dir);
 	return (names);
 }

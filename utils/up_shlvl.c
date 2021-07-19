@@ -2,15 +2,14 @@
 
 void	up_shlvl(char ***envp)
 {
-	int ret;
+	int		ret;
+	int		lvl;
+	char	*newlvl;
+	char	*tmp;
 
 	ret = find_environment("SHLVL", *envp);
 	if (ret >= 0)
 	{
-		int lvl;
-		char *newlvl;
-		char *tmp;
-			
 		lvl = ft_atoi(&(*envp)[ret][6]);
 		lvl++;
 		tmp = ft_itoa(lvl);

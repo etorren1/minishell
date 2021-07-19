@@ -31,7 +31,7 @@ static int	is_empty(const char *str)
 	while (str[++i])
 		if (!ft_isspace(str[i]))
 			break ;
-	if (i == ft_strlen(str))
+	if ((size_t)i == ft_strlen(str))
 		return (1);
 	return (0);
 }
@@ -65,7 +65,6 @@ static int	is_right_num_of_tokens(const char *c_line, int i)
 	return (1);
 }
 
-// returns 0 if nothing to parse, -1 if multiline
 int	preparser(const char *c_line)
 {
 	int	i;

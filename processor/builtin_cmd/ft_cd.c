@@ -39,14 +39,14 @@ static void	change_envp(char ***envp, char *old, char *new)
 	ft_strcpy((*envp)[ret], new);
 }
 
-static char *make_pwdenv(char *var, char *val)
+static char	*make_pwdenv(char *var, char *val)
 {
 	char	*env;
 
 	env = ft_strjoin(ft_strdup(var), "=");
 	env = ft_strjoin(env, val);
 	free(val);
-	return(env);
+	return (env);
 }
 
 static int	new_pwd(t_cmd *cmd, char ***envp)
@@ -58,7 +58,8 @@ static int	new_pwd(t_cmd *cmd, char ***envp)
 	if (chdir(cmd->args[1]) == -1)
 	{
 		free(oldpwd);
-		put_error(NULL, cmd->args[0], cmd->args[1], "No such file or directory");
+		put_error(NULL, cmd->args[0], cmd->args[1],
+			"No such file or directory");
 		return (1);
 	}
 	else if (find_environment("PWD", *envp) > -1)
@@ -70,7 +71,7 @@ static int	new_pwd(t_cmd *cmd, char ***envp)
 	return (0);
 }
 
-int		ft_cd(t_cmd *cmd, char ***envp)
+int	ft_cd(t_cmd *cmd, char ***envp)
 {
 	if (cmd->args[1] == 0)
 		get_home_dir(*envp);

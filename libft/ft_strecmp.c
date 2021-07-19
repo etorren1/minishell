@@ -1,6 +1,6 @@
 #include "libft.h"
 
-int		ft_strecmp(const char *str, const char *tail)
+int	ft_strecmp(const char *str, const char *tail)
 {
 	unsigned char	*tmp1;
 	unsigned char	*tmp2;

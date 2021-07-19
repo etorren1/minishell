@@ -31,7 +31,7 @@ static int	find_environment_mod(char *env, char **envp)
 static void	output_envvar(int fd, char **envp)
 {
 	char	**tmp;
-	int	 	size;
+	int		size;
 
 	size = ft_arrsize(envp);
 	tmp = (char **)malloc(sizeof(envp) * (size + 1));
@@ -45,7 +45,7 @@ static void	output_envvar(int fd, char **envp)
 
 static int	ft_othersymb(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -67,7 +67,8 @@ static int	catcherr(t_cmd *cmd, int i)
 	}
 	else if (ft_othersymb(cmd->args[i]))
 	{
-		put_error(NULL, cmd->args[0], cmd->args[i], "not valid in this context");
+		put_error(NULL, cmd->args[0], cmd->args[i],
+			"not valid in this context");
 		return (1);
 	}
 	return (0);
@@ -82,11 +83,12 @@ static int	add_envvar(t_cmd *cmd, char *(**envp))
 	while (cmd->args[i])
 	{
 		if (catcherr(cmd, i))
-			return (1);	
+			return (1);
 		res = find_environment_mod(cmd->args[i], *envp);
 		if (res >= 0)
 		{
-			(*envp)[res] = ft_realloc((*envp)[res], ft_strlen(cmd->args[i]) + 1);
+			(*envp)[res] = ft_realloc((*envp)[res],
+					ft_strlen(cmd->args[i]) + 1);
 			ft_strcpy((*envp)[res], cmd->args[i]);
 		}
 		else

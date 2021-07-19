@@ -14,7 +14,7 @@
 
 char	**ft_arrcpy(char **dest, char **arr)
 {
-	int	 i;
+	int	i;
 
 	i = 0;
 	while (arr[i])
@@ -24,5 +24,5 @@ char	**ft_arrcpy(char **dest, char **arr)
 		i++;
 	}
 	dest[i] = NULL;
-	return(dest);
+	return (dest);
 }

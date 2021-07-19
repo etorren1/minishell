@@ -22,5 +22,5 @@ char	*get_absolute_path_process(char *name)
 		str[i] = 0;
 		str[i - 1] = 0;
 	}
-	return(str);
+	return (str);
 }

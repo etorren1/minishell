@@ -15,7 +15,7 @@
 char	*ft_realloc(char *src, size_t size)
 {
 	char	*new;
-	
+
 	new = (char *)malloc(size + 1);
 	ft_bzero(new, size + 1);
 	if (!new)

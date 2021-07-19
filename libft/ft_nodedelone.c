@@ -1,4 +1,3 @@
-
 #include "libft.h"
 
 void	ft_nodedelone(t_node *node, void (*del)(void *))

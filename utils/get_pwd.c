@@ -2,7 +2,7 @@
 
 char	*get_pwd(void)
 {
-	int 	size;
+	int		size;
 	char	*pwd;
 
 	size = 128;

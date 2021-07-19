@@ -1,4 +1,3 @@
-
 #include "libft.h"
 
 void	ft_nodeclear(t_node **node, void (*del)(void *))

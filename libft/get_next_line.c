@@ -57,8 +57,10 @@ int	get_next_line(int fd, char **line)
 	int			rd;
 	size_t		i;
 
-	if (fd < 0 || !line || BUFFER_SIZE <= 0
-		|| !(buff = (char*)malloc(BUFFER_SIZE + 1)))
+	if (fd < 0 || !line || BUFFER_SIZE <= 0)
+		return (-1);
+	buff = (char *)malloc(BUFFER_SIZE + 1);
+	if (!buff)
 		return (-1);
 	rd = liner(&str, buff, fd);
 	if (rd == -1)

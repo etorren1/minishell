@@ -12,9 +12,9 @@
 
 #include "libft.h"
 
-int		ft_arrsize(char **arr)
+int	ft_arrsize(char **arr)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (arr[i])

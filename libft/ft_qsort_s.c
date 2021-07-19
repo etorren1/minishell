@@ -43,7 +43,7 @@ static void	s_core(char **arr, int beg, int end)
 
 void	ft_qsort_s(char **arr, int beg, int end)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < end)

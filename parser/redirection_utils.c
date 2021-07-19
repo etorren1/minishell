@@ -19,8 +19,8 @@ int	count_symbols(char *line, char c)
 	count = 0;
 	if (c == '>')
 	{
-		while (*line == c) {
-			line++; count++; }
+		while (*line == c)
+			line++ && count++;
 	}
 	return (count);
 }

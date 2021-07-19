@@ -37,7 +37,7 @@ static void	retrieve_next_arg(const char *ln, t_cmd *cmd, int *start, int *i)
 	char	*arg;
 	int		arg_num;
 
-	if ((!(ln)[*i] || (ln)[(*i)++]) && ((!(ln)[*i] || ft_isspace((ln)[*i]))))
+	if (!(ln)[*i] || (ln)[(*i)++] && (!(ln)[*i] || ft_isspace((ln)[*i])))
 	{
 		arg = ft_substr(ln, *start, *i - *start);
 		arg_num = 0;

@@ -41,7 +41,7 @@ char	*heredoc(char **line, int *i, t_cmd *cmd, t_rl *rl)
 			handle_heredoc_tokens(&tmp, &k, rl);
 	j += 1 + (ft_isspace((*line)[j + 1]));
 	cmd->fd_from = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	write(cmd->fd_from, tmp, ft_strlen(tmp)); close(cmd->fd_from);
+	write(cmd->fd_from, tmp, ft_strlen(tmp)) && close(cmd->fd_from);
 	free(tmp);
 	cmd->fd_from = open(".heredoc", O_RDONLY, 0644);
 	prefix = ft_substr(*line, 0, *i);

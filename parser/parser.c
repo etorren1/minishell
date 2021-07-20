@@ -186,12 +186,12 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //	char *case25 = "ls|ls|ls";
 //	char *case26 = "ls> 1 ; cat 1 ; rm 1";
 //	char *case27 = "<<\xff";
-//	char *case28 = "";
+//	char *case28 = "$$USER$";
 //
 //	// ---------------
 //	char *case30 = "cat <<asd\n\xff; cat <<$USER\n\xff";
 //
-//	char *mainCase = case16;
+//	char *mainCase = case28;
 //	while (mainCase[len]) {
 //		if (cmd)
 //			free_arrcmd(cmd);
@@ -214,7 +214,7 @@ int	parser(char *command_line, t_rl *rl, t_cmd ***cmd)
 //			printf("Element %d\n", i);
 //			int j = -1;
 //			while (cmd[i]->args[++j])
-//				printf("arg[%d] = %s$\n", j, cmd[i]->args[j]);
+//				printf("arg[%d] = >%s<\n", j, cmd[i]->args[j]);
 //			if (cmd[i]->flags)
 //				printf("flags = %s\n", cmd[i]->flags);
 //			printf("fd_from = %d\n", cmd[i]->fd_from);

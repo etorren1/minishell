@@ -18,7 +18,7 @@ static char	*take_from_op_status(int status, int *i)
 	char	*body;
 
 	len = ft_numsize(status);
-	body = calloc(len + 1, 1);
+	body = ft_calloc(len + 1, 1);
 	(*i) += len;
 	if (status < 0)
 	{
@@ -48,7 +48,10 @@ static char	*take_from_env(char *str, char **env, int *i, int *e)
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
 	if (*i == start + 1)
-		return (str);
+	{
+		(*i)--;
+		return (ft_strdup(""));
+	}
 	tmp = ft_strjoin(ft_substr(str, start + 1, *i - start - 1), "=");
 	*e = -1;
 	while (env[++(*e)])

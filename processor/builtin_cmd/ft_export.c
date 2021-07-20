@@ -12,21 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-static int	find_environment_mod(char *env, char **envp)
-{
-	int		i;
-	int		len;
-
-	len = 0;
-	while (env[len] != '=')
-		if (!env[++len])
-			return (-2);
-	i = -1;
-	while (envp[++i])
-		if (!ft_strncmp(env, envp[i], len) && envp[i][len] == '=')
-			return (i);
-	return (-1);
-}
+int	find_environment_mod(char *env, char **envp);
 
 static void	output_envvar(int fd, char **envp)
 {
@@ -48,9 +34,10 @@ static int	ft_othersymb(char *str)
 	int	i;
 
 	i = 0;
-	while (str[i])
+	while (str[i] && str[i] != '=')
 	{
-		if (ft_isalpha(str[i]) || ft_isdigit(str[i]) || str[i] == '_')
+		if (ft_isalpha(str[i]) || ft_isdigit(str[i])
+			 || str[i] == '_')
 			i++;
 		else
 			return (1);

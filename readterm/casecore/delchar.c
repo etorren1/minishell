@@ -3,7 +3,7 @@
 void	ft_delchar(char **str, int i, int size, int len)
 {
 	char	*tail;
-	int	 j;
+	int		j;
 
 	j = 0;
 	if (i == len + 1)
@@ -20,14 +20,15 @@ void	ft_delchar(char **str, int i, int size, int len)
 	free(tail);
 }
 
-void    delchar(t_rl *rl)
+void	delchar(t_rl *rl)
 {
-    if (rl->cursor_pos > rl->plen)
-    {
-        ft_delchar(&rl->command_line, rl->cursor_pos, rl->count_symb, rl->plen);
-        rl->cursor_pos--;
-        rl->count_symb--;
-        tputs(tgetstr("le", 0), 1, ft_putint);
-        tputs(tgetstr("dc", 0), 1, ft_putint);
-    }
+	if (rl->cursor_pos > rl->plen)
+	{
+		ft_delchar(&rl->command_line, rl->cursor_pos,
+			 rl->count_symb, rl->plen);
+		rl->cursor_pos--;
+		rl->count_symb--;
+		tputs(tgetstr("le", 0), 1, ft_putint);
+		tputs(tgetstr("dc", 0), 1, ft_putint);
+	}
 }

@@ -2,13 +2,13 @@
 
 static void	replace_ruschar(t_rl *rl, int count)
 {
-	int	i;
-	int	j;
-	char *tmp;
+	int		i;
+	int		j;
+	char	*tmp;
 
 	i = 0;
 	j = 0;
-	tmp = malloc(ft_strlen(rl->command_line) + count + 1);	
+	tmp = malloc(ft_strlen(rl->command_line) + count + 1);
 	while (rl->command_line[i])
 	{
 		if (rl->command_line[i] < -112)
@@ -24,8 +24,8 @@ static void	replace_ruschar(t_rl *rl, int count)
 
 void	add_rus(t_rl *rl)
 {
-	int i;
-	int count;
+	int	i;
+	int	count;
 
 	i = -1;
 	count = 0;

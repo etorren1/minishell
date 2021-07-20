@@ -19,7 +19,7 @@ OBJS		= $(SRCS:.c=.o)
 
 HEADER		= -I ./includes
 
-FLAGS		= -g -Wall -Werror -Wextra
+FLAGS		= -g #-Wall -Werror -Wextra
 
 LIB_PATH	= ./libft/libft.a
 
@@ -54,15 +54,21 @@ norm:
 	cd ../includes; \
 	echo "\033[46m\033[30mHEADERS\033[0m"; \
 	norminette *.h; \
+	cd ../readterm; \
+	echo "\033[46m\033[30mREADTERM\033[0m"; \
+	norminette *.c */*.c; \
 	cd ../processor; \
 	echo "\033[46m\033[30mPROCESSOR\033[0m"; \
-	norminette *.c; \
+	norminette *.c */*.c; \
 	cd ../parser; \
 	echo "\033[46m\033[30mPARSER\033[0m"; \
-	norminette *.c; \
+	norminette *.c */*.c; \
 	cd ../utils; \
 	echo "\033[46m\033[30mUTILS\033[0m"; \
-	norminette *.c; \
+	norminette *.c */*.c; \
 	cd ..; \
+	echo "\033[46m\033[30mCORE\033[0m"; \
+	norminette core.c; \
 	echo "\033[46m\033[30mMAIN\033[0m"; \
 	norminette main.c
+	

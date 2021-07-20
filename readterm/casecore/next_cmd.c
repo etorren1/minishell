@@ -10,11 +10,9 @@ void	next_cmd(t_rl *rl, t_node **histnode)
 		clear_buf(rl->command_line, rl->len);
 		tputs(tgetstr("rc", 0), 1, ft_putint);
 		tputs(tgetstr("ce", 0), 1, ft_putint);
-		while ((int)ft_strlen((*histnode)->content) > rl->len || (int)ft_strlen(rl->last_insert) > rl->len)
-		{
-			rl->len += rl->len;
-			rl->command_line = ft_realloc(rl->command_line, rl->len);
-		}
+		while ((int)ft_strlen((*histnode)->content) > rl->len
+			 || (int)ft_strlen(rl->last_insert) > rl->len)
+			mem_add(rl);
 		if (!(*histnode)->next)
 			ft_strcpy(rl->command_line, rl->last_insert);
 		else

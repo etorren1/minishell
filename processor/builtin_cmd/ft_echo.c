@@ -12,6 +12,19 @@
 
 #include "../../includes/minishell.h"
 
+void	flag_n(t_cmd *cmd, int size)
+{
+	int	i;
+
+	i = 1;
+	while (i < size)
+	{
+		ft_putstr_fd(cmd->args[i++], cmd->fd_to);
+		if (i != size)
+			write(cmd->fd_to, " ", 1);
+	}
+}
+
 int	ft_echo(t_cmd *cmd)
 {
 	int	i;
@@ -20,12 +33,7 @@ int	ft_echo(t_cmd *cmd)
 	i = 1;
 	size = ft_arrsize(cmd->args);
 	if (cmd->flags && ft_strchr(cmd->flags, 'n'))
-		while (i < size)
-		{
-			ft_putstr_fd(cmd->args[i++], cmd->fd_to);
-			if (i != size)
-				write(cmd->fd_to, " ", 1);
-		}
+		flag_n(cmd, size);
 	else if (!cmd->args[1])
 		write(cmd->fd_to, "\n", 1);
 	else

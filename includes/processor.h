@@ -15,12 +15,12 @@
 
 # include "minishell.h"
 
-int 	ft_echo(t_cmd *cmd);
-int 	ft_pwd(int fd);
+int		ft_echo(t_cmd *cmd);
+int		ft_pwd(int fd);
 void	ft_exit(t_cmd *cmd, t_rl *rl);
-int 	ft_cd(t_cmd *cmd,char ***envp);
+int		ft_cd(t_cmd *cmd, char ***envp);
 int		ft_env(t_cmd *cmd, char **envp);
-int 	ft_unset(t_cmd *cmd, char *(**envp));
-int 	ft_export(t_cmd *cmd, char *(**envp));
+int		ft_unset(t_cmd *cmd, char *(**envp));
+int		ft_export(t_cmd *cmd, char *(**envp));
 
 #endif

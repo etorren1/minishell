@@ -8,9 +8,11 @@ int	read_history(int fd, t_node **node)
 
 	i = 0;
 	line = NULL;
-	while ((rd = get_next_line(fd, &line)) > 0)
+	rd = get_next_line(fd, &line);
+	while (rd > 0)
 	{
 		ft_nodeadd_back(node, ft_nodenew(line));
+		rd = get_next_line(fd, &line);
 		i++;
 	}
 	if (line)

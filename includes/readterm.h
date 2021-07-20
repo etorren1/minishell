@@ -5,10 +5,10 @@
 # include <termios.h>
 # include "minishell.h"
 
-typedef struct  s_hd {
-    char    *stoper;
-    char    *tail;
-}               t_hd;
+typedef struct s_hd {
+	char	*stoper;
+	char	*tail;
+}	t_hd;
 
 int		ft_putint(int ch);
 int		read_history(int fd, t_node **node);
@@ -23,13 +23,13 @@ void	end(t_rl *rl);
 void	home(t_rl *rl);
 void	left(t_rl *rl);
 void	right(t_rl *rl);
-void	wordend(t_rl *rl);
-void	wordbegin(t_rl *rl);
+void	wordend(t_rl *rl, int k, int end);
+void	wordbegin(t_rl *rl, int k, int beg);
 void	tabkey(t_rl *rl);
 void	correct_rl(t_rl *rl);
-t_rl    *init_rl(char *argv, char **envp);
+t_rl	*init_rl(char *argv, char **envp);
 void	writehist(t_rl *rl);
-void    readterm(t_rl *rl, t_node **histnode);
+void	readterm(t_rl *rl, t_node **histnode);
 void	casecore(t_rl *rl, t_node **histnode);
 char	*readheredoc(t_rl *rl);
 void	preread(t_rl *rl, struct termios *term);

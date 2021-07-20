@@ -8,7 +8,7 @@ int	ft_putint(int ch)
 
 void	clear_buf(char *buf, int size)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < size)

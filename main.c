@@ -12,6 +12,27 @@
 
 #include "./includes/readterm.h"
 
+int	parse_err(t_rl *rl, int err)
+{
+	rl->status = 1;
+	if (err == -1)
+	{
+		ft_putendl_fd("minishell: syntax error near unexpected token", 2);
+		return (1);
+	}
+	else if (err == -2)
+	{
+		rl->status = 2;
+		return (2);
+	}
+	else if (err < 0)
+	{
+		ft_putendl_fd("minishell: parser error", 2);
+		return (3);
+	}
+	return (0);
+}
+
 void	clear_exit(t_rl *rl)
 {
 	close(rl->fd);
@@ -33,9 +54,9 @@ void	clear_exit(t_rl *rl)
 
 int	main(int argc, char **argv, char **envp)
 {
-	struct	termios term;
-	struct	termios saveterm;
-	t_rl	*rl;
+	struct termios	term;
+	struct termios	saveterm;
+	t_rl			*rl;
 
 	if (argc > 1)
 		return (0);
@@ -49,9 +70,8 @@ int	main(int argc, char **argv, char **envp)
 		preread(rl, &term);
 		readterm(rl, &rl->histnode);
 		tcsetattr(0, TCSANOW, &saveterm);
-		//printf("\e[35mCommLine=\"%s\"\e[0m\n", rl->command_line);
 		if (ft_strcmp(rl->buf, "\4") && ft_strcmp(rl->buf, "\3"))
-			core(rl); 
+			core(rl, 0);
 	}
 	clear_exit(rl);
 	return (0);

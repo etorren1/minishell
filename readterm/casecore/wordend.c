@@ -1,12 +1,11 @@
 #include "../../includes/readterm.h"
 
-void	wordend(t_rl *rl)
+void	wordend(t_rl *rl, int k, int end)
 {
-	int		k = rl->cursor_pos;
-	int		end = rl->count_symb;
-	int		check = 0;;
+	int		check;
 	char	ch;
 
+	check = 0;
 	while (k < rl->count_symb)
 	{
 		ch = rl->command_line[k - rl->plen];
@@ -16,7 +15,7 @@ void	wordend(t_rl *rl)
 		{
 			check = 0;
 			end = k;
-			break;
+			break ;
 		}
 		k++;
 	}

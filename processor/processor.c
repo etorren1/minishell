@@ -15,10 +15,12 @@
 
 static void	get_paths(char *path, char *bin, char *(**temp))
 {
-	int		i = -1;
-	int		prev = 0;
+	int		i;
+	int		prev;
 	char	*sub;
 
+	i = -1;
+	prev = 0;
 	while (path[++i])
 	{
 		if (path[i] == ':')
@@ -40,16 +42,16 @@ static void	get_paths(char *path, char *bin, char *(**temp))
 
 static void	subprocess(t_cmd *cmd, char **envp)
 {
-	char **temp;
-	int ret;
-	int j;
+	char	**temp;
+	int		ret;
+	int		j;
 
 	dup2(cmd->fd_to, 1);
 	dup2(cmd->fd_from, 0);
 	temp = malloc(sizeof(temp) * 2);
 	temp[0] = malloc(ft_strlen(cmd->args[0]) + 1);
 	temp[1] = NULL;
-	ft_strcpy(temp[0], cmd->args[0]);	
+	ft_strcpy(temp[0], cmd->args[0]);
 	ret = find_environment("PATH", envp);
 	if (ret != -1)
 		get_paths(ft_strdup(envp[ret]), cmd->args[0], &temp);
@@ -62,17 +64,14 @@ static void	subprocess(t_cmd *cmd, char **envp)
 		ft_arrfree(temp);
 		exit(127);
 	}
-	if (cmd->fd_to > 1)
-		close(cmd->fd_to);
-	if (cmd->fd_from > 0)
-		close(cmd->fd_from);
 	ft_arrfree(temp);
 }
 
 static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 {
-	pid_t pid = fork();
-	
+	pid_t	pid;
+
+	pid = fork();
 	signal(SIGQUIT, print_ouit);
 	signal(SIGINT, ctrl_c_handler);
 	if (cmd->flags)
@@ -98,12 +97,17 @@ static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 
 void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 {
+	int	i;
+
+	i = -1;
+	while (cmd->args[++i])
+		printf("args[%d]=%s\n", i, cmd->args[i]);
 	if (!cmd->args[0])
 		return ;
 	if (!ft_strcmp(cmd->args[0], "echo"))
-		rl->status =ft_echo(cmd);
+		rl->status = ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
-		rl->status =ft_pwd(cmd->fd_to);
+		rl->status = ft_pwd(cmd->fd_to);
 	else if (!ft_strcmp(cmd->args[0], "cd"))
 		rl->status = ft_cd(cmd, envp);
 	else if (!ft_strcmp(cmd->args[0], "env"))

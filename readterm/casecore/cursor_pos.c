@@ -28,7 +28,8 @@ void	end(t_rl *rl)
 {
 	if (rl->cursor_pos < rl->count_symb)
 	{
-		tputs(tgoto(tgetstr("RI", 0), 0, rl->count_symb - rl->cursor_pos), 1, ft_putint);
+		tputs(tgoto(tgetstr("RI", 0), 0, rl->count_symb
+				 - rl->cursor_pos), 1, ft_putint);
 		rl->cursor_pos = rl->count_symb;
 	}
 }

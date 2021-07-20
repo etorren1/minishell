@@ -1,6 +1,8 @@
 #include "../../includes/readterm.h"
 
-char	**get_filenames(t_rl *rl)
+void	restore_line(t_rl *rl);
+
+static char	**get_filenames(t_rl *rl)
 {
 	char	**name;
 	char	*ptr;
@@ -19,10 +21,10 @@ char	**get_filenames(t_rl *rl)
 	return (name);
 }
 
-void		show_same(t_rl *rl, int size, int wordlen, char *name)
+static void	show_same(t_rl *rl, int size, int wordlen, char *name)
 {
-	int i;
-	char *tail;
+	int		i;
+	char	*tail;
 
 	i = -1;
 	while (++i < wordlen)
@@ -33,48 +35,50 @@ void		show_same(t_rl *rl, int size, int wordlen, char *name)
 	tputs(tgetstr("im", 0), 1, ft_putint);
 	ft_putstr_fd(name, 1);
 	tputs(tgetstr("ei", 0), 1, ft_putint);
-	tail = ft_substr(rl->command_line, rl->cursor_pos - rl->plen, rl->count_symb - rl->cursor_pos - rl->plen);
+	tail = ft_substr(rl->command_line, rl->cursor_pos - rl->plen,
+			 rl->count_symb - rl->cursor_pos - rl->plen);
 	while (ft_strlen(rl->command_line) + ft_strlen(name) > (size_t)rl->len)
-	{
-		rl->len += rl->len;
-		rl->command_line = ft_realloc(rl->command_line, rl->len);
-	}
+		mem_add(rl);
 	i = -1;
 	while (name[++i])
 		rl->command_line[size + 1 + i] = name[i];
 	ft_strcpy(&rl->command_line[size + i + 1], tail);
 	free(tail);
-	rl->cursor_pos += - wordlen + ft_strlen(name);
-	rl->count_symb += - wordlen + ft_strlen(name);
+	rl->cursor_pos += ft_strlen(name) - wordlen;
+	rl->count_symb += ft_strlen(name) - wordlen;
 	rl->buf[0] = 0;
 }
 
-void	try_complete(t_rl *rl, char **name)
+static void	try_complete(t_rl *rl, char **name)
 {
-	int size;
-	int i = -1;
+	int		size;
+	int		i;
 	char	*ptr;
-	int wordlen;
+	int		wordlen;
 
+	i = -1;
 	size = rl->cursor_pos - rl->plen - 1;
-	while (rl->command_line[size] && rl->command_line[size] != ' ' && rl->command_line[size] != '/')
+	while (rl->command_line[size] && rl->command_line[size] != ' '
+		 && rl->command_line[size] != '/')
 		size--;
 	wordlen = rl->cursor_pos - size - rl->plen - 1;
 	ptr = ft_substr(rl->command_line, size + 1, wordlen);
 	while (name[++i])
+	{
 		if (!ft_strncmp(ptr, name[i], wordlen) && ptr[0])
 		{
 			show_same(rl, size, wordlen, name[i]);
-			break;
+			break ;
 		}
+	}
 	free(ptr);
 	ft_arrfree(name);
 }
 
-void	show_all(t_rl *rl, char **name)
+static void	show_all(t_rl *rl, char **name)
 {
-	int i;
-	int sp;
+	int		i;
+	int		sp;
 
 	i = 0;
 	tputs(tgetstr("do", 0), 1, ft_putint);
@@ -88,27 +92,27 @@ void	show_all(t_rl *rl, char **name)
 			if (i % 4 == 0)
 				tputs(tgetstr("do", 0), 1, ft_putint);
 			else
+			{
 				if (sp < 2)
 					write(1, " ", 1);
 				else
 					while (sp--)
 						write(1, " ", 1);
+			}
 		}
 	}
-	tputs(tgetstr("do", 0), 1, ft_putint);
-	write (1, MINISHELL, rl->plen);
-	tputs(tgetstr("sc", 0), 1, ft_putint);
-	ft_putstr_fd(rl->command_line, 1);
+	restore_line(rl);
 }
 
 void	tabkey(t_rl *rl)
 {
 	char	**name;
-	
+
 	name = get_filenames(rl);
 	tputs(tgetstr("vi", 0), 1, ft_putint);
 	if (rl->command_line[rl->cursor_pos - rl->plen - 1] != ' '
-		 && rl->command_line[rl->cursor_pos - rl->plen - 1] != '/' && rl->command_line[0])
+		 && rl->command_line[rl->cursor_pos - rl->plen - 1] != '/'
+		 && rl->command_line[0])
 		try_complete(rl, name);
 	else
 		show_all(rl, name);

@@ -1,22 +1,16 @@
 #include "../includes/minishell.h"
 
-char	**get_dir_content(char *str)
+static char	**write_names(DIR *dir)
 {
-	DIR				*dir;
 	struct dirent	*entry;
 	char			**names;
 	int				i;
 
+	i = 0;
 	names = malloc(sizeof(char *));
 	names[0] = NULL;
-	dir = opendir(str);
-	if (!dir)
-	{
-		perror("diropen");
-		exit(1);
-	}
-	i = 0;
-	while ((entry = readdir(dir)) != NULL)
+	entry = readdir(dir);
+	while (entry != NULL)
 	{
 		if (entry->d_name[0] != '.')
 		{
@@ -25,7 +19,23 @@ char	**get_dir_content(char *str)
 				names[i] = ft_strjoin(names[i], "/");
 			i++;
 		}
+		entry = readdir(dir);
 	}
+	return (names);
+}
+
+char	**get_dir_content(char *str)
+{
+	DIR				*dir;
+	char			**names;
+
+	dir = opendir(str);
+	if (!dir)
+	{
+		perror("diropen");
+		exit(1);
+	}
+	names = write_names(dir);
 	free(str);
 	closedir(dir);
 	return (names);

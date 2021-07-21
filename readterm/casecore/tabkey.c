@@ -6,7 +6,6 @@ static char	**get_filenames(t_rl *rl)
 {
 	char	**name;
 	char	*ptr;
-	char	*tmp;
 	int		size;
 
 	size = rl->cursor_pos - rl->plen - 1;
@@ -14,10 +13,8 @@ static char	**get_filenames(t_rl *rl)
 		size--;
 	ptr = ft_substr(rl->command_line, size + 1, rl->cursor_pos - rl->plen
 			 - size - 1);
-	tmp = get_absolute_path_process(ptr);
-	name = get_dir_content(tmp);
+	name = get_dir_content(get_absolute_path_process(ptr));
 	free(ptr);
-	free(tmp);
 	return (name);
 }
 
@@ -115,6 +112,9 @@ void	tabkey(t_rl *rl)
 		 && rl->command_line[0])
 		try_complete(rl, name);
 	else
+	{
 		show_all(rl, name);
+		ft_arrfree(name);
+	}
 	tputs(tgetstr("ve", 0), 1, ft_putint);
 }

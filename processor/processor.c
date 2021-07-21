@@ -54,7 +54,7 @@ static void	subprocess(t_cmd *cmd, char **envp)
 	ft_strcpy(temp[0], cmd->args[0]);
 	ret = find_environment("PATH", envp);
 	if (ret != -1)
-		get_paths(ft_strdup(envp[ret]), cmd->args[0], &temp);
+		get_paths(ft_strdup(&envp[ret][5]), cmd->args[0], &temp);
 	j = 0;
 	while (temp[j] && execve(temp[j], cmd->args, envp) == -1 )
 		j++;

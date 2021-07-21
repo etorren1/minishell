@@ -97,11 +97,6 @@ static void	binary_cmd(t_cmd *cmd, t_rl *rl, char **envp)
 
 void	processor(t_cmd *cmd, char *(**envp), t_rl *rl)
 {
-	int	i;
-
-	i = -1;
-	while (cmd->args[++i])
-		printf("args[%d]=%s\n", i, cmd->args[i]);
 	if (!cmd->args[0])
 		return ;
 	if (!ft_strcmp(cmd->args[0], "echo"))

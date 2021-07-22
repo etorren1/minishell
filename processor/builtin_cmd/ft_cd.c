@@ -37,6 +37,7 @@ static void	change_envp(char ***envp, char *old, char *new)
 	ret = find_environment("PWD", *envp);
 	(*envp)[ret] = ft_realloc((*envp)[ret], ft_strlen(new) + 1);
 	ft_strcpy((*envp)[ret], new);
+	free(new);
 }
 
 static char	*make_pwdenv(char *var, char *val)

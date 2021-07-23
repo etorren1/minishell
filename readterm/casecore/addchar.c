@@ -11,6 +11,7 @@ void	ft_addchar(char **str, char ch, int i, int len)
 	(*str)[(i++) - len] = ch;
 	while (tail[j])
 		(*str)[(i++) - len] = tail[j++];
+	(*str)[i - len] = 0;
 	free(tail);
 }
 

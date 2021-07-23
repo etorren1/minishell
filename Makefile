@@ -19,7 +19,7 @@ OBJS		= $(SRCS:.c=.o)
 
 HEADER		= -I ./includes
 
-FLAGS		= -g #-Wall -Werror -Wextra
+FLAGS		= -g -Wall -Werror -Wextra
 
 LIB_PATH	= ./libft/libft.a
 
@@ -31,17 +31,17 @@ NAME		= minishell
 all: $(NAME)
 
 $(NAME): $(OBJS)
-#	@$(MAKE) bonus -C ./libft
+	@$(MAKE) bonus -C ./libft
 	@gcc $(OBJS) $(LIB_PATH) $(HEADER) -ltermcap -o $(NAME)
 	@echo "\033[33mCompiling complete\033[0m"
 
 clean:
-#	@$(MAKE) clean -C ./libft
+	@$(MAKE) clean -C ./libft
 	@rm -rf $(OBJS)
 	@echo "\033[33mClean objects files\033[0m"
 
 fclean: clean
-#	@$(MAKE) fclean -C ./libft
+	@$(MAKE) fclean -C ./libft
 	@rm -rf $(NAME)
 	@echo "\033[33mAll cleaned\033[0m"
 

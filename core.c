@@ -99,8 +99,10 @@ void	core(t_rl *rl, int k)
 	{
 		cmd = (t_cmd **)malloc(sizeof(t_cmd));
 		*cmd = NULL;
-		if (parse_err(rl, parser(&rl->command_line[i], rl, &cmd)))
+		if (parse_err(rl, parser(&rl->command_line[i], rl, &cmd))) {
+			free_arrcmd(cmd);
 			break ;
+		}
 		i += count_sumlen(cmd);
 		if (rl->command_line[i])
 			i++;

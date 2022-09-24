@@ -17,6 +17,7 @@ void	ft_delchar(char **str, int i, int size, int len)
 	ft_strcpy(tail, &(*str)[(i--) - len]);
 	while (tail[j])
 		(*str)[(i++) - len] = tail[j++];
+	(*str)[i - len] = 0;
 	free(tail);
 }
 

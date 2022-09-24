@@ -26,7 +26,7 @@
 # include <dirent.h>
 # define BUF_SIZE	12
 # define PROMPT		26
-# define MINISHELL	"\033[1;32mminishell-0.6$ \033[0m"
+# define MINISHELL	"\033[1;32mminishell-1.0$ \033[0m"
 # define HISTORY	".minishell_history"
 
 typedef struct s_cmd {
@@ -63,7 +63,7 @@ typedef struct s_pip {
 
 int			parser(char *command_line, t_rl *rl, t_cmd ***cmd);
 void		processor(t_cmd *cmd, char *(**envp), t_rl *rl);
-void		core(t_rl *rl, int k);
+void		core(t_rl *rl);
 void		put_error(char *prefix, char *cmd, char *args, char *err);
 int			find_environment(char *env, char **envp);
 char		*get_absolute_path_process(char *proc);

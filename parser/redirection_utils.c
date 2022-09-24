@@ -20,7 +20,10 @@ int	count_symbols(char *line, char c)
 	if (c == '>')
 	{
 		while (*line == c)
-			line++ && count++;
+		{
+			line++;
+			count++;
+		}
 	}
 	return (count);
 }

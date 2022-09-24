@@ -88,7 +88,8 @@ void	wildcard(char *str, int *pos, t_cmd *cmd, int *start)
 		while (tmp[++j])
 			cmd->args = ft_arradd_str_back(cmd->args, tmp[j]);
 		ft_arrfree(tmp);
-		!str[*pos + 1] && (*pos)++;
+		if (!str[*pos + 1])
+			(*pos)++;
 	}
 	else
 	{

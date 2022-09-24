@@ -71,7 +71,7 @@ int	main(int argc, char **argv, char **envp)
 		readterm(rl, &rl->histnode);
 		tcsetattr(0, TCSANOW, &saveterm);
 		if (ft_strcmp(rl->buf, "\4") && ft_strcmp(rl->buf, "\3"))
-			core(rl, 0);
+			core(rl);
 	}
 	clear_exit(rl);
 	return (0);

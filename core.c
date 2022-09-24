@@ -88,15 +88,16 @@ void	pipes(t_rl *rl, t_cmd **cmd, int k)
 	free(pip);
 }
 
-void	core(t_rl *rl, int k)
+void	core(t_rl *rl)
 {
 	t_cmd	**cmd;
-	int		i;
+	int		i, k;
 
 	i = 0;
 	cmd = NULL;
 	while (rl->command_line[i])
 	{
+		k = 0;
 		cmd = (t_cmd **)malloc(sizeof(t_cmd));
 		*cmd = NULL;
 		if (parse_err(rl, parser(&rl->command_line[i], rl, &cmd))) {
